@@ -29,8 +29,12 @@ export default function ScreeningsScreen() {
         </View>
       ) : !screenings?.length ? (
         <View className="flex-1 items-center justify-center gap-2 p-6">
-          <Text className="text-foreground text-lg text-center">No upcoming shows</Text>
-          <Text className="text-muted-foreground text-center">Check back later.</Text>
+          <Text className="text-foreground text-center text-lg">
+            No upcoming shows
+          </Text>
+          <Text className="text-muted-foreground text-center">
+            Check back later.
+          </Text>
         </View>
       ) : (
         <FlatList
@@ -38,23 +42,30 @@ export default function ScreeningsScreen() {
           keyExtractor={(item) => item.id}
           contentContainerClassName="p-4 gap-3"
           renderItem={({ item }: { item: Screening }) => {
-            const screen = item.screen as { name: string; cinema?: { name: string; neighborhood?: string } } | undefined;
+            const screen = item.screen as
+              | {
+                  name: string;
+                  cinema?: { name: string; neighborhood?: string };
+                }
+              | undefined;
             return (
               <Pressable
                 onPress={() => router.push(`/booking/${item.id}`)}
-                className="bg-card rounded-xl p-4 gap-2"
+                className="bg-card gap-2 rounded-xl p-4"
               >
-                <Text className="text-foreground font-semibold text-base">
+                <Text className="text-foreground text-base font-semibold">
                   {formatDateTime(item.starts_at)}
                 </Text>
                 {screen?.cinema && (
                   <Text className="text-muted-foreground text-sm">
                     {screen.cinema.name}
-                    {screen.cinema.neighborhood ? ` — ${screen.cinema.neighborhood}` : ""}
+                    {screen.cinema.neighborhood
+                      ? ` — ${screen.cinema.neighborhood}`
+                      : ""}
                   </Text>
                 )}
-                <View className="flex-row justify-between items-center pt-1">
-                  <Text className="text-primary font-bold text-base">
+                <View className="flex-row items-center justify-between pt-1">
+                  <Text className="text-primary text-base font-bold">
                     €{Number(item.price).toFixed(2)}
                   </Text>
                   <Text className="text-muted-foreground text-sm">

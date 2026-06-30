@@ -143,12 +143,13 @@ export function useMyBookings() {
     queryKey: ["bookings", user?.id],
     enabled: !!user,
     queryFn: async () => {
+      if (!user) throw new Error("Not authenticated");
       const { data, error } = await supabase
         .from("bookings")
         .select(
           "*, screening:screenings(*, movie:movies(*), screen:screens(*, cinema:cinemas(*)))",
         )
-        .eq("user_id", user!.id)
+        .eq("user_id", user.id)
         .order("created_at", { ascending: false });
       if (error) throw error;
       return data as Booking[];

@@ -132,13 +132,7 @@ export default function SignUp() {
 }
 
 /** Post-sign-up email confirmation: a 6-digit code, no email links/deep-links. */
-function CheckEmail({
-  email,
-  onBack,
-}: {
-  email: string;
-  onBack: () => void;
-}) {
+function CheckEmail({ email, onBack }: { email: string; onBack: () => void }) {
   const [code, setCode] = useState("");
   const [verifying, setVerifying] = useState(false);
 

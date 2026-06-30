@@ -22,7 +22,7 @@ export default function HomeScreen() {
           renderItem={({ item }) => (
             <Pressable
               onPress={() => router.push(`/movies/${item.id}`)}
-              className="bg-card rounded-xl overflow-hidden"
+              className="bg-card overflow-hidden rounded-xl"
             >
               {item.poster_url ? (
                 <Image
@@ -31,12 +31,17 @@ export default function HomeScreen() {
                   resizeMode="cover"
                 />
               ) : (
-                <View className="bg-muted items-center justify-center" style={{ height: 192 }}>
+                <View
+                  className="bg-muted items-center justify-center"
+                  style={{ height: 192 }}
+                >
                   <Text className="text-muted-foreground text-4xl">🎬</Text>
                 </View>
               )}
-              <View className="p-4 gap-1">
-                <Text className="text-foreground text-lg font-bold">{item.title}</Text>
+              <View className="gap-1 p-4">
+                <Text className="text-foreground text-lg font-bold">
+                  {item.title}
+                </Text>
                 <Text className="text-muted-foreground text-sm">
                   {[item.genre, `${item.duration_minutes} min`, item.language]
                     .filter(Boolean)

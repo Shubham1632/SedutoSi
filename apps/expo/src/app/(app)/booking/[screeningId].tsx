@@ -32,41 +32,65 @@ export default function BookingScreen() {
   }
 
   const movie = screening.movie as { title?: string } | undefined;
-  const screen = screening.screen as { name?: string; cinema?: { name?: string; neighborhood?: string } } | undefined;
+  const screen = screening.screen as
+    | { name?: string; cinema?: { name?: string; neighborhood?: string } }
+    | undefined;
   const total = seats * Number(screening.price);
   const maxSeats = Math.min(screening.available_seats, 8);
 
   async function onConfirm() {
     try {
-      await createBooking.mutateAsync({ screeningId, seatsCount: seats, totalPrice: total });
-      Alert.alert("Booking Confirmed!", `You've booked ${seats} seat${seats > 1 ? "s" : ""}.`, [
-        { text: "My Bookings", onPress: () => router.replace("/bookings") },
-        { text: "Home", onPress: () => router.replace("/") },
-      ]);
+      await createBooking.mutateAsync({
+        screeningId,
+        seatsCount: seats,
+        totalPrice: total,
+      });
+      Alert.alert(
+        "Booking Confirmed!",
+        `You've booked ${seats} seat${seats > 1 ? "s" : ""}.`,
+        [
+          { text: "My Bookings", onPress: () => router.replace("/bookings") },
+          { text: "Home", onPress: () => router.replace("/") },
+        ],
+      );
     } catch (e) {
-      Alert.alert("Booking failed", e instanceof Error ? e.message : "Please try again.");
+      Alert.alert(
+        "Booking failed",
+        e instanceof Error ? e.message : "Please try again.",
+      );
     }
   }
 
   return (
-    <ScrollView className="bg-background flex-1" contentContainerClassName="p-6 gap-6">
+    <ScrollView
+      className="bg-background flex-1"
+      contentContainerClassName="p-6 gap-6"
+    >
       <Stack.Screen options={{ title: "Confirm Booking" }} />
 
-      <View className="bg-card rounded-xl p-4 gap-3">
-        <Text className="text-foreground text-xl font-bold">{movie?.title ?? "Movie"}</Text>
-        <Text className="text-muted-foreground">{formatDateTime(screening.starts_at)}</Text>
+      <View className="bg-card gap-3 rounded-xl p-4">
+        <Text className="text-foreground text-xl font-bold">
+          {movie?.title ?? "Movie"}
+        </Text>
+        <Text className="text-muted-foreground">
+          {formatDateTime(screening.starts_at)}
+        </Text>
         {screen?.cinema && (
           <Text className="text-muted-foreground">
             {screen.cinema.name}
-            {screen.cinema.neighborhood ? ` — ${screen.cinema.neighborhood}` : ""}
+            {screen.cinema.neighborhood
+              ? ` — ${screen.cinema.neighborhood}`
+              : ""}
           </Text>
         )}
         {screen?.name && (
-          <Text className="text-muted-foreground text-sm">Hall: {screen.name}</Text>
+          <Text className="text-muted-foreground text-sm">
+            Hall: {screen.name}
+          </Text>
         )}
       </View>
 
-      <View className="bg-card rounded-xl p-4 gap-4">
+      <View className="bg-card gap-4 rounded-xl p-4">
         <Text className="text-foreground font-semibold">Number of seats</Text>
         <View className="flex-row items-center gap-6">
           <Button
@@ -83,11 +107,15 @@ export default function BookingScreen() {
         </View>
         <View className="flex-row justify-between">
           <Text className="text-muted-foreground">Price per seat</Text>
-          <Text className="text-foreground">€{Number(screening.price).toFixed(2)}</Text>
+          <Text className="text-foreground">
+            €{Number(screening.price).toFixed(2)}
+          </Text>
         </View>
-        <View className="flex-row justify-between border-t border-border pt-3">
-          <Text className="text-foreground font-semibold text-base">Total</Text>
-          <Text className="text-primary text-lg font-bold">€{total.toFixed(2)}</Text>
+        <View className="border-border flex-row justify-between border-t pt-3">
+          <Text className="text-foreground text-base font-semibold">Total</Text>
+          <Text className="text-primary text-lg font-bold">
+            €{total.toFixed(2)}
+          </Text>
         </View>
       </View>
 
