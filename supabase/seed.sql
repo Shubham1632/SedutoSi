@@ -1,96 +1,159 @@
 -- Seed data for local dev. Runs after migrations on `supabase db reset`.
 -- CinemaMilano — demo movies, cinemas and screenings for Milan, Italy.
+-- Movie data sourced from TMDB (https://www.themoviedb.org/) — now playing /
+-- popular / upcoming titles at generation time, with real posters, genres,
+-- runtimes, original language and certifications where available.
 
 -- ============================================================================
 -- Cinemas in Milan
 -- ============================================================================
 insert into public.cinemas (id, name, address, neighborhood) values
-  ('c1111111-1111-1111-1111-111111111101', 'Anteo Palazzo del Cinema',  'Via Milazzo 9, 20121 Milano',      'Porta Volta'),
-  ('c1111111-1111-1111-1111-111111111102', 'Cinema Mexico',             'Via Savona 57, 20144 Milano',      'Navigli'),
-  ('c1111111-1111-1111-1111-111111111103', 'Odeon Multisala',           'Via Santa Radegonda 8, 20121 Milano','Duomo'),
-  ('c1111111-1111-1111-1111-111111111104', 'UCI Cinemas Bicocca',       'Viale Sarca 336, 20126 Milano',    'Bicocca')
+  ('c1111111-1111-1111-1111-000000000065', 'Anteo Palazzo del Cinema', 'Via Milazzo 9, 20121 Milano', 'Porta Volta'),
+  ('c1111111-1111-1111-1111-000000000066', 'Cinema Mexico', 'Via Savona 57, 20144 Milano', 'Navigli'),
+  ('c1111111-1111-1111-1111-000000000067', 'Odeon Multisala', 'Via Santa Radegonda 8, 20121 Milano', 'Duomo'),
+  ('c1111111-1111-1111-1111-000000000068', 'UCI Cinemas Bicocca', 'Viale Sarca 336, 20126 Milano', 'Bicocca'),
+  ('c1111111-1111-1111-1111-000000000069', 'UCI Cinemas Certosa', 'Via Stephenson 29, 20157 Milano', 'Certosa'),
+  ('c1111111-1111-1111-1111-00000000006a', 'The Space Cinema Odeon', 'Via Santa Radegonda 8, 20121 Milano', 'Duomo'),
+  ('c1111111-1111-1111-1111-00000000006b', 'Cinema Colosseo', 'Viale Tunisia 35, 20124 Milano', 'Porta Venezia'),
+  ('c1111111-1111-1111-1111-00000000006c', 'Cinema Beltrade', 'Via Oxilia 10, 20127 Milano', 'Loreto'),
+  ('c1111111-1111-1111-1111-00000000006d', 'Arcobaleno Film', 'Viale Tunisia 11, 20124 Milano', 'Porta Venezia'),
+  ('c1111111-1111-1111-1111-00000000006e', 'The Space Cinema Città Fiori', 'Via Cristina Belgioioso 1, 20157 Milano', 'Bovisa'),
+  ('c1111111-1111-1111-1111-00000000006f', 'Cinema Arlecchino', 'Via San Pietro all''Orto 9, 20121 Milano', 'San Babila'),
+  ('c1111111-1111-1111-1111-000000000070', 'Apollo Spazio Cinema', 'Galleria De Cristoforis 1, 20122 Milano', 'Centro')
 on conflict (id) do nothing;
 
 -- ============================================================================
--- Screens (one per cinema for simplicity)
+-- Screens (two per cinema)
 -- ============================================================================
 insert into public.screens (id, cinema_id, name, total_seats) values
-  ('a2222222-2222-2222-2222-222222222201', 'c1111111-1111-1111-1111-111111111101', 'Sala Uno',   120),
-  ('a2222222-2222-2222-2222-222222222202', 'c1111111-1111-1111-1111-111111111102', 'Sala Grande', 90),
-  ('a2222222-2222-2222-2222-222222222203', 'c1111111-1111-1111-1111-111111111103', 'Screen 1',   200),
-  ('a2222222-2222-2222-2222-222222222204', 'c1111111-1111-1111-1111-111111111104', 'Hall A',     150)
+  ('a2222222-1111-1111-1111-0000000000c9', 'c1111111-1111-1111-1111-000000000065', 'Sala Uno', 80),
+  ('a2222222-1111-1111-1111-0000000000ca', 'c1111111-1111-1111-1111-000000000065', 'Sala Due', 100),
+  ('a2222222-1111-1111-1111-0000000000d3', 'c1111111-1111-1111-1111-000000000066', 'Sala Uno', 100),
+  ('a2222222-1111-1111-1111-0000000000d4', 'c1111111-1111-1111-1111-000000000066', 'Sala Due', 120),
+  ('a2222222-1111-1111-1111-0000000000dd', 'c1111111-1111-1111-1111-000000000067', 'Sala Uno', 120),
+  ('a2222222-1111-1111-1111-0000000000de', 'c1111111-1111-1111-1111-000000000067', 'Sala Due', 140),
+  ('a2222222-1111-1111-1111-0000000000e7', 'c1111111-1111-1111-1111-000000000068', 'Sala Uno', 140),
+  ('a2222222-1111-1111-1111-0000000000e8', 'c1111111-1111-1111-1111-000000000068', 'Sala Due', 160),
+  ('a2222222-1111-1111-1111-0000000000f1', 'c1111111-1111-1111-1111-000000000069', 'Sala Uno', 160),
+  ('a2222222-1111-1111-1111-0000000000f2', 'c1111111-1111-1111-1111-000000000069', 'Sala Due', 80),
+  ('a2222222-1111-1111-1111-0000000000fb', 'c1111111-1111-1111-1111-00000000006a', 'Sala Uno', 80),
+  ('a2222222-1111-1111-1111-0000000000fc', 'c1111111-1111-1111-1111-00000000006a', 'Sala Due', 100),
+  ('a2222222-1111-1111-1111-000000000105', 'c1111111-1111-1111-1111-00000000006b', 'Sala Uno', 100),
+  ('a2222222-1111-1111-1111-000000000106', 'c1111111-1111-1111-1111-00000000006b', 'Sala Due', 120),
+  ('a2222222-1111-1111-1111-00000000010f', 'c1111111-1111-1111-1111-00000000006c', 'Sala Uno', 120),
+  ('a2222222-1111-1111-1111-000000000110', 'c1111111-1111-1111-1111-00000000006c', 'Sala Due', 140),
+  ('a2222222-1111-1111-1111-000000000119', 'c1111111-1111-1111-1111-00000000006d', 'Sala Uno', 140),
+  ('a2222222-1111-1111-1111-00000000011a', 'c1111111-1111-1111-1111-00000000006d', 'Sala Due', 160),
+  ('a2222222-1111-1111-1111-000000000123', 'c1111111-1111-1111-1111-00000000006e', 'Sala Uno', 160),
+  ('a2222222-1111-1111-1111-000000000124', 'c1111111-1111-1111-1111-00000000006e', 'Sala Due', 80),
+  ('a2222222-1111-1111-1111-00000000012d', 'c1111111-1111-1111-1111-00000000006f', 'Sala Uno', 80),
+  ('a2222222-1111-1111-1111-00000000012e', 'c1111111-1111-1111-1111-00000000006f', 'Sala Due', 100),
+  ('a2222222-1111-1111-1111-000000000137', 'c1111111-1111-1111-1111-000000000070', 'Sala Uno', 100),
+  ('a2222222-1111-1111-1111-000000000138', 'c1111111-1111-1111-1111-000000000070', 'Sala Due', 120)
 on conflict (id) do nothing;
 
 -- ============================================================================
--- Movies
+-- Movies (from TMDB)
 -- ============================================================================
-insert into public.movies (id, title, description, genre, duration_minutes, language, rating, poster_url) values
-  (
-    'b3333333-3333-3333-3333-333333333301',
-    'Il Padrino',
-    'La storia epica della famiglia Corleone, uno dei clan mafiosi più potenti d''America. Un classico senza tempo.',
-    'Drama',
-    175,
-    'Italian',
-    'VM14',
-    'https://upload.wikimedia.org/wikipedia/en/1/1c/Godfather_ver1.jpg'
-  ),
-  (
-    'b3333333-3333-3333-3333-333333333302',
-    'Inception',
-    'Un ladro esperto di furti nei sogni riceve un''ultima missione: impiantare un''idea nella mente di un CEO.',
-    'Sci-Fi',
-    148,
-    'English',
-    'PG-13',
-    'https://upload.wikimedia.org/wikipedia/en/2/2e/Inception_%282010%29_theatrical_poster.jpg'
-  ),
-  (
-    'b3333333-3333-3333-3333-333333333303',
-    'La La Land',
-    'Una pianista e un jazzista inseguono i loro sogni nella Los Angeles moderna, tra amore e ambizione.',
-    'Musical',
-    128,
-    'English',
-    'PG',
-    'https://upload.wikimedia.org/wikipedia/en/a/ab/La_La_Land_%28film%29.png'
-  ),
-  (
-    'b3333333-3333-3333-3333-333333333304',
-    'Interstellar',
-    'Un gruppo di astronauti viaggia attraverso un wormhole alla ricerca di un nuovo pianeta abitabile per l''umanità.',
-    'Sci-Fi',
-    169,
-    'English',
-    'PG-13',
-    'https://upload.wikimedia.org/wikipedia/en/b/bc/Interstellar_film_poster.jpg'
-  )
+insert into public.movies (id, title, description, genre, duration_minutes, language, rating, poster_url, release_date) values
+  ('b3333333-1111-1111-1111-00000000012d', 'Disclosure Day', 'A cybersecurity expert becomes a whistleblower after uncovering secrets about aliens, putting him on the run from a corporation. Meanwhile, a meteorologist experiencing strange phenomena joins forces with him to prove there''s life beyond our understanding.', 'Science Fiction', 145, 'English', 'T', 'https://image.tmdb.org/t/p/w500/AnJ8IQJI23hNpYXVNaythu061Ru.jpg', '2026-06-10'),
+  ('b3333333-1111-1111-1111-00000000012e', 'Toy Story 5', 'When Bonnie receives a Lilypad tablet as a gift and becomes obsessed, Buzz, Woody, Jessie and the rest of the gang''s jobs become exponentially harder when they have to go head to head with the all-new threat to playtime.', 'Animation', 102, 'English', 'T', 'https://image.tmdb.org/t/p/w500/a6H2U7pjibMia41TwyFVd1PVQw3.jpg', '2026-06-17'),
+  ('b3333333-1111-1111-1111-00000000012f', 'Backrooms', 'A strange doorway appears in the basement of a furniture showroom.', 'Horror', 111, 'English', '14+', 'https://image.tmdb.org/t/p/w500/rhGx6E3qRNMgj3i5su2oukNHwIQ.jpg', '2026-05-27'),
+  ('b3333333-1111-1111-1111-000000000130', 'Scary Movie', 'Twenty-six years after outrunning a suspiciously familiar masked killer, the Core Four are back in the killer''s crosshairs and no horror movie IP is safe.', 'Comedy', 96, 'English', '10+', 'https://image.tmdb.org/t/p/w500/reZ8NInXjMkkaOpUHcI3Pn7iaRN.jpg', '2026-06-03'),
+  ('b3333333-1111-1111-1111-000000000131', 'Supergirl', 'When an unexpected and ruthless adversary strikes too close to home, Kara Zor-El, aka Supergirl, reluctantly joins forces with an unlikely companion on an epic, interstellar journey of vengeance and justice.', 'Action', 108, 'English', 'T', 'https://image.tmdb.org/t/p/w500/niSvU02l2BONH9ivubV6K1a5QiK.jpg', '2026-06-24'),
+  ('b3333333-1111-1111-1111-000000000132', 'The Mandalorian and Grogu', 'The evil Empire has fallen, and Imperial warlords remain scattered throughout the galaxy. As the fledgling New Republic works to protect everything the Rebellion fought for, they have enlisted the help of legendary Mandalorian bounty hunter Din Djarin and his young apprentice Grogu.', 'Action', 132, 'English', 'T', 'https://image.tmdb.org/t/p/w500/5Vi8dSauVwH1HOsiZceDMbRr1Ca.jpg', '2026-05-20'),
+  ('b3333333-1111-1111-1111-000000000133', 'Minions & Monsters', 'This is the rambunctious, ridiculous and totally true story of how the Minions conquered Hollywood, became movie stars, lost everything, unleashed monsters onto the world and then banded together to try and save the planet from the mayhem they had just created.', 'Adventure', 90, 'English', 'PG', 'https://image.tmdb.org/t/p/w500/nz7i42yhLIJ4ve9JKgM6NthoLHO.jpg', '2026-06-24'),
+  ('b3333333-1111-1111-1111-000000000134', 'Masters of the Universe', 'After being separated for 15 years, the Sword of Power leads Prince Adam back to Eternia, where he discovers his home shattered under the fiendish rule of Skeletor. To save his family and his world, Adam must join forces with his closest allies, Teela and Duncan/Man-At-Arms, and embrace his true destiny as He-Man — the most powerful man in the universe.', 'Action', 141, 'English', 'T', 'https://image.tmdb.org/t/p/w500/3YMd9Ogae4rDKLWuAZFuse9xhc5.jpg', '2026-06-03'),
+  ('b3333333-1111-1111-1111-000000000135', 'Tom Clancy''s Jack Ryan: Ghost War', 'Jack Ryan is reluctantly pulled back into espionage when an international covert mission unravels a deadly conspiracy. Racing against time, he joins CIA allies Mike November & James Greer and sharp MI6 officer Emma Marlowe to battle a rogue black-ops unit in a high-stakes, deeply personal fight.', 'Action', 107, 'English', 'T', 'https://image.tmdb.org/t/p/w500/8ehYxUh5MWE41AeE9gkHE8DKzvB.jpg', '2026-05-20'),
+  ('b3333333-1111-1111-1111-000000000136', 'Tuner', 'A gifted piano tuner''s meticulous skills for tuning pianos lead him to discover an unexpected aptitude for cracking safes, turning his life upside down.', 'Crime', 108, 'English', 'R', 'https://image.tmdb.org/t/p/w500/5OvA3i9wZs5jHu0DCrfmXlzAM67.jpg', '2026-05-21'),
+  ('b3333333-1111-1111-1111-000000000137', 'Good Luck, Have Fun, Don''t Die', 'A ''Man from the Future'' arrives at an LA diner where he must recruit the precise combination of disgruntled patrons to join him on a one-night quest to save the world from the terminal threat of a rogue artificial intelligence.', 'Science Fiction', 134, 'English', 'R', 'https://image.tmdb.org/t/p/w500/rWcfOdY7TU6lTdazWj0ebDZnAfO.jpg', '2026-02-13'),
+  ('b3333333-1111-1111-1111-000000000138', 'Jackass: Best and Last', 'The fifth and final installment to Jackass franchise where the crew go on one last insane crusade.', 'Action', 92, 'English', 'R', 'https://image.tmdb.org/t/p/w500/tfgccePxnswMqhmtxafliLlcCVR.jpg', '2026-06-25'),
+  ('b3333333-1111-1111-1111-000000000139', 'How to Make a Killing', 'Disowned at birth by his obscenely wealthy family, blue-collar Becket Redfellow will stop at nothing to reclaim his inheritance, no matter how many relatives stand in his way.', 'Comedy', 105, 'English', 'R', 'https://image.tmdb.org/t/p/w500/kw7x5mSmHhoeeqwXLwXTBsofD1N.jpg', '2026-02-16'),
+  ('b3333333-1111-1111-1111-00000000013a', 'Fuze', 'An unexploded WWII bomb is discovered on a busy construction site in the centre of London. Chaos ensues as the military and police begin a mass evacuation against a ticking clock.', 'Action', 96, 'English', 'R', 'https://image.tmdb.org/t/p/w500/oMFdQE5hMJ9JjhNORegwTo0GKmh.jpg', '2026-03-23'),
+  ('b3333333-1111-1111-1111-00000000013b', 'Passenger', 'After a young couple witnesses a gruesome highway accident, they soon realize they did not leave the crash scene alone, as a demonic presence called the Passenger that won''t stop until it claims them both turns their van life adventure into a nightmare.', 'Horror', 94, 'English', '14+', 'https://image.tmdb.org/t/p/w500/2sOEJzhPzjTkZSlPbGxOJ7xgIyS.jpg', '2026-05-20'),
+  ('b3333333-1111-1111-1111-00000000013c', 'Kill Bill: The Whole Bloody Affair', 'A former assassin, known simply as The Bride, wakes from a coma four years after her jealous ex-lover Bill attempts to murder her on her wedding day. Fueled by an insatiable desire for revenge, she vows to get even with every person who contributed to the loss of her unborn child, her entire wedding party, and four years of her life.  After devising a hit list, The Bride sets off on her quest, enduring unspeakable injury and unscrupulous enemies.', 'Action', 254, 'English', '14+', 'https://image.tmdb.org/t/p/w500/nSOJfWJCdVFZQwXQA7RXn7FIIiY.jpg', '2011-03-27'),
+  ('b3333333-1111-1111-1111-00000000013d', 'You, Me & Tuscany', 'When a woman crashes at an empty Italian villa, posing as the owner''s fiancée, she discovers an unexpected romance that could transform her life.', 'Romance', 105, 'English', 'PG-13', 'https://image.tmdb.org/t/p/w500/mJS0IF7Af3WpPRhSTDT6rGpiLzw.jpg', '2026-04-09'),
+  ('b3333333-1111-1111-1111-00000000013e', 'Kiss of the Spider Woman', 'Valentín, a political prisoner, shares a cell with Molina, a window dresser convicted of public indecency. The two form an unlikely bond as Molina recounts the plot of a Hollywood musical starring his favorite silver screen diva, Ingrid Luna.', 'Romance', 128, 'English', 'R', 'https://image.tmdb.org/t/p/w500/c8zDeDq0Uatjly6Fh4ycmWuoLYy.jpg', '2025-10-09'),
+  ('b3333333-1111-1111-1111-00000000013f', 'Romería', 'With her mother''s diary in hand, Marina''s search for official documents for university leads her to her biological family on the Atlantic coast. What starts as an administrative quest reveals long-buried family secrets.', 'Drama', 112, 'Spanish', null, 'https://image.tmdb.org/t/p/w500/6Wo9z9dvy0ns1Q84OLEHXemRpeh.jpg', '2025-09-05'),
+  ('b3333333-1111-1111-1111-000000000140', 'MASTERCLASS', 'In a time without space, a group of actors desperately try to stage a play under the supervision of a computer.', 'Drama', 13, 'Italian', null, 'https://image.tmdb.org/t/p/w500/b1AsLFhwGqF4SOIeSDxvzVcb6We.jpg', '2026-06-19'),
+  ('b3333333-1111-1111-1111-000000000141', 'ChaO', 'In a futuristic world where humans and mermaids coexist, the life of mild-mannered office worker Stephan is upended when he is suddenly proposed to by Chao — a princess from the mermaid kingdom. With no time to make sense of what''s happening, Stephan soon finds himself living with the unpredictable, wholehearted Chao, and her sincere love begins to break down his emotional barriers.', 'Animation', 90, 'Japanese', 'NR', 'https://image.tmdb.org/t/p/w500/m723xGi6lyklfsTPdtgEtYJSKcw.jpg', '2025-08-15'),
+  ('b3333333-1111-1111-1111-000000000142', 'The Chronology of Water', 'Plagued by an abusive childhood, a woman finds escape in competitive swimming, sexual experimentation, toxic relationships, and addiction before ultimately finding her voice through writing.', 'Drama', 128, 'English', 'R', 'https://image.tmdb.org/t/p/w500/pU3GZI6C9lxzxUnBccIQLThDLVY.jpg', '2025-10-15'),
+  ('b3333333-1111-1111-1111-000000000143', 'Nobody Knows', 'In a small Tokyo apartment, twelve-year-old Akira must care for his younger siblings after their mother leaves them and shows no sign of returning.', 'Drama', 141, 'Japanese', 'PG-13', 'https://image.tmdb.org/t/p/w500/kDUUdWrbBBVqzSmm27pHFJcTvCU.jpg', '2004-08-07'),
+  ('b3333333-1111-1111-1111-000000000144', 'Still Walking', 'A family gathers together for a commemorative ritual whose nature only gradually becomes clear.', 'Drama', 114, 'Japanese', 'NR', 'https://image.tmdb.org/t/p/w500/FWJbhAPdwiwKhUaAyz841jpYa1.jpg', '2008-06-28'),
+  ('b3333333-1111-1111-1111-000000000145', 'Bitter Christmas', 'After her mother dies in December, advertising director Elsa immerses herself in work to cope. When a panic attack forces her to take a break, she decides to travel to Lanzarote with her friend Patricia. The story of these women run parallel to that of a screenwriter and film director, exploring how life and fiction are inseparably linked, sometimes painfully so.', 'Drama', 112, 'Spanish', null, 'https://image.tmdb.org/t/p/w500/q030Fi4tubXBJKg3D9otPDgGP2o.jpg', '2026-03-20'),
+  ('b3333333-1111-1111-1111-000000000146', 'Cycle of Time', 'In 1950s France, Helene and Michel lead a simple life until a freak accident in 2025 leads to Helene becoming a bank executive and Michel struggling with unemployment and depression. Their children grow up in a technology-dominated world.', 'Comedy', 103, 'French', null, 'https://image.tmdb.org/t/p/w500/63QJSYPjR3i3mwr4PmpvwfyLgDo.jpg', '2025-10-08')
 on conflict (id) do nothing;
 
 -- ============================================================================
--- Screenings (future dates relative to migration time — adjust year if needed)
+-- Screenings (future dates relative to seed time, spread across cinemas)
 -- ============================================================================
 insert into public.screenings (movie_id, screen_id, starts_at, ends_at, price, available_seats) values
-  -- Il Padrino
-  ('b3333333-3333-3333-3333-333333333301', 'a2222222-2222-2222-2222-222222222201',
-   now() + interval '1 day 18:00:00', now() + interval '1 day 20:55:00', 9.50, 80),
-  ('b3333333-3333-3333-3333-333333333301', 'a2222222-2222-2222-2222-222222222203',
-   now() + interval '2 days 20:30:00', now() + interval '2 days 23:25:00', 11.00, 140),
-
-  -- Inception
-  ('b3333333-3333-3333-3333-333333333302', 'a2222222-2222-2222-2222-222222222202',
-   now() + interval '1 day 15:00:00', now() + interval '1 day 17:28:00', 8.50, 60),
-  ('b3333333-3333-3333-3333-333333333302', 'a2222222-2222-2222-2222-222222222204',
-   now() + interval '3 days 21:00:00', now() + interval '3 days 23:28:00', 10.00, 120),
-
-  -- La La Land
-  ('b3333333-3333-3333-3333-333333333303', 'a2222222-2222-2222-2222-222222222201',
-   now() + interval '2 days 17:30:00', now() + interval '2 days 19:38:00', 9.00, 90),
-  ('b3333333-3333-3333-3333-333333333303', 'a2222222-2222-2222-2222-222222222203',
-   now() + interval '4 days 19:00:00', now() + interval '4 days 21:08:00', 10.50, 180),
-
-  -- Interstellar
-  ('b3333333-3333-3333-3333-333333333304', 'a2222222-2222-2222-2222-222222222202',
-   now() + interval '1 day 20:00:00', now() + interval '1 day 22:49:00', 9.00, 70),
-  ('b3333333-3333-3333-3333-333333333304', 'a2222222-2222-2222-2222-222222222204',
-   now() + interval '5 days 16:00:00', now() + interval '5 days 18:49:00', 11.00, 130);
+  ('b3333333-1111-1111-1111-00000000012d', 'a2222222-1111-1111-1111-0000000000fc', (now() + interval '5 days' + interval '14:30:00'), (now() + interval '5 days' + interval '14:30:00') + interval '121 minutes', 8.87, 77),
+  ('b3333333-1111-1111-1111-00000000012d', 'a2222222-1111-1111-1111-00000000012d', (now() + interval '2 days' + interval '21:45:00'), (now() + interval '2 days' + interval '21:45:00') + interval '134 minutes', 9.04, 41),
+  ('b3333333-1111-1111-1111-00000000012d', 'a2222222-1111-1111-1111-000000000106', (now() + interval '5 days' + interval '14:30:00'), (now() + interval '5 days' + interval '14:30:00') + interval '118 minutes', 11.69, 51),
+  ('b3333333-1111-1111-1111-00000000012e', 'a2222222-1111-1111-1111-0000000000c9', (now() + interval '1 days' + interval '14:30:00'), (now() + interval '1 days' + interval '14:30:00') + interval '137 minutes', 10.15, 33),
+  ('b3333333-1111-1111-1111-00000000012e', 'a2222222-1111-1111-1111-0000000000de', (now() + interval '4 days' + interval '21:45:00'), (now() + interval '4 days' + interval '21:45:00') + interval '109 minutes', 9.75, 59),
+  ('b3333333-1111-1111-1111-00000000012e', 'a2222222-1111-1111-1111-0000000000ca', (now() + interval '5 days' + interval '14:30:00'), (now() + interval '5 days' + interval '14:30:00') + interval '128 minutes', 8.55, 58),
+  ('b3333333-1111-1111-1111-00000000012f', 'a2222222-1111-1111-1111-00000000012e', (now() + interval '2 days' + interval '17:00:00'), (now() + interval '2 days' + interval '17:00:00') + interval '107 minutes', 7.87, 79),
+  ('b3333333-1111-1111-1111-00000000012f', 'a2222222-1111-1111-1111-00000000011a', (now() + interval '7 days' + interval '14:30:00'), (now() + interval '7 days' + interval '14:30:00') + interval '146 minutes', 9.66, 154),
+  ('b3333333-1111-1111-1111-00000000012f', 'a2222222-1111-1111-1111-0000000000d3', (now() + interval '1 days' + interval '17:00:00'), (now() + interval '1 days' + interval '17:00:00') + interval '118 minutes', 10.56, 93),
+  ('b3333333-1111-1111-1111-000000000130', 'a2222222-1111-1111-1111-00000000011a', (now() + interval '2 days' + interval '19:30:00'), (now() + interval '2 days' + interval '19:30:00') + interval '100 minutes', 10.10, 142),
+  ('b3333333-1111-1111-1111-000000000130', 'a2222222-1111-1111-1111-0000000000d4', (now() + interval '4 days' + interval '21:45:00'), (now() + interval '4 days' + interval '21:45:00') + interval '116 minutes', 10.39, 72),
+  ('b3333333-1111-1111-1111-000000000131', 'a2222222-1111-1111-1111-0000000000e8', (now() + interval '3 days' + interval '17:00:00'), (now() + interval '3 days' + interval '17:00:00') + interval '140 minutes', 10.98, 159),
+  ('b3333333-1111-1111-1111-000000000131', 'a2222222-1111-1111-1111-00000000012d', (now() + interval '4 days' + interval '17:00:00'), (now() + interval '4 days' + interval '17:00:00') + interval '96 minutes', 10.98, 47),
+  ('b3333333-1111-1111-1111-000000000131', 'a2222222-1111-1111-1111-000000000124', (now() + interval '1 days' + interval '17:00:00'), (now() + interval '1 days' + interval '17:00:00') + interval '139 minutes', 8.15, 78),
+  ('b3333333-1111-1111-1111-000000000132', 'a2222222-1111-1111-1111-00000000011a', (now() + interval '2 days' + interval '17:00:00'), (now() + interval '2 days' + interval '17:00:00') + interval '99 minutes', 10.77, 96),
+  ('b3333333-1111-1111-1111-000000000132', 'a2222222-1111-1111-1111-0000000000de', (now() + interval '7 days' + interval '17:00:00'), (now() + interval '7 days' + interval '17:00:00') + interval '137 minutes', 9.46, 67),
+  ('b3333333-1111-1111-1111-000000000133', 'a2222222-1111-1111-1111-0000000000f1', (now() + interval '6 days' + interval '19:30:00'), (now() + interval '6 days' + interval '19:30:00') + interval '142 minutes', 12.04, 84),
+  ('b3333333-1111-1111-1111-000000000133', 'a2222222-1111-1111-1111-00000000010f', (now() + interval '2 days' + interval '14:30:00'), (now() + interval '2 days' + interval '14:30:00') + interval '132 minutes', 11.04, 68),
+  ('b3333333-1111-1111-1111-000000000133', 'a2222222-1111-1111-1111-0000000000e7', (now() + interval '1 days' + interval '14:30:00'), (now() + interval '1 days' + interval '14:30:00') + interval '149 minutes', 10.36, 139),
+  ('b3333333-1111-1111-1111-000000000134', 'a2222222-1111-1111-1111-0000000000de', (now() + interval '3 days' + interval '17:00:00'), (now() + interval '3 days' + interval '17:00:00') + interval '116 minutes', 9.59, 113),
+  ('b3333333-1111-1111-1111-000000000134', 'a2222222-1111-1111-1111-0000000000f1', (now() + interval '7 days' + interval '17:00:00'), (now() + interval '7 days' + interval '17:00:00') + interval '119 minutes', 10.55, 116),
+  ('b3333333-1111-1111-1111-000000000135', 'a2222222-1111-1111-1111-0000000000dd', (now() + interval '3 days' + interval '17:00:00'), (now() + interval '3 days' + interval '17:00:00') + interval '130 minutes', 8.60, 60),
+  ('b3333333-1111-1111-1111-000000000135', 'a2222222-1111-1111-1111-000000000119', (now() + interval '1 days' + interval '17:00:00'), (now() + interval '1 days' + interval '17:00:00') + interval '92 minutes', 10.39, 73),
+  ('b3333333-1111-1111-1111-000000000135', 'a2222222-1111-1111-1111-0000000000fb', (now() + interval '5 days' + interval '21:45:00'), (now() + interval '5 days' + interval '21:45:00') + interval '138 minutes', 9.70, 39),
+  ('b3333333-1111-1111-1111-000000000136', 'a2222222-1111-1111-1111-000000000106', (now() + interval '7 days' + interval '17:00:00'), (now() + interval '7 days' + interval '17:00:00') + interval '98 minutes', 10.59, 106),
+  ('b3333333-1111-1111-1111-000000000136', 'a2222222-1111-1111-1111-0000000000dd', (now() + interval '4 days' + interval '21:45:00'), (now() + interval '4 days' + interval '21:45:00') + interval '119 minutes', 11.80, 108),
+  ('b3333333-1111-1111-1111-000000000136', 'a2222222-1111-1111-1111-000000000119', (now() + interval '1 days' + interval '14:30:00'), (now() + interval '1 days' + interval '14:30:00') + interval '120 minutes', 10.88, 119),
+  ('b3333333-1111-1111-1111-000000000137', 'a2222222-1111-1111-1111-000000000124', (now() + interval '6 days' + interval '21:45:00'), (now() + interval '6 days' + interval '21:45:00') + interval '125 minutes', 9.26, 53),
+  ('b3333333-1111-1111-1111-000000000137', 'a2222222-1111-1111-1111-00000000012e', (now() + interval '3 days' + interval '21:45:00'), (now() + interval '3 days' + interval '21:45:00') + interval '127 minutes', 9.15, 90),
+  ('b3333333-1111-1111-1111-000000000137', 'a2222222-1111-1111-1111-0000000000d3', (now() + interval '1 days' + interval '14:30:00'), (now() + interval '1 days' + interval '14:30:00') + interval '128 minutes', 11.13, 97),
+  ('b3333333-1111-1111-1111-000000000138', 'a2222222-1111-1111-1111-0000000000fc', (now() + interval '2 days' + interval '17:00:00'), (now() + interval '2 days' + interval '17:00:00') + interval '98 minutes', 7.74, 57),
+  ('b3333333-1111-1111-1111-000000000138', 'a2222222-1111-1111-1111-0000000000fc', (now() + interval '6 days' + interval '21:45:00'), (now() + interval '6 days' + interval '21:45:00') + interval '137 minutes', 8.48, 79),
+  ('b3333333-1111-1111-1111-000000000138', 'a2222222-1111-1111-1111-000000000105', (now() + interval '4 days' + interval '17:00:00'), (now() + interval '4 days' + interval '17:00:00') + interval '115 minutes', 9.16, 58),
+  ('b3333333-1111-1111-1111-000000000139', 'a2222222-1111-1111-1111-000000000105', (now() + interval '4 days' + interval '19:30:00'), (now() + interval '4 days' + interval '19:30:00') + interval '128 minutes', 9.69, 48),
+  ('b3333333-1111-1111-1111-000000000139', 'a2222222-1111-1111-1111-0000000000c9', (now() + interval '7 days' + interval '14:30:00'), (now() + interval '7 days' + interval '14:30:00') + interval '142 minutes', 9.65, 56),
+  ('b3333333-1111-1111-1111-00000000013a', 'a2222222-1111-1111-1111-000000000123', (now() + interval '3 days' + interval '14:30:00'), (now() + interval '3 days' + interval '14:30:00') + interval '132 minutes', 10.32, 73),
+  ('b3333333-1111-1111-1111-00000000013a', 'a2222222-1111-1111-1111-000000000138', (now() + interval '5 days' + interval '21:45:00'), (now() + interval '5 days' + interval '21:45:00') + interval '122 minutes', 11.52, 85),
+  ('b3333333-1111-1111-1111-00000000013b', 'a2222222-1111-1111-1111-0000000000c9', (now() + interval '1 days' + interval '17:00:00'), (now() + interval '1 days' + interval '17:00:00') + interval '130 minutes', 10.84, 58),
+  ('b3333333-1111-1111-1111-00000000013b', 'a2222222-1111-1111-1111-000000000137', (now() + interval '3 days' + interval '17:00:00'), (now() + interval '3 days' + interval '17:00:00') + interval '107 minutes', 11.67, 72),
+  ('b3333333-1111-1111-1111-00000000013c', 'a2222222-1111-1111-1111-000000000138', (now() + interval '2 days' + interval '19:30:00'), (now() + interval '2 days' + interval '19:30:00') + interval '141 minutes', 12.18, 97),
+  ('b3333333-1111-1111-1111-00000000013c', 'a2222222-1111-1111-1111-000000000106', (now() + interval '3 days' + interval '17:00:00'), (now() + interval '3 days' + interval '17:00:00') + interval '135 minutes', 10.25, 97),
+  ('b3333333-1111-1111-1111-00000000013d', 'a2222222-1111-1111-1111-000000000106', (now() + interval '7 days' + interval '21:45:00'), (now() + interval '7 days' + interval '21:45:00') + interval '108 minutes', 10.66, 96),
+  ('b3333333-1111-1111-1111-00000000013d', 'a2222222-1111-1111-1111-00000000012d', (now() + interval '7 days' + interval '17:00:00'), (now() + interval '7 days' + interval '17:00:00') + interval '142 minutes', 9.57, 48),
+  ('b3333333-1111-1111-1111-00000000013d', 'a2222222-1111-1111-1111-000000000106', (now() + interval '5 days' + interval '21:45:00'), (now() + interval '5 days' + interval '21:45:00') + interval '131 minutes', 8.25, 68),
+  ('b3333333-1111-1111-1111-00000000013e', 'a2222222-1111-1111-1111-0000000000fb', (now() + interval '5 days' + interval '21:45:00'), (now() + interval '5 days' + interval '21:45:00') + interval '134 minutes', 11.07, 40),
+  ('b3333333-1111-1111-1111-00000000013e', 'a2222222-1111-1111-1111-00000000012e', (now() + interval '4 days' + interval '17:00:00'), (now() + interval '4 days' + interval '17:00:00') + interval '94 minutes', 10.00, 93),
+  ('b3333333-1111-1111-1111-00000000013e', 'a2222222-1111-1111-1111-000000000119', (now() + interval '4 days' + interval '19:30:00'), (now() + interval '4 days' + interval '19:30:00') + interval '133 minutes', 10.09, 59),
+  ('b3333333-1111-1111-1111-00000000013f', 'a2222222-1111-1111-1111-0000000000d3', (now() + interval '3 days' + interval '21:45:00'), (now() + interval '3 days' + interval '21:45:00') + interval '140 minutes', 10.92, 45),
+  ('b3333333-1111-1111-1111-00000000013f', 'a2222222-1111-1111-1111-0000000000c9', (now() + interval '5 days' + interval '17:00:00'), (now() + interval '5 days' + interval '17:00:00') + interval '141 minutes', 10.63, 75),
+  ('b3333333-1111-1111-1111-000000000140', 'a2222222-1111-1111-1111-0000000000f1', (now() + interval '5 days' + interval '14:30:00'), (now() + interval '5 days' + interval '14:30:00') + interval '118 minutes', 8.89, 88),
+  ('b3333333-1111-1111-1111-000000000140', 'a2222222-1111-1111-1111-00000000011a', (now() + interval '4 days' + interval '19:30:00'), (now() + interval '4 days' + interval '19:30:00') + interval '96 minutes', 11.41, 130),
+  ('b3333333-1111-1111-1111-000000000140', 'a2222222-1111-1111-1111-000000000137', (now() + interval '1 days' + interval '14:30:00'), (now() + interval '1 days' + interval '14:30:00') + interval '110 minutes', 8.70, 53),
+  ('b3333333-1111-1111-1111-000000000141', 'a2222222-1111-1111-1111-000000000106', (now() + interval '3 days' + interval '19:30:00'), (now() + interval '3 days' + interval '19:30:00') + interval '91 minutes', 11.17, 105),
+  ('b3333333-1111-1111-1111-000000000141', 'a2222222-1111-1111-1111-0000000000f1', (now() + interval '6 days' + interval '19:30:00'), (now() + interval '6 days' + interval '19:30:00') + interval '98 minutes', 7.91, 138),
+  ('b3333333-1111-1111-1111-000000000141', 'a2222222-1111-1111-1111-0000000000fc', (now() + interval '6 days' + interval '17:00:00'), (now() + interval '6 days' + interval '17:00:00') + interval '147 minutes', 8.38, 48),
+  ('b3333333-1111-1111-1111-000000000142', 'a2222222-1111-1111-1111-000000000119', (now() + interval '6 days' + interval '14:30:00'), (now() + interval '6 days' + interval '14:30:00') + interval '98 minutes', 10.80, 106),
+  ('b3333333-1111-1111-1111-000000000142', 'a2222222-1111-1111-1111-000000000105', (now() + interval '7 days' + interval '19:30:00'), (now() + interval '7 days' + interval '19:30:00') + interval '134 minutes', 7.75, 97),
+  ('b3333333-1111-1111-1111-000000000142', 'a2222222-1111-1111-1111-000000000105', (now() + interval '1 days' + interval '17:00:00'), (now() + interval '1 days' + interval '17:00:00') + interval '132 minutes', 11.31, 55),
+  ('b3333333-1111-1111-1111-000000000143', 'a2222222-1111-1111-1111-0000000000fb', (now() + interval '5 days' + interval '19:30:00'), (now() + interval '5 days' + interval '19:30:00') + interval '101 minutes', 11.76, 36),
+  ('b3333333-1111-1111-1111-000000000143', 'a2222222-1111-1111-1111-0000000000d4', (now() + interval '2 days' + interval '17:00:00'), (now() + interval '2 days' + interval '17:00:00') + interval '120 minutes', 10.60, 82),
+  ('b3333333-1111-1111-1111-000000000143', 'a2222222-1111-1111-1111-000000000119', (now() + interval '7 days' + interval '21:45:00'), (now() + interval '7 days' + interval '21:45:00') + interval '110 minutes', 8.52, 99),
+  ('b3333333-1111-1111-1111-000000000144', 'a2222222-1111-1111-1111-0000000000fb', (now() + interval '2 days' + interval '17:00:00'), (now() + interval '2 days' + interval '17:00:00') + interval '92 minutes', 11.81, 49),
+  ('b3333333-1111-1111-1111-000000000144', 'a2222222-1111-1111-1111-0000000000fb', (now() + interval '4 days' + interval '14:30:00'), (now() + interval '4 days' + interval '14:30:00') + interval '129 minutes', 7.82, 75),
+  ('b3333333-1111-1111-1111-000000000144', 'a2222222-1111-1111-1111-000000000124', (now() + interval '6 days' + interval '14:30:00'), (now() + interval '6 days' + interval '14:30:00') + interval '125 minutes', 10.24, 55),
+  ('b3333333-1111-1111-1111-000000000145', 'a2222222-1111-1111-1111-0000000000fb', (now() + interval '5 days' + interval '14:30:00'), (now() + interval '5 days' + interval '14:30:00') + interval '132 minutes', 7.52, 65),
+  ('b3333333-1111-1111-1111-000000000145', 'a2222222-1111-1111-1111-0000000000dd', (now() + interval '6 days' + interval '21:45:00'), (now() + interval '6 days' + interval '21:45:00') + interval '106 minutes', 10.59, 112),
+  ('b3333333-1111-1111-1111-000000000145', 'a2222222-1111-1111-1111-0000000000fb', (now() + interval '4 days' + interval '17:00:00'), (now() + interval '4 days' + interval '17:00:00') + interval '116 minutes', 9.84, 68),
+  ('b3333333-1111-1111-1111-000000000146', 'a2222222-1111-1111-1111-00000000011a', (now() + interval '7 days' + interval '21:45:00'), (now() + interval '7 days' + interval '21:45:00') + interval '118 minutes', 7.54, 151),
+  ('b3333333-1111-1111-1111-000000000146', 'a2222222-1111-1111-1111-0000000000ca', (now() + interval '4 days' + interval '19:30:00'), (now() + interval '4 days' + interval '19:30:00') + interval '123 minutes', 10.55, 91);
