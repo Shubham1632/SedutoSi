@@ -20,11 +20,14 @@ export function zodFormResolver<T extends FieldValues>(
       return { values: result.data, errors: {} };
     }
     const errors: FieldErrors<T> = {};
+    const errorsByKey = errors as Record<
+      string,
+      { type: string; message: string }
+    >;
     for (const issue of result.error.issues) {
       const key = issue.path[0];
       if (typeof key !== "string" || key in errors) continue;
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      (errors as any)[key] = { type: issue.code, message: issue.message };
+      errorsByKey[key] = { type: issue.code, message: issue.message };
     }
     return { values: {}, errors };
   };

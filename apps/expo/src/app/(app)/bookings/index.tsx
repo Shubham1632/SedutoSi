@@ -26,7 +26,9 @@ export default function BookingsScreen() {
         </View>
       ) : !bookings?.length ? (
         <View className="flex-1 items-center justify-center gap-2 p-6">
-          <Text className="text-foreground text-lg text-center">No bookings yet</Text>
+          <Text className="text-foreground text-center text-lg">
+            No bookings yet
+          </Text>
           <Text className="text-muted-foreground text-center">
             Book a movie from the home screen.
           </Text>
@@ -37,16 +39,23 @@ export default function BookingsScreen() {
           keyExtractor={(item) => item.id}
           contentContainerClassName="p-4 gap-3"
           renderItem={({ item }: { item: Booking }) => {
-            const screening = item.screening as { starts_at?: string; movie?: { title?: string }; screen?: { cinema?: { name?: string } } } | undefined;
+            const screening = item.screening as
+              | {
+                  starts_at?: string;
+                  movie?: { title?: string };
+                  screen?: { cinema?: { name?: string } };
+                }
+              | undefined;
             return (
-              <View className="bg-card rounded-xl p-4 gap-2">
-                <View className="flex-row justify-between items-start gap-2">
-                  <Text className="text-foreground font-bold text-base flex-1">
+              <View className="bg-card gap-2 rounded-xl p-4">
+                <View className="flex-row items-start justify-between gap-2">
+                  <Text className="text-foreground flex-1 text-base font-bold">
                     {screening?.movie?.title ?? "Movie"}
                   </Text>
                   <View
                     style={{
-                      backgroundColor: item.status === "confirmed" ? "#dcfce7" : "#fee2e2",
+                      backgroundColor:
+                        item.status === "confirmed" ? "#dcfce7" : "#fee2e2",
                       borderRadius: 999,
                       paddingHorizontal: 8,
                       paddingVertical: 2,
@@ -54,7 +63,8 @@ export default function BookingsScreen() {
                   >
                     <Text
                       style={{
-                        color: item.status === "confirmed" ? "#15803d" : "#dc2626",
+                        color:
+                          item.status === "confirmed" ? "#15803d" : "#dc2626",
                         fontSize: 11,
                         fontWeight: "600",
                       }}

@@ -1,0 +1,48 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+env:
+  # Dummy values — the build only needs these vars to be present (not real),
+  # since no network calls happen during typecheck/lint/export.
+  EXPO_PUBLIC_SUPABASE_URL: https://example.supabase.co
+  EXPO_PUBLIC_SUPABASE_ANON_KEY: dummy-anon-key
+  EXPO_PUBLIC_API_URL: http://localhost:3000
+
+jobs:
+  build:
+    name: Typecheck, lint & build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10.19.0
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Typecheck
+        run: pnpm typecheck
+
+      - name: Lint
+        run: pnpm lint
+
+      - name: Format check
+        run: pnpm format
+
+      - name: Build (Expo export smoke test)
+        run: pnpm -F @acme/expo smoke:export

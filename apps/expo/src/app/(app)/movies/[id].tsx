@@ -18,7 +18,12 @@ export default function MovieScreen() {
     );
   }
 
-  const meta = [movie.genre, `${movie.duration_minutes} min`, movie.language, movie.rating]
+  const meta = [
+    movie.genre,
+    `${movie.duration_minutes} min`,
+    movie.language,
+    movie.rating,
+  ]
     .filter(Boolean)
     .join(" · ");
 
@@ -32,14 +37,21 @@ export default function MovieScreen() {
           resizeMode="cover"
         />
       ) : (
-        <View className="bg-muted items-center justify-center" style={{ height: 256 }}>
+        <View
+          className="bg-muted items-center justify-center"
+          style={{ height: 256 }}
+        >
           <Text style={{ fontSize: 64 }}>🎬</Text>
         </View>
       )}
-      <View className="p-6 gap-4">
+      <View className="gap-4 p-6">
         <View className="gap-1">
-          <Text className="text-foreground text-2xl font-bold">{movie.title}</Text>
-          {meta ? <Text className="text-muted-foreground text-sm">{meta}</Text> : null}
+          <Text className="text-foreground text-2xl font-bold">
+            {movie.title}
+          </Text>
+          {meta ? (
+            <Text className="text-muted-foreground text-sm">{meta}</Text>
+          ) : null}
         </View>
         {movie.description ? (
           <Text className="text-foreground leading-6">{movie.description}</Text>
