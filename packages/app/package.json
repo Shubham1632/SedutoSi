@@ -23,6 +23,7 @@
     "@acme/api": "workspace:*",
     "@supabase/supabase-js": "catalog:",
     "@tanstack/react-query": "catalog:",
+    "react-hook-form": "catalog:",
     "zod": "catalog:"
   },
   "devDependencies": {
