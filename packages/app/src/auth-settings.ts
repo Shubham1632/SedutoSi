@@ -44,15 +44,15 @@ export interface LoginMethodRow {
 }
 
 /**
- * The kit's out-of-the-box method order + enablement (mirrors the global
- * default). Magic link leads, so the default sign-in flow sends a magic link
- * ("check your email") and email-code is the manual fallback; password stays
- * enabled (reachable via "Use password instead" / used for sign-up).
+ * Email + password only. Magic link / email OTP / OAuth / SSO all rely on a
+ * deep-link redirect back into the app, which Expo Go can't handle (it can't
+ * register a custom URL scheme — only a standalone/dev-client build can), so
+ * they're disabled by default to keep auth simple and reliable.
  */
 export const DEFAULT_LOGIN_METHODS: LoginMethodRow[] = [
-  { method: "magicLink", enabled: true },
-  { method: "emailOtp", enabled: true },
   { method: "password", enabled: true },
+  { method: "magicLink", enabled: false },
+  { method: "emailOtp", enabled: false },
   { method: "google", enabled: false },
   { method: "apple", enabled: false },
   { method: "sso", enabled: false },
