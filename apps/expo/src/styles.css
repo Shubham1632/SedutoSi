@@ -1,0 +1,12 @@
+@import "tailwindcss/theme.css" layer(theme);
+@import "tailwindcss/preflight.css" layer(base);
+@import "tailwindcss/utilities.css";
+
+@import "nativewind/theme";
+
+@import "@acme/tailwind-config/theme";
+
+/* Class sources outside the app tree: shared native primitives + extension
+ * screens (static globs — no per-extension codegen; EXTENSIONS-PLAN.md §1.6). */
+@source "../../../packages/ui-native/src";
+@source "../../../extensions";

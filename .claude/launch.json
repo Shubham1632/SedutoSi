@@ -1,0 +1,18 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "web",
+      "runtimeExecutable": "pnpm",
+      "runtimeArgs": ["-F", "@acme/nextjs", "dev"],
+      "port": 3000,
+      "autoPort": false
+    },
+    {
+      "name": "mobile",
+      "runtimeExecutable": "pnpm",
+      "runtimeArgs": ["-F", "@acme/expo", "dev"],
+      "port": 8081
+    }
+  ]
+}

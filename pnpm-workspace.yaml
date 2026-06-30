@@ -1,0 +1,80 @@
+packages:
+  - apps/expo
+  - packages/*
+  - tooling/*
+
+catalog:
+  '@eslint/js': ^9.38.0
+  '@hookform/resolvers': ^5.4.0
+  '@payloadcms/db-postgres': 3.85.0
+  '@payloadcms/live-preview-react': 3.85.0
+  '@payloadcms/next': 3.85.0
+  '@payloadcms/plugin-form-builder': 3.85.0
+  '@payloadcms/plugin-nested-docs': 3.85.0
+  '@payloadcms/plugin-seo': 3.85.0
+  '@payloadcms/plugin-stripe': 3.85.0
+  '@payloadcms/richtext-lexical': 3.85.0
+  '@payloadcms/storage-s3': 3.85.0
+  '@payloadcms/ui': 3.85.0
+  '@react-native-async-storage/async-storage': ^2.2.0
+  '@supabase/ssr': ^0.10.3
+  '@supabase/supabase-js': ^2.106.2
+  '@tailwindcss/postcss': ^4.1.16
+  '@tailwindcss/vite': ^4.1.16
+  '@tanstack/react-query': ^5.90.8
+  '@types/node': ^22.18.12
+  '@vitejs/plugin-react': 5.1.0
+  ai: ^6.0.194
+  eslint: ^9.38.0
+  graphql: ^16.8.1
+  payload: 3.85.0
+  prettier: ^3.6.2
+  react-hook-form: ^7.77.0
+  sharp: ^0.34.5
+  stripe: ^22.2.0
+  tailwindcss: ^4.1.16
+  typescript: ^5.9.3
+  vite: 7.1.12
+  vitest: ^4.1.8
+  zod: 4.1.12
+
+catalogs:
+  react19:
+    '@types/react': ~19.1.0
+    '@types/react-dom': ~19.1.0
+    react: 19.1.4
+    react-dom: 19.1.4
+
+linkWorkspacePackages: true
+
+# Postinstall scripts we deliberately don't run (silences pnpm's "Ignored build
+# scripts" warning): bufferutil is an optional native ws speedup with a pure-JS
+# fallback; core-js-pure's script only prints a funding banner.
+ignoredBuiltDependencies:
+  - bufferutil
+  - core-js-pure
+
+onlyBuiltDependencies:
+  - '@tailwindcss/oxide'
+  - esbuild
+  - sharp
+
+overrides:
+  # plugin-stripe depends on stripe@^10, whose legacy ambient 'declare module'
+  # typings hijack every `import "stripe"` in the TS program. Force one modern
+  # stripe everywhere (the plugin's runtime usage is API-stable).
+  stripe: ^22.2.0
+  '@types/minimatch': 5.1.2
+  lightningcss: 1.30.1
+  vite: 7.1.12
+  # Security: force patched transitive deps (critical GitHub advisories).
+  # basic-ftp <5.2.0 path traversal (GHSA-5rq4-664w-9x2c, via @turbo/gen);
+  # handlebars <=4.7.8 RCE/AST injection (GHSA-2w6w-674q-4c4q, via @turbo/gen);
+  # shell-quote <=1.8.3 command injection (GHSA-w7jw-789q-3m8p, via react-native).
+  basic-ftp: '>=5.2.0'
+  handlebars: '>=4.7.9'
+  shell-quote: '>=1.8.4'
+
+publicHoistPattern:
+  - '@ianvs/prettier-plugin-sort-imports'
+  - prettier-plugin-tailwindcss

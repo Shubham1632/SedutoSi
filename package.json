@@ -1,0 +1,36 @@
+{
+  "name": "cinemamilano",
+  "version": "1.0.0",
+  "private": true,
+  "license": "Apache-2.0",
+  "engines": {
+    "node": "^22.21.0 || ^24.0.0",
+    "pnpm": "^10.19.0"
+  },
+  "packageManager": "pnpm@10.19.0",
+  "scripts": {
+    "build": "turbo run build",
+    "clean": "git clean -xdf node_modules",
+    "clean:workspaces": "turbo run clean",
+    "db:gen-types": "supabase gen types typescript --linked > packages/api/src/types.ts",
+    "db:push": "supabase db push",
+    "dev": "turbo watch dev --continue",
+    "format": "turbo run format --continue -- --cache --cache-location .cache/.prettiercache",
+    "format:fix": "turbo run format --continue -- --write --cache --cache-location .cache/.prettiercache",
+    "lint": "turbo run lint --continue -- --cache --cache-location .cache/.eslintcache",
+    "lint:fix": "turbo run lint --continue -- --fix --cache --cache-location .cache/.eslintcache",
+    "test": "turbo run test",
+    "typecheck": "turbo run typecheck",
+    "android": "pnpm -F @acme/expo android",
+    "ios": "pnpm -F @acme/expo ios"
+  },
+  "devDependencies": {
+    "@acme/prettier-config": "workspace:*",
+    "@turbo/gen": "^2.5.8",
+    "dotenv-cli": "^10.0.0",
+    "prettier": "catalog:",
+    "turbo": "^2.5.8",
+    "typescript": "catalog:"
+  },
+  "prettier": "@acme/prettier-config"
+}
