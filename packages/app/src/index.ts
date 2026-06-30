@@ -7,6 +7,7 @@
 export * from "./validators/auth";
 export * from "./auth";
 export * from "./auth-settings";
+export { zodFormResolver } from "./zod-resolver";
 export { useAuthConfig } from "./hooks/use-auth-config";
 export { useProfile, useUpdateProfile } from "./hooks/use-profile";
 export { useDeleteAccount } from "./hooks/use-delete-account";

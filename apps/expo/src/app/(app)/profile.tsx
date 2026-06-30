@@ -1,6 +1,5 @@
 import { Alert, ScrollView, View } from "react-native";
 import { Stack } from "expo-router";
-import { standardSchemaResolver } from "@hookform/resolvers/standard-schema";
 import { Controller, useForm } from "react-hook-form";
 
 import type { UpdateProfileInput } from "@acme/app";
@@ -11,6 +10,7 @@ import {
   useDeleteAccount,
   useProfile,
   useUpdateProfile,
+  zodFormResolver,
 } from "@acme/app";
 import { Button } from "@acme/ui-native/button";
 import { Input } from "@acme/ui-native/input";
@@ -32,7 +32,7 @@ export default function Profile() {
     handleSubmit,
     formState: { errors },
   } = useForm<UpdateProfileInput>({
-    resolver: standardSchemaResolver(updateProfileSchema),
+    resolver: zodFormResolver(updateProfileSchema),
     values: {
       displayName: profile.data?.display_name ?? "",
       avatarUrl: profile.data?.avatar_url ?? "",

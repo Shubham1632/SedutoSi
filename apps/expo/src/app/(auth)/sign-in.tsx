@@ -1,10 +1,9 @@
 import { Alert, View } from "react-native";
 import { Link } from "expo-router";
-import { standardSchemaResolver } from "@hookform/resolvers/standard-schema";
 import { Controller, useForm } from "react-hook-form";
 
 import type { SignInInput } from "@acme/app";
-import { signInSchema, signInWithPassword } from "@acme/app";
+import { signInSchema, signInWithPassword, zodFormResolver } from "@acme/app";
 import { Button } from "@acme/ui-native/button";
 import { Input } from "@acme/ui-native/input";
 import { Text } from "@acme/ui-native/text";
@@ -20,7 +19,7 @@ export default function SignIn() {
     handleSubmit,
     formState: { errors, isSubmitting },
   } = useForm<SignInInput>({
-    resolver: standardSchemaResolver(signInSchema),
+    resolver: zodFormResolver(signInSchema),
     defaultValues: { email: "", password: "" },
   });
 
