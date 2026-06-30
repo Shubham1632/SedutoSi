@@ -27,14 +27,6 @@ export default function MoviesScreen() {
   const [query, setQuery] = useState("");
   const [activeFilter, setActiveFilter] = useState("All");
 
-  console.log("MoviesScreen render", {
-    movies,
-    isLoading,
-    searchOpen,
-    query,
-    activeFilter,
-  });
-
   const filters = useMemo(() => {
     const languages = new Set<string>();
     movies?.forEach((m) => m.language && languages.add(m.language));

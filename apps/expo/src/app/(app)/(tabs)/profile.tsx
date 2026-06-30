@@ -1,6 +1,8 @@
+import { useState } from "react";
 import { Alert, ScrollView, View } from "react-native";
 import { Stack } from "expo-router";
 import { Controller, useForm } from "react-hook-form";
+import { useQueryClient } from "@tanstack/react-query";
 
 import type { UpdateProfileInput } from "@acme/app";
 import { useSession } from "@acme/api";
@@ -26,6 +28,22 @@ export default function Profile() {
   const profile = useProfile();
   const updateProfile = useUpdateProfile();
   const deleteAccount = useDeleteAccount();
+  const queryClient = useQueryClient();
+  const [isSigningOut, setIsSigningOut] = useState(false);
+
+  async function onSignOut() {
+    setIsSigningOut(true);
+    try {
+      await signOut(supabase);
+      // Drop any cached per-user data (profile, bookings) so the next
+      // sign-in doesn't briefly show the previous user's stale cache.
+      queryClient.clear();
+    } catch (e) {
+      Alert.alert("Sign out failed", msg(e));
+    } finally {
+      setIsSigningOut(false);
+    }
+  }
 
   const {
     control,
@@ -102,7 +120,8 @@ export default function Profile() {
       <Button
         title="Sign out"
         variant="outline"
-        onPress={() => void signOut(supabase)}
+        loading={isSigningOut}
+        onPress={() => void onSignOut()}
       />
       <Button
         title="Delete account"

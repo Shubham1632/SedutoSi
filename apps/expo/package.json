@@ -25,7 +25,6 @@
     "@tanstack/react-query": "catalog:",
     "expo": "~54.0.20",
     "expo-constants": "~18.0.10",
-    "expo-dev-client": "~6.0.16",
     "expo-device": "~8.0.10",
     "expo-linking": "~8.0.8",
     "expo-notifications": "~0.32.17",
