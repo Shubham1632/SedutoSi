@@ -101,6 +101,109 @@ export function useCinemas() {
   });
 }
 
+export function useCinema(id: string) {
+  const supabase = useSupabase();
+  return useQuery({
+    queryKey: ["cinemas", id],
+    enabled: !!id,
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("cinemas")
+        .select("*")
+        .eq("id", id)
+        .single();
+      if (error) throw error;
+      return data as Cinema;
+    },
+  });
+}
+
+export function useCinemaMovies(cinemaId: string) {
+  const supabase = useSupabase();
+  return useQuery({
+    queryKey: ["cinemas", cinemaId, "movies"],
+    enabled: !!cinemaId,
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("screenings")
+        .select(
+          "*, movie:movies(*), screen:screens!inner(*, cinema:cinemas!inner(*))",
+        )
+        .eq("screen.cinema_id", cinemaId)
+        .gte("starts_at", new Date().toISOString())
+        .order("starts_at");
+      if (error) throw error;
+
+      const screenings = data as Screening[];
+      const grouped = new Map<
+        string,
+        { movie: Movie; showtimes: Screening[] }
+      >();
+
+      screenings.forEach((screening) => {
+        const movie = screening.movie;
+        if (!movie) return;
+
+        const existing = grouped.get(movie.id);
+        if (existing) {
+          existing.showtimes.push(screening);
+        } else {
+          grouped.set(movie.id, { movie, showtimes: [screening] });
+        }
+      });
+
+      return Array.from(grouped.values()).map((entry) => ({
+        movie: entry.movie,
+        showtimes: entry.showtimes.sort((a, b) =>
+          a.starts_at.localeCompare(b.starts_at),
+        ),
+      }));
+    },
+  });
+}
+
+export function useScreeningsByCinemaAndMovie(
+  cinemaId: string,
+  movieId: string,
+  date?: string,
+) {
+  const supabase = useSupabase();
+  return useQuery({
+    queryKey: [
+      "cinemas",
+      cinemaId,
+      "movies",
+      movieId,
+      "showtimes",
+      date ?? "upcoming",
+    ],
+    enabled: !!cinemaId && !!movieId,
+    queryFn: async () => {
+      let query = supabase
+        .from("screenings")
+        .select("*, movie:movies(*), screen:screens(*, cinema:cinemas(*))")
+        .eq("movie_id", movieId)
+        .eq("screen.cinema_id", cinemaId)
+        .order("starts_at");
+
+      if (date) {
+        // filter for the exact date (UTC day)
+        const start = new Date(`${date}T00:00:00Z`).toISOString();
+        const end = new Date(
+          new Date(start).getTime() + 24 * 60 * 60 * 1000,
+        ).toISOString();
+        query = query.gte("starts_at", start).lt("starts_at", end);
+      } else {
+        query = query.gte("starts_at", new Date().toISOString());
+      }
+
+      const { data, error } = await query;
+      if (error) throw error;
+      return data as Screening[];
+    },
+  });
+}
+
 export function useScreenings(movieId: string) {
   const supabase = useSupabase();
   return useQuery({

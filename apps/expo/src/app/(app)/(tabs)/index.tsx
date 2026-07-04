@@ -1,5 +1,12 @@
 import { useMemo, useState } from "react";
-import { Image, Pressable, Text, TextInput, View } from "react-native";
+import {
+  FlatList,
+  Image,
+  Pressable,
+  Text,
+  TextInput,
+  View,
+} from "react-native";
 import { Stack, useRouter } from "expo-router";
 import { LegendList } from "@legendapp/list";
 
@@ -89,7 +96,7 @@ export default function MoviesScreen() {
       )}
 
       <View className="px-4 pt-3">
-        <LegendList
+        <FlatList
           data={filters}
           horizontal
           showsHorizontalScrollIndicator={false}
