@@ -80,12 +80,15 @@ export default function MoviesScreen() {
         </View>
       )}
 
-      <View className="px-4 pt-3">
+      <View
+        style={{ paddingHorizontal: 16, paddingTop: 12, paddingBottom: 12 }}
+      >
         <LegendList
           data={filters}
           horizontal
           showsHorizontalScrollIndicator={false}
           keyExtractor={(item) => item}
+          extraData={activeFilter}
           contentContainerStyle={{ gap: 8 }}
           renderItem={({ item }) => {
             const selected = item === activeFilter;
@@ -94,8 +97,8 @@ export default function MoviesScreen() {
                 onPress={() => setActiveFilter(item)}
                 className={
                   selected
-                    ? "bg-primary rounded-full px-4 py-2"
-                    : "border-border rounded-full border px-4 py-2"
+                    ? "bg-primary rounded-[20px] px-4 py-2"
+                    : "border-border rounded-[20px] border px-4 py-2"
                 }
               >
                 <Text

@@ -30,20 +30,26 @@ export default function MovieScreen() {
   return (
     <ScrollView className="bg-background flex-1">
       <Stack.Screen options={{ title: movie.title }} />
-      {movie.poster_url ? (
-        <Image
-          source={{ uri: movie.poster_url }}
-          style={{ width: "100%", height: 256 }}
-          resizeMode="cover"
-        />
-      ) : (
-        <View
-          className="bg-muted items-center justify-center"
-          style={{ height: 256 }}
-        >
-          <Text style={{ fontSize: 64 }}>🎬</Text>
-        </View>
-      )}
+      <View className="items-center px-8 pt-6">
+        {movie.poster_url ? (
+          <Image
+            source={{ uri: movie.poster_url }}
+            style={{
+              width: "70%",
+              aspectRatio: 2 / 3,
+              borderRadius: 16,
+            }}
+            resizeMode="cover"
+          />
+        ) : (
+          <View
+            className="bg-muted items-center justify-center rounded-2xl"
+            style={{ width: "70%", aspectRatio: 2 / 3 }}
+          >
+            <Text style={{ fontSize: 64 }}>🎬</Text>
+          </View>
+        )}
+      </View>
       <View className="gap-4 p-6">
         <View className="gap-1">
           <Text className="text-foreground text-2xl font-bold">
