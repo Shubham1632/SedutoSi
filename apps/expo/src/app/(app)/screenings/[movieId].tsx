@@ -35,7 +35,8 @@ function sortScreenings(screenings: Screening[], sortBy: SortKey) {
     case "time":
     default:
       sorted.sort(
-        (a, b) => new Date(a.starts_at).getTime() - new Date(b.starts_at).getTime(),
+        (a, b) =>
+          new Date(a.starts_at).getTime() - new Date(b.starts_at).getTime(),
       );
       break;
   }
@@ -46,7 +47,12 @@ export default function ScreeningsScreen() {
   const { movieId } = useLocalSearchParams<{ movieId: string }>();
   const router = useRouter();
   const { data: movie } = useMovie(movieId);
-  const { data: screenings, isLoading, isError, refetch } = useScreenings(movieId);
+  const {
+    data: screenings,
+    isLoading,
+    isError,
+    refetch,
+  } = useScreenings(movieId);
   const [sortBy, setSortBy] = useState<SortKey>("time");
 
   const sortedScreenings = useMemo(
@@ -58,7 +64,7 @@ export default function ScreeningsScreen() {
     <View className="bg-background flex-1">
       <Stack.Screen options={{ title: movie?.title ?? "Select Showtime" }} />
       {!isLoading && screenings?.length ? (
-        <View className="flex-row gap-2 px-4 pb-1 pt-4">
+        <View className="flex-row gap-2 px-4 pt-4 pb-1">
           <Text className="text-muted-foreground self-center text-sm">
             Sort by
           </Text>
