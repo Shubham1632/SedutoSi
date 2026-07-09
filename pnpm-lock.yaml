@@ -81,6 +81,9 @@ importers:
       prettier:
         specifier: 'catalog:'
         version: 3.6.2
+      supabase:
+        specifier: ^2.109.1
+        version: 2.109.1
       turbo:
         specifier: ^2.5.8
         version: 2.5.8
@@ -1065,6 +1068,12 @@ packages:
     resolution: {integrity: sha512-IchNf6dN4tHoMFIn/7OE8LWZ19Y6q/67Bmf6vnGREv8RSbBVb9LPJxEcnwrcwX6ixSvaiGoomAUvu4YSxXrVgw==}
     engines: {node: '>=12'}
 
+  '@ecies/ciphers@0.2.6':
+    resolution: {integrity: sha512-patgsRPKGkhhoBjETV4XxD0En4ui5fbX0hzayqI3M8tvNMGUoUvmyYAIWwlxBc1KX5cturfqByYdj5bYGRpN9g==}
+    engines: {bun: '>=1', deno: '>=2.7.10', node: '>=16'}
+    peerDependencies:
+      '@noble/ciphers': ^1.0.0
+
   '@egjs/hammerjs@2.0.17':
     resolution: {integrity: sha512-XQsZgjm2EcVUiZQf11UBJQfmZeEmOW8DpI1gsFeln6w0ae0ii4dMQEQ0kjl6DspdWX1aGY1/loyXnP0JS06e/A==}
     engines: {node: '>=0.8.0'}
@@ -1733,6 +1742,18 @@ packages:
   '@next/eslint-plugin-next@16.0.0':
     resolution: {integrity: sha512-IB7RzmmtrPOrpAgEBR1PIQPD0yea5lggh5cq54m51jHjjljU80Ia+czfxJYMlSDl1DPvpzb8S9TalCc0VMo9Hw==}
 
+  '@noble/ciphers@1.3.0':
+    resolution: {integrity: sha512-2I0gnIVPtfnMw9ee9h1dJG7tp81+8Ob3OJb3Mv37rx5L40/b0i7djjCVvGOVqc9AEIQyvyu1i6ypKdFw8R8gQw==}
+    engines: {node: ^14.21.3 || >=16}
+
+  '@noble/curves@1.9.7':
+    resolution: {integrity: sha512-gbKGcRUYIjA3/zCCNaWDciTMFI0dCkvou3TL8Zmy5Nc7sJ47a0jtOeZoTaMxkuqRo9cRhjOdZJXegxYE5FN/xw==}
+    engines: {node: ^14.21.3 || >=16}
+
+  '@noble/hashes@1.8.0':
+    resolution: {integrity: sha512-jCs9ldd7NwzpgXDIf6P3+NrHh9/sD6CQdxHyjQI+h/6rDNo88ypBxxz45UDuZHz9r3tNz7N/VInSVoVdtXEI4A==}
+    engines: {node: ^14.21.3 || >=16}
+
   '@nodelib/fs.scandir@2.1.5':
     resolution: {integrity: sha512-vq24Bq3ym5HEQm2NKCr3yXDwjc7vTsEThRDnkp2DK9p1uqLR+DHurm/NOTo0KG7HYHU7eppKZj3MyqYuMBf62g==}
     engines: {node: '>= 8'}
@@ -2334,6 +2355,46 @@ packages:
   '@supabase/auth-js@2.106.2':
     resolution: {integrity: sha512-VcAjUErkHkhC5Jaf+g/G1qbkQrFh8edaCdHa7pxJmHUjkWKjT7UnYCtPA89XV0N0GIYRkEqJZw5V62CtOxTmBQ==}
     engines: {node: '>=20.0.0'}
+
+  '@supabase/cli-darwin-arm64@2.109.1':
+    resolution: {integrity: sha512-tkn8tfunyqIL7RE+7DVjg6Ql2cJLPkGgh9cPafp2LbXI0qDgds0TaS+UOTHQEjci8JQXXe2wS00+122ko2QI8A==}
+    cpu: [arm64]
+    os: [darwin]
+
+  '@supabase/cli-darwin-x64@2.109.1':
+    resolution: {integrity: sha512-0Q5ZAoWhOyIv4ZzQOU8QbjjdB2JmznnDNyJ3VrIeuLMWoifVfUWaLZhHBNYzr4xXoxBpKrggomuAT8BaEhY3lg==}
+    cpu: [x64]
+    os: [darwin]
+
+  '@supabase/cli-linux-arm64-musl@2.109.1':
+    resolution: {integrity: sha512-cXNOsSU7MS+jmslGQATTD4DfWBEIHiFi7LaBWyBxHmR7tzIiZXimUXgN26ZiQjfAxU+RZq52C3k0qhi7vmqXQw==}
+    cpu: [arm64]
+    os: [linux]
+
+  '@supabase/cli-linux-arm64@2.109.1':
+    resolution: {integrity: sha512-MS1djJjq5laD99+jYJUoARfSZhzRX9aXmo5piZ1yl2JXb9IXTuhiTD5olkFKQcgNckRcAZqMf4fucQGTYC767A==}
+    cpu: [arm64]
+    os: [linux]
+
+  '@supabase/cli-linux-x64-musl@2.109.1':
+    resolution: {integrity: sha512-zeD9MrZpEKJrjkSPcYp4nZeGJ9FQt0i/kiRij4ZprPP6R5l+SLi6Pk20ln+Vj/GZuWTVxX7IHJ11pgViaReAWw==}
+    cpu: [x64]
+    os: [linux]
+
+  '@supabase/cli-linux-x64@2.109.1':
+    resolution: {integrity: sha512-svFmamF/vIq4/oinwY50jDi869itC9/GWrPaGtsHFkK4NUBcQtl1T37WWIivGsXwbBKNC4FjZD3dGqjL7bfW1g==}
+    cpu: [x64]
+    os: [linux]
+
+  '@supabase/cli-windows-arm64@2.109.1':
+    resolution: {integrity: sha512-NeKzgWAOpglnLwMTggTp5t44fbkfxACLkQNlCRx0q332HMM3WqsKQUsHv1MHc6ZbEc5bcMwaYjqPNI/aOWnP5g==}
+    cpu: [arm64]
+    os: [win32]
+
+  '@supabase/cli-windows-x64@2.109.1':
+    resolution: {integrity: sha512-L9/pDLM+4IR8646aT69ZDVcnJeg1lZZsB26ZgI775S3f8jOHP41+1UH9Oq1g9CvKiAQviuaLgtwkuvi0I/cc/A==}
+    cpu: [x64]
+    os: [win32]
 
   '@supabase/functions-js@2.106.2':
     resolution: {integrity: sha512-oRnr0QrL8H+zTO1YyQ1QjiHZU/957jvubbxSJTUm2XLAgzoGGV9Tahfyd+uvLsBLRVmXLtpU3oyCjdQIvkGMOA==}
@@ -3447,6 +3508,10 @@ packages:
 
   eastasianwidth@0.2.0:
     resolution: {integrity: sha512-I88TYZWc9XiYHRQ4/3c5rjjfgkjhLyW2luGIheGERbNQ6OY7yTybanSpDXZa8y7VUP9YmDcYa+eyq4ca7iLqWA==}
+
+  eciesjs@0.5.0:
+    resolution: {integrity: sha512-s0J9SEVYAEPg7J63GFMApLYzPH9VNIQIyC6s15JpnqVc0TqcKWdbgFlnAweEBRyMmko2dcs2sfC83Hj4J43tuA==}
+    engines: {bun: '>=1', deno: '>=2.7.10', node: '>=16'}
 
   ee-first@1.1.1:
     resolution: {integrity: sha512-WMwm9LhRUo+WUaRN+vRuETqG89IgZphVSNkdFgeb6sS/E4OrDIN7t48CAewSHXc6C8lefD8KKfr5vY61brQlow==}
@@ -6100,6 +6165,10 @@ packages:
     engines: {node: '>=16 || 14 >=14.17'}
     hasBin: true
 
+  supabase@2.109.1:
+    resolution: {integrity: sha512-N2yP2MHTxOxXBWhfn3poudpJn4pkPosAUo7J/46FTou/l7wOwFi9tox8NSN6HljWkfM0zhwPRimNNGC9XBMoxQ==}
+    hasBin: true
+
   supports-color@5.5.0:
     resolution: {integrity: sha512-QjVjwdXIt408MIiAqCX4oUKsgU2EqAGzs2Ppkm4aQYbjm+ZEWEcW4SfFNTr4uMNZma0ey4f5lgLrkB0aX0QMow==}
     engines: {node: '>=4'}
@@ -7490,6 +7559,10 @@ snapshots:
     dependencies:
       '@jridgewell/trace-mapping': 0.3.9
 
+  '@ecies/ciphers@0.2.6(@noble/ciphers@1.3.0)':
+    dependencies:
+      '@noble/ciphers': 1.3.0
+
   '@egjs/hammerjs@2.0.17':
     dependencies:
       '@types/hammerjs': 2.0.46
@@ -8093,7 +8166,7 @@ snapshots:
       postcss: 8.4.49
       resolve-from: 5.0.0
     optionalDependencies:
-      expo: 54.0.20(@babel/core@7.29.7)(@expo/metro-runtime@6.1.2)(@modelcontextprotocol/sdk@1.29.0(zod@3.25.76))(bufferutil@4.0.8)(expo-router@6.0.13)(graphql@16.14.1)(react-native@0.81.5(@babel/core@7.29.7)(@types/react@19.1.12)(bufferutil@4.0.8)(react@19.1.4))(react@19.1.4)
+      expo: 54.0.20(@babel/core@7.29.7)(@expo/metro-runtime@6.1.2)(@modelcontextprotocol/sdk@1.29.0(zod@4.1.12))(bufferutil@4.0.8)(expo-router@6.0.13)(graphql@16.14.1)(react-native@0.81.5(@babel/core@7.29.7)(@types/react@19.1.12)(bufferutil@4.0.8)(react@19.1.4))(react@19.1.4)
     transitivePeerDependencies:
       - bufferutil
       - supports-color
@@ -8102,7 +8175,7 @@ snapshots:
   '@expo/metro-runtime@6.1.2(expo@54.0.20)(react-dom@19.1.4(react@19.1.4))(react-native@0.81.5(@babel/core@7.29.7)(@types/react@19.1.12)(bufferutil@4.0.8)(react@19.1.4))(react@19.1.4)':
     dependencies:
       anser: 1.4.10
-      expo: 54.0.20(@babel/core@7.29.7)(@expo/metro-runtime@6.1.2)(@modelcontextprotocol/sdk@1.29.0(zod@3.25.76))(bufferutil@4.0.8)(expo-router@6.0.13)(graphql@16.14.1)(react-native@0.81.5(@babel/core@7.29.7)(@types/react@19.1.12)(bufferutil@4.0.8)(react@19.1.4))(react@19.1.4)
+      expo: 54.0.20(@babel/core@7.29.7)(@expo/metro-runtime@6.1.2)(@modelcontextprotocol/sdk@1.29.0(zod@4.1.12))(bufferutil@4.0.8)(expo-router@6.0.13)(graphql@16.14.1)(react-native@0.81.5(@babel/core@7.29.7)(@types/react@19.1.12)(bufferutil@4.0.8)(react@19.1.4))(react@19.1.4)
       pretty-format: 29.7.0
       react: 19.1.4
       react-native: 0.81.5(@babel/core@7.29.7)(@types/react@19.1.12)(bufferutil@4.0.8)(react@19.1.4)
@@ -8165,7 +8238,7 @@ snapshots:
       '@expo/json-file': 10.0.7
       '@react-native/normalize-colors': 0.81.5
       debug: 4.4.3
-      expo: 54.0.20(@babel/core@7.29.7)(@expo/metro-runtime@6.1.2)(@modelcontextprotocol/sdk@1.29.0(zod@3.25.76))(bufferutil@4.0.8)(expo-router@6.0.13)(graphql@16.14.1)(react-native@0.81.5(@babel/core@7.29.7)(@types/react@19.1.12)(bufferutil@4.0.8)(react@19.1.4))(react@19.1.4)
+      expo: 54.0.20(@babel/core@7.29.7)(@expo/metro-runtime@6.1.2)(@modelcontextprotocol/sdk@1.29.0(zod@4.1.12))(bufferutil@4.0.8)(expo-router@6.0.13)(graphql@16.14.1)(react-native@0.81.5(@babel/core@7.29.7)(@types/react@19.1.12)(bufferutil@4.0.8)(react@19.1.4))(react@19.1.4)
       resolve-from: 5.0.0
       semver: 7.7.3
       xml2js: 0.6.0
@@ -8417,6 +8490,14 @@ snapshots:
   '@next/eslint-plugin-next@16.0.0':
     dependencies:
       fast-glob: 3.3.1
+
+  '@noble/ciphers@1.3.0': {}
+
+  '@noble/curves@1.9.7':
+    dependencies:
+      '@noble/hashes': 1.8.0
+
+  '@noble/hashes@1.8.0': {}
 
   '@nodelib/fs.scandir@2.1.5':
     dependencies:
@@ -8969,6 +9050,30 @@ snapshots:
   '@supabase/auth-js@2.106.2':
     dependencies:
       tslib: 2.8.1
+
+  '@supabase/cli-darwin-arm64@2.109.1':
+    optional: true
+
+  '@supabase/cli-darwin-x64@2.109.1':
+    optional: true
+
+  '@supabase/cli-linux-arm64-musl@2.109.1':
+    optional: true
+
+  '@supabase/cli-linux-arm64@2.109.1':
+    optional: true
+
+  '@supabase/cli-linux-x64-musl@2.109.1':
+    optional: true
+
+  '@supabase/cli-linux-x64@2.109.1':
+    optional: true
+
+  '@supabase/cli-windows-arm64@2.109.1':
+    optional: true
+
+  '@supabase/cli-windows-x64@2.109.1':
+    optional: true
 
   '@supabase/functions-js@2.106.2':
     dependencies:
@@ -9761,7 +9866,7 @@ snapshots:
       resolve-from: 5.0.0
     optionalDependencies:
       '@babel/runtime': 7.28.4
-      expo: 54.0.20(@babel/core@7.29.7)(@expo/metro-runtime@6.1.2)(@modelcontextprotocol/sdk@1.29.0(zod@3.25.76))(bufferutil@4.0.8)(expo-router@6.0.13)(graphql@16.14.1)(react-native@0.81.5(@babel/core@7.29.7)(@types/react@19.1.12)(bufferutil@4.0.8)(react@19.1.4))(react@19.1.4)
+      expo: 54.0.20(@babel/core@7.29.7)(@expo/metro-runtime@6.1.2)(@modelcontextprotocol/sdk@1.29.0(zod@4.1.12))(bufferutil@4.0.8)(expo-router@6.0.13)(graphql@16.14.1)(react-native@0.81.5(@babel/core@7.29.7)(@types/react@19.1.12)(bufferutil@4.0.8)(react@19.1.4))(react@19.1.4)
     transitivePeerDependencies:
       - '@babel/core'
       - supports-color
@@ -10271,6 +10376,13 @@ snapshots:
 
   eastasianwidth@0.2.0: {}
 
+  eciesjs@0.5.0:
+    dependencies:
+      '@ecies/ciphers': 0.2.6(@noble/ciphers@1.3.0)
+      '@noble/ciphers': 1.3.0
+      '@noble/curves': 1.9.7
+      '@noble/hashes': 1.8.0
+
   ee-first@1.1.1: {}
 
   electron-to-chromium@1.5.234: {}
@@ -10699,7 +10811,7 @@ snapshots:
   expo-asset@12.0.9(expo@54.0.20)(react-native@0.81.5(@babel/core@7.29.7)(@types/react@19.1.12)(bufferutil@4.0.8)(react@19.1.4))(react@19.1.4):
     dependencies:
       '@expo/image-utils': 0.8.7
-      expo: 54.0.20(@babel/core@7.29.7)(@expo/metro-runtime@6.1.2)(@modelcontextprotocol/sdk@1.29.0(zod@3.25.76))(bufferutil@4.0.8)(expo-router@6.0.13)(graphql@16.14.1)(react-native@0.81.5(@babel/core@7.29.7)(@types/react@19.1.12)(bufferutil@4.0.8)(react@19.1.4))(react@19.1.4)
+      expo: 54.0.20(@babel/core@7.29.7)(@expo/metro-runtime@6.1.2)(@modelcontextprotocol/sdk@1.29.0(zod@4.1.12))(bufferutil@4.0.8)(expo-router@6.0.13)(graphql@16.14.1)(react-native@0.81.5(@babel/core@7.29.7)(@types/react@19.1.12)(bufferutil@4.0.8)(react@19.1.4))(react@19.1.4)
       expo-constants: 18.0.10(expo@54.0.20)(react-native@0.81.5(@babel/core@7.29.7)(@types/react@19.1.12)(bufferutil@4.0.8)(react@19.1.4))
       react: 19.1.4
       react-native: 0.81.5(@babel/core@7.29.7)(@types/react@19.1.12)(bufferutil@4.0.8)(react@19.1.4)
@@ -10710,7 +10822,7 @@ snapshots:
     dependencies:
       '@expo/config': 12.0.10
       '@expo/env': 2.0.7
-      expo: 54.0.20(@babel/core@7.29.7)(@expo/metro-runtime@6.1.2)(@modelcontextprotocol/sdk@1.29.0(zod@3.25.76))(bufferutil@4.0.8)(expo-router@6.0.13)(graphql@16.14.1)(react-native@0.81.5(@babel/core@7.29.7)(@types/react@19.1.12)(bufferutil@4.0.8)(react@19.1.4))(react@19.1.4)
+      expo: 54.0.20(@babel/core@7.29.7)(@expo/metro-runtime@6.1.2)(@modelcontextprotocol/sdk@1.29.0(zod@4.1.12))(bufferutil@4.0.8)(expo-router@6.0.13)(graphql@16.14.1)(react-native@0.81.5(@babel/core@7.29.7)(@types/react@19.1.12)(bufferutil@4.0.8)(react@19.1.4))(react@19.1.4)
       react-native: 0.81.5(@babel/core@7.29.7)(@types/react@19.1.12)(bufferutil@4.0.8)(react@19.1.4)
     transitivePeerDependencies:
       - supports-color
@@ -10731,19 +10843,19 @@ snapshots:
 
   expo-file-system@19.0.17(expo@54.0.20)(react-native@0.81.5(@babel/core@7.29.7)(@types/react@19.1.12)(bufferutil@4.0.8)(react@19.1.4)):
     dependencies:
-      expo: 54.0.20(@babel/core@7.29.7)(@expo/metro-runtime@6.1.2)(@modelcontextprotocol/sdk@1.29.0(zod@3.25.76))(bufferutil@4.0.8)(expo-router@6.0.13)(graphql@16.14.1)(react-native@0.81.5(@babel/core@7.29.7)(@types/react@19.1.12)(bufferutil@4.0.8)(react@19.1.4))(react@19.1.4)
+      expo: 54.0.20(@babel/core@7.29.7)(@expo/metro-runtime@6.1.2)(@modelcontextprotocol/sdk@1.29.0(zod@4.1.12))(bufferutil@4.0.8)(expo-router@6.0.13)(graphql@16.14.1)(react-native@0.81.5(@babel/core@7.29.7)(@types/react@19.1.12)(bufferutil@4.0.8)(react@19.1.4))(react@19.1.4)
       react-native: 0.81.5(@babel/core@7.29.7)(@types/react@19.1.12)(bufferutil@4.0.8)(react@19.1.4)
 
   expo-font@14.0.9(expo@54.0.20)(react-native@0.81.5(@babel/core@7.29.7)(@types/react@19.1.12)(bufferutil@4.0.8)(react@19.1.4))(react@19.1.4):
     dependencies:
-      expo: 54.0.20(@babel/core@7.29.7)(@expo/metro-runtime@6.1.2)(@modelcontextprotocol/sdk@1.29.0(zod@3.25.76))(bufferutil@4.0.8)(expo-router@6.0.13)(graphql@16.14.1)(react-native@0.81.5(@babel/core@7.29.7)(@types/react@19.1.12)(bufferutil@4.0.8)(react@19.1.4))(react@19.1.4)
+      expo: 54.0.20(@babel/core@7.29.7)(@expo/metro-runtime@6.1.2)(@modelcontextprotocol/sdk@1.29.0(zod@4.1.12))(bufferutil@4.0.8)(expo-router@6.0.13)(graphql@16.14.1)(react-native@0.81.5(@babel/core@7.29.7)(@types/react@19.1.12)(bufferutil@4.0.8)(react@19.1.4))(react@19.1.4)
       fontfaceobserver: 2.3.0
       react: 19.1.4
       react-native: 0.81.5(@babel/core@7.29.7)(@types/react@19.1.12)(bufferutil@4.0.8)(react@19.1.4)
 
   expo-keep-awake@15.0.7(expo@54.0.20)(react@19.1.4):
     dependencies:
-      expo: 54.0.20(@babel/core@7.29.7)(@expo/metro-runtime@6.1.2)(@modelcontextprotocol/sdk@1.29.0(zod@3.25.76))(bufferutil@4.0.8)(expo-router@6.0.13)(graphql@16.14.1)(react-native@0.81.5(@babel/core@7.29.7)(@types/react@19.1.12)(bufferutil@4.0.8)(react@19.1.4))(react@19.1.4)
+      expo: 54.0.20(@babel/core@7.29.7)(@expo/metro-runtime@6.1.2)(@modelcontextprotocol/sdk@1.29.0(zod@4.1.12))(bufferutil@4.0.8)(expo-router@6.0.13)(graphql@16.14.1)(react-native@0.81.5(@babel/core@7.29.7)(@types/react@19.1.12)(bufferutil@4.0.8)(react@19.1.4))(react@19.1.4)
       react: 19.1.4
 
   expo-linking@8.0.8(expo@54.0.20)(react-native@0.81.5(@babel/core@7.29.7)(@types/react@19.1.12)(bufferutil@4.0.8)(react@19.1.4))(react@19.1.4):
@@ -11781,8 +11893,7 @@ snapshots:
 
   jiti@2.6.1: {}
 
-  jose@6.2.3:
-    optional: true
+  jose@6.2.3: {}
 
   js-tokens@4.0.0: {}
 
@@ -13686,6 +13797,20 @@ snapshots:
       pirates: 4.0.7
       tinyglobby: 0.2.17
       ts-interface-checker: 0.1.13
+
+  supabase@2.109.1:
+    dependencies:
+      eciesjs: 0.5.0
+      jose: 6.2.3
+    optionalDependencies:
+      '@supabase/cli-darwin-arm64': 2.109.1
+      '@supabase/cli-darwin-x64': 2.109.1
+      '@supabase/cli-linux-arm64': 2.109.1
+      '@supabase/cli-linux-arm64-musl': 2.109.1
+      '@supabase/cli-linux-x64': 2.109.1
+      '@supabase/cli-linux-x64-musl': 2.109.1
+      '@supabase/cli-windows-arm64': 2.109.1
+      '@supabase/cli-windows-x64': 2.109.1
 
   supports-color@5.5.0:
     dependencies:
