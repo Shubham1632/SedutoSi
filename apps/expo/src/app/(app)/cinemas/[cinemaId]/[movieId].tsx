@@ -18,18 +18,6 @@ function formatDateTime(iso: string) {
   });
 }
 
-function formatDate(iso: string) {
-  return new Date(iso).toLocaleDateString("it-IT", {
-    weekday: "short",
-    day: "numeric",
-    month: "short",
-  });
-}
-
-function dateKey(iso: string) {
-  return new Date(iso).toISOString().slice(0, 10);
-}
-
 export default function CinemaMovieScreen() {
   const { cinemaId, movieId, date } = useLocalSearchParams<{
     cinemaId: string;
@@ -80,7 +68,7 @@ export default function CinemaMovieScreen() {
       ) : (
         <View className="flex-1">
           <FlatList
-            data={screenings ?? []}
+            data={screenings}
             keyExtractor={(item) => item.id}
             contentContainerClassName="p-4 gap-3"
             renderItem={({ item }: { item: Screening }) => {
