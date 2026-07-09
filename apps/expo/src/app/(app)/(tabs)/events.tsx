@@ -57,8 +57,8 @@ export default function EventsScreen() {
       list = list.filter(
         (event) =>
           event.title.toLowerCase().includes(q) ||
-          event.description?.toLowerCase().includes(q) ||
-          event.location?.toLowerCase().includes(q),
+          (event.description?.toLowerCase().includes(q) ?? false) ||
+          (event.location?.toLowerCase().includes(q) ?? false),
       );
     }
     return list;

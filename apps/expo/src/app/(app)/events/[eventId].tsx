@@ -1,5 +1,5 @@
 import { ActivityIndicator, Text, View } from "react-native";
-import { Stack, useLocalSearchParams, useRouter } from "expo-router";
+import { Stack, useLocalSearchParams } from "expo-router";
 
 import { useEvent } from "@acme/app";
 
@@ -24,7 +24,6 @@ function formatEventDateTime(startsAt: string, endsAt?: string | null) {
 
 export default function EventDetailScreen() {
   const { eventId } = useLocalSearchParams<{ eventId: string }>();
-  const router = useRouter();
   const { data: event, isLoading } = useEvent(eventId);
 
   if (isLoading || !event) {

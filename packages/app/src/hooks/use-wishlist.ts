@@ -21,10 +21,11 @@ export function useWishlist() {
   return useQuery({
     queryKey: ["wishlist", user?.id],
     queryFn: async () => {
+      if (!user?.id) throw new Error("Not signed in");
       const { data, error } = await supabase
         .from("wishlist")
         .select("*, movie:movies(*)")
-        .eq("user_id", user!.id)
+        .eq("user_id", user.id)
         .order("created_at", { ascending: false });
       if (error) throw error;
       return data as Wishlist[];
@@ -68,20 +69,22 @@ export function useToggleWishlist() {
 
       const previous = queryClient.getQueryData<Wishlist[]>(queryKey);
 
-      queryClient.setQueryData<Wishlist[]>(queryKey, (old) => {
-        if (!old) return old;
-        if (wishlisted) {
-          // Optimistically add a placeholder row
-          const optimisticRow: Wishlist = {
-            id: `optimistic-${movieId}`,
-            user_id: user!.id,
-            movie_id: movieId,
-            created_at: new Date().toISOString(),
-          };
-          return [optimisticRow, ...old];
-        }
-        return old.filter((w) => w.movie_id !== movieId);
-      });
+      if (user?.id) {
+        queryClient.setQueryData<Wishlist[]>(queryKey, (old) => {
+          if (!old) return old;
+          if (wishlisted) {
+            // Optimistically add a placeholder row
+            const optimisticRow: Wishlist = {
+              id: `optimistic-${movieId}`,
+              user_id: user.id,
+              movie_id: movieId,
+              created_at: new Date().toISOString(),
+            };
+            return [optimisticRow, ...old];
+          }
+          return old.filter((w) => w.movie_id !== movieId);
+        });
+      }
 
       return { previous };
     },

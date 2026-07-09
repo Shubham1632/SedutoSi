@@ -29,7 +29,7 @@ export default function MovieScreen() {
       router.push("/sign-in");
       return;
     }
-    toggleWishlist.mutate({ movieId: movie!.id, wishlisted: !isWishlisted });
+    toggleWishlist.mutate({ movieId: movie.id, wishlisted: !isWishlisted });
   }
 
   const meta = [
