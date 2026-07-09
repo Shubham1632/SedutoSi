@@ -1,4 +1,3 @@
-import { useMemo } from "react";
 import { FlatList, Pressable, Text, View } from "react-native";
 import { Stack, useLocalSearchParams, useRouter } from "expo-router";
 

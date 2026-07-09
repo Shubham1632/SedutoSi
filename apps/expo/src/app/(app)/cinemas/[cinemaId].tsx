@@ -2,7 +2,6 @@ import { useMemo, useState } from "react";
 import { FlatList, Image, Pressable, Text, View } from "react-native";
 import { Stack, useLocalSearchParams, useRouter } from "expo-router";
 
-import type { Movie } from "@acme/app";
 import { useCinema, useCinemaMovies } from "@acme/app";
 
 function formatTime(iso: string) {
@@ -144,17 +143,18 @@ export default function CinemaDetailScreen() {
               keyExtractor={(item) => item.movie.id}
               contentContainerClassName="p-4 gap-4"
               renderItem={({ item }) => {
-                const movie = item.movie as Movie;
+                const movie = item.movie;
                 return (
                   <Pressable
                     onPress={() => {
-                      const base = `/cinemas/${encodeURIComponent(
-                        String(cinemaId),
-                      )}/${encodeURIComponent(String(movie.id))}`;
-                      const path = selectedDateKey
-                        ? `${base}?date=${encodeURIComponent(selectedDateKey)}`
-                        : base;
-                      router.push(path);
+                      router.push({
+                        pathname: "/cinemas/[cinemaId]/[movieId]",
+                        params: {
+                          cinemaId,
+                          movieId: movie.id,
+                          ...(selectedDateKey ? { date: selectedDateKey } : {}),
+                        },
+                      });
                     }}
                     className="bg-card overflow-hidden rounded-2xl"
                   >

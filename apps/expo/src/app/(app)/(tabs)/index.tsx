@@ -1,12 +1,5 @@
 import { useMemo, useState } from "react";
-import {
-  FlatList,
-  Image,
-  Pressable,
-  Text,
-  TextInput,
-  View,
-} from "react-native";
+import { Image, Pressable, Text, TextInput, View } from "react-native";
 import { Stack, useRouter } from "expo-router";
 import { LegendList } from "@legendapp/list";
 
