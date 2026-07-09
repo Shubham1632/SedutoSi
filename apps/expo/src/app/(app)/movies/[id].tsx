@@ -29,6 +29,7 @@ export default function MovieScreen() {
       router.push("/sign-in");
       return;
     }
+    if (!movie) return;
     toggleWishlist.mutate({ movieId: movie.id, wishlisted: !isWishlisted });
   }
 
