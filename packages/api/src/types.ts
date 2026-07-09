@@ -7,6 +7,11 @@ export type Json =
   | Json[];
 
 export type Database = {
+  // Allows to automatically instantiate createClient with right options
+  // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
+  __InternalSupabase: {
+    PostgrestVersion: "14.5";
+  };
   graphql_public: {
     Tables: {
       [_ in never]: never;
@@ -34,6 +39,194 @@ export type Database = {
   };
   public: {
     Tables: {
+      bookings: {
+        Row: {
+          created_at: string;
+          id: string;
+          screening_id: string;
+          seats_count: number;
+          status: string;
+          total_price: number;
+          user_id: string;
+        };
+        Insert: {
+          created_at?: string;
+          id?: string;
+          screening_id: string;
+          seats_count?: number;
+          status?: string;
+          total_price: number;
+          user_id: string;
+        };
+        Update: {
+          created_at?: string;
+          id?: string;
+          screening_id?: string;
+          seats_count?: number;
+          status?: string;
+          total_price?: number;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "bookings_screening_id_fkey";
+            columns: ["screening_id"];
+            isOneToOne: false;
+            referencedRelation: "screenings";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "bookings_user_id_fkey";
+            columns: ["user_id"];
+            isOneToOne: false;
+            referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      cinemas: {
+        Row: {
+          address: string;
+          created_at: string;
+          id: string;
+          name: string;
+          neighborhood: string | null;
+        };
+        Insert: {
+          address: string;
+          created_at?: string;
+          id?: string;
+          name: string;
+          neighborhood?: string | null;
+        };
+        Update: {
+          address?: string;
+          created_at?: string;
+          id?: string;
+          name?: string;
+          neighborhood?: string | null;
+        };
+        Relationships: [];
+      };
+      events: {
+        Row: {
+          category: string;
+          created_at: string;
+          description: string | null;
+          ends_at: string | null;
+          id: string;
+          image_url: string | null;
+          location: string | null;
+          price: number | null;
+          starts_at: string;
+          title: string;
+        };
+        Insert: {
+          category?: string;
+          created_at?: string;
+          description?: string | null;
+          ends_at?: string | null;
+          id?: string;
+          image_url?: string | null;
+          location?: string | null;
+          price?: number | null;
+          starts_at: string;
+          title: string;
+        };
+        Update: {
+          category?: string;
+          created_at?: string;
+          description?: string | null;
+          ends_at?: string | null;
+          id?: string;
+          image_url?: string | null;
+          location?: string | null;
+          price?: number | null;
+          starts_at?: string;
+          title?: string;
+        };
+        Relationships: [];
+      };
+      movies: {
+        Row: {
+          created_at: string;
+          description: string | null;
+          duration_minutes: number;
+          genre: string | null;
+          id: string;
+          language: string;
+          poster_url: string | null;
+          rating: string | null;
+          release_date: string | null;
+          title: string;
+        };
+        Insert: {
+          created_at?: string;
+          description?: string | null;
+          duration_minutes?: number;
+          genre?: string | null;
+          id?: string;
+          language?: string;
+          poster_url?: string | null;
+          rating?: string | null;
+          release_date?: string | null;
+          title: string;
+        };
+        Update: {
+          created_at?: string;
+          description?: string | null;
+          duration_minutes?: number;
+          genre?: string | null;
+          id?: string;
+          language?: string;
+          poster_url?: string | null;
+          rating?: string | null;
+          release_date?: string | null;
+          title?: string;
+        };
+        Relationships: [];
+      };
+      payment_methods: {
+        Row: {
+          brand: string;
+          created_at: string;
+          exp_month: number;
+          exp_year: number;
+          id: string;
+          is_default: boolean;
+          last4: string;
+          user_id: string;
+        };
+        Insert: {
+          brand: string;
+          created_at?: string;
+          exp_month: number;
+          exp_year: number;
+          id?: string;
+          is_default?: boolean;
+          last4: string;
+          user_id: string;
+        };
+        Update: {
+          brand?: string;
+          created_at?: string;
+          exp_month?: number;
+          exp_year?: number;
+          id?: string;
+          is_default?: boolean;
+          last4?: string;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "payment_methods_user_id_fkey";
+            columns: ["user_id"];
+            isOneToOne: false;
+            referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
       profiles: {
         Row: {
           avatar_url: string | null;
@@ -55,131 +248,39 @@ export type Database = {
         };
         Relationships: [];
       };
-      movies: {
-        Row: {
-          id: string;
-          title: string;
-          description: string | null;
-          poster_url: string | null;
-          genre: string | null;
-          duration_minutes: number;
-          language: string;
-          rating: string | null;
-          release_date: string | null;
-          created_at: string;
-        };
-        Insert: {
-          id?: string;
-          title: string;
-          description?: string | null;
-          poster_url?: string | null;
-          genre?: string | null;
-          duration_minutes?: number;
-          language?: string;
-          rating?: string | null;
-          release_date?: string | null;
-          created_at?: string;
-        };
-        Update: {
-          id?: string;
-          title?: string;
-          description?: string | null;
-          poster_url?: string | null;
-          genre?: string | null;
-          duration_minutes?: number;
-          language?: string;
-          rating?: string | null;
-          release_date?: string | null;
-          created_at?: string;
-        };
-        Relationships: [];
-      };
-      cinemas: {
-        Row: {
-          id: string;
-          name: string;
-          address: string;
-          neighborhood: string | null;
-          created_at: string;
-        };
-        Insert: {
-          id?: string;
-          name: string;
-          address: string;
-          neighborhood?: string | null;
-          created_at?: string;
-        };
-        Update: {
-          id?: string;
-          name?: string;
-          address?: string;
-          neighborhood?: string | null;
-          created_at?: string;
-        };
-        Relationships: [];
-      };
-      screens: {
-        Row: {
-          id: string;
-          cinema_id: string;
-          name: string;
-          total_seats: number;
-          created_at: string;
-        };
-        Insert: {
-          id?: string;
-          cinema_id: string;
-          name: string;
-          total_seats?: number;
-          created_at?: string;
-        };
-        Update: {
-          id?: string;
-          cinema_id?: string;
-          name?: string;
-          total_seats?: number;
-          created_at?: string;
-        };
-        Relationships: [
-          {
-            foreignKeyName: "screens_cinema_id_fkey";
-            columns: ["cinema_id"];
-            isOneToOne: false;
-            referencedRelation: "cinemas";
-            referencedColumns: ["id"];
-          },
-        ];
-      };
       screenings: {
         Row: {
-          id: string;
-          movie_id: string;
-          screen_id: string;
-          starts_at: string;
-          ends_at: string;
-          price: number;
           available_seats: number;
           created_at: string;
-        };
-        Insert: {
-          id?: string;
+          ends_at: string;
+          format: string | null;
+          id: string;
           movie_id: string;
+          price: number;
           screen_id: string;
           starts_at: string;
-          ends_at: string;
-          price: number;
+        };
+        Insert: {
           available_seats: number;
           created_at?: string;
+          ends_at: string;
+          format?: string | null;
+          id?: string;
+          movie_id: string;
+          price: number;
+          screen_id: string;
+          starts_at: string;
         };
         Update: {
-          id?: string;
-          movie_id?: string;
-          screen_id?: string;
-          starts_at?: string;
-          ends_at?: string;
-          price?: number;
           available_seats?: number;
           created_at?: string;
+          ends_at?: string;
+          format?: string | null;
+          id?: string;
+          movie_id?: string;
+          price?: number;
+          screen_id?: string;
+          starts_at?: string;
         };
         Relationships: [
           {
@@ -198,47 +299,63 @@ export type Database = {
           },
         ];
       };
-      bookings: {
+      screens: {
         Row: {
-          id: string;
-          user_id: string;
-          screening_id: string;
-          seats_count: number;
-          total_price: number;
-          status: string;
+          cinema_id: string;
           created_at: string;
+          id: string;
+          name: string;
+          total_seats: number;
         };
         Insert: {
-          id?: string;
-          user_id: string;
-          screening_id: string;
-          seats_count?: number;
-          total_price: number;
-          status?: string;
+          cinema_id: string;
           created_at?: string;
+          id?: string;
+          name: string;
+          total_seats?: number;
         };
         Update: {
-          id?: string;
-          user_id?: string;
-          screening_id?: string;
-          seats_count?: number;
-          total_price?: number;
-          status?: string;
+          cinema_id?: string;
           created_at?: string;
+          id?: string;
+          name?: string;
+          total_seats?: number;
         };
         Relationships: [
           {
-            foreignKeyName: "bookings_user_id_fkey";
-            columns: ["user_id"];
+            foreignKeyName: "screens_cinema_id_fkey";
+            columns: ["cinema_id"];
             isOneToOne: false;
-            referencedRelation: "profiles";
+            referencedRelation: "cinemas";
             referencedColumns: ["id"];
           },
+        ];
+      };
+      wishlist: {
+        Row: {
+          created_at: string;
+          id: string;
+          movie_id: string;
+          user_id: string;
+        };
+        Insert: {
+          created_at?: string;
+          id?: string;
+          movie_id: string;
+          user_id: string;
+        };
+        Update: {
+          created_at?: string;
+          id?: string;
+          movie_id?: string;
+          user_id?: string;
+        };
+        Relationships: [
           {
-            foreignKeyName: "bookings_screening_id_fkey";
-            columns: ["screening_id"];
+            foreignKeyName: "wishlist_movie_id_fkey";
+            columns: ["movie_id"];
             isOneToOne: false;
-            referencedRelation: "screenings";
+            referencedRelation: "movies";
             referencedColumns: ["id"];
           },
         ];
