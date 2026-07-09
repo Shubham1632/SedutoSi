@@ -386,7 +386,7 @@ email_optional = false
 
 [auth.external.google]
 # Flip to true once you've added the client id + secret (Google Cloud Console).
-enabled = false
+enabled = true
 client_id = "env(SUPABASE_AUTH_EXTERNAL_GOOGLE_CLIENT_ID)"
 secret = "env(SUPABASE_AUTH_EXTERNAL_GOOGLE_SECRET)"
 redirect_uri = ""

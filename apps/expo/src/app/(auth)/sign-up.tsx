@@ -14,6 +14,8 @@ import { Button } from "@acme/ui-native/button";
 import { Input } from "@acme/ui-native/input";
 import { Text } from "@acme/ui-native/text";
 
+import { GoogleSignInButton } from "~/components/google-sign-in-button";
+import { signInWithGoogle } from "~/lib/google-auth";
 import { supabase } from "~/lib/supabase";
 
 const msg = (e: unknown) =>
@@ -23,6 +25,7 @@ export default function SignUp() {
   // Set when sign-up needs email confirmation (the Supabase project default):
   // swaps the form for a 6-digit code entry. No email links/deep-links involved.
   const [confirmEmail, setConfirmEmail] = useState<string | null>(null);
+  const [googleLoading, setGoogleLoading] = useState(false);
 
   const {
     control,
@@ -40,6 +43,18 @@ export default function SignUp() {
       if (!session) setConfirmEmail(values.email);
     } catch (e) {
       Alert.alert("Sign up failed", msg(e));
+    }
+  }
+
+  async function onGoogleSignIn() {
+    setGoogleLoading(true);
+    try {
+      await signInWithGoogle();
+      // Session established on success — AuthGate routes into the app.
+    } catch (e) {
+      Alert.alert("Google sign-in failed", msg(e));
+    } finally {
+      setGoogleLoading(false);
     }
   }
 
@@ -120,6 +135,17 @@ export default function SignUp() {
         title="Create account"
         loading={isSubmitting}
         onPress={() => void handleSubmit(onSubmit)()}
+      />
+
+      <View className="flex-row items-center gap-3">
+        <View className="bg-border h-px flex-1" />
+        <Text className="text-muted-foreground text-xs uppercase">or</Text>
+        <View className="bg-border h-px flex-1" />
+      </View>
+
+      <GoogleSignInButton
+        loading={googleLoading}
+        onPress={() => void onGoogleSignIn()}
       />
 
       <View className="flex-row justify-center">

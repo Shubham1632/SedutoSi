@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Alert, View } from "react-native";
 import { Link } from "expo-router";
 import { Controller, useForm } from "react-hook-form";
@@ -8,12 +9,16 @@ import { Button } from "@acme/ui-native/button";
 import { Input } from "@acme/ui-native/input";
 import { Text } from "@acme/ui-native/text";
 
+import { GoogleSignInButton } from "~/components/google-sign-in-button";
+import { signInWithGoogle } from "~/lib/google-auth";
 import { supabase } from "~/lib/supabase";
 
 const msg = (e: unknown) =>
   e instanceof Error ? e.message : "Something went wrong";
 
 export default function SignIn() {
+  const [googleLoading, setGoogleLoading] = useState(false);
+
   const {
     control,
     handleSubmit,
@@ -28,6 +33,18 @@ export default function SignIn() {
       await signInWithPassword(supabase, values);
     } catch (e) {
       Alert.alert("Sign in failed", msg(e));
+    }
+  }
+
+  async function onGoogleSignIn() {
+    setGoogleLoading(true);
+    try {
+      await signInWithGoogle();
+      // Session established on success — AuthGate routes into the app.
+    } catch (e) {
+      Alert.alert("Google sign-in failed", msg(e));
+    } finally {
+      setGoogleLoading(false);
     }
   }
 
@@ -82,6 +99,17 @@ export default function SignIn() {
         title="Sign in"
         loading={isSubmitting}
         onPress={() => void handleSubmit(onSubmit)()}
+      />
+
+      <View className="flex-row items-center gap-3">
+        <View className="bg-border h-px flex-1" />
+        <Text className="text-muted-foreground text-xs uppercase">or</Text>
+        <View className="bg-border h-px flex-1" />
+      </View>
+
+      <GoogleSignInButton
+        loading={googleLoading}
+        onPress={() => void onGoogleSignIn()}
       />
 
       <View className="flex-row justify-center">
