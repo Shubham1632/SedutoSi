@@ -186,6 +186,47 @@ export type Database = {
         }
         Relationships: []
       }
+      payment_methods: {
+        Row: {
+          brand: string
+          created_at: string
+          exp_month: number
+          exp_year: number
+          id: string
+          is_default: boolean
+          last4: string
+          user_id: string
+        }
+        Insert: {
+          brand: string
+          created_at?: string
+          exp_month: number
+          exp_year: number
+          id?: string
+          is_default?: boolean
+          last4: string
+          user_id: string
+        }
+        Update: {
+          brand?: string
+          created_at?: string
+          exp_month?: number
+          exp_year?: number
+          id?: string
+          is_default?: boolean
+          last4?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "payment_methods_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           avatar_url: string | null

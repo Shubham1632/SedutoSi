@@ -16,5 +16,6 @@ export { useWishlist, useToggleWishlist } from "./hooks/use-wishlist";
 export type { Wishlist } from "./hooks/use-wishlist";
 
 export * from "./hooks/use-events";
+export * from "./hooks/use-payment-methods";
 // Movie booking hooks
 export * from "./hooks/use-movies";
