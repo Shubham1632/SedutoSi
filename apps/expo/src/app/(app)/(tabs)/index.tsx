@@ -34,14 +34,6 @@ export default function MoviesScreen() {
   const [query, setQuery] = useState("");
   const [activeFilter, setActiveFilter] = useState("All");
 
-  console.log("MoviesScreen render", {
-    movies,
-    isLoading,
-    searchOpen,
-    query,
-    activeFilter,
-  });
-
   const filters = useMemo(() => {
     const languages = new Set<string>();
     movies?.forEach((m) => m.language && languages.add(m.language));
@@ -95,12 +87,15 @@ export default function MoviesScreen() {
         </View>
       )}
 
-      <View className="px-4 pt-3">
-        <FlatList
+      <View
+        style={{ paddingHorizontal: 16, paddingTop: 12, paddingBottom: 12 }}
+      >
+        <LegendList
           data={filters}
           horizontal
           showsHorizontalScrollIndicator={false}
           keyExtractor={(item) => item}
+          extraData={activeFilter}
           contentContainerStyle={{ gap: 8 }}
           renderItem={({ item }) => {
             const selected = item === activeFilter;
@@ -109,8 +104,8 @@ export default function MoviesScreen() {
                 onPress={() => setActiveFilter(item)}
                 className={
                   selected
-                    ? "bg-primary rounded-full px-4 py-2"
-                    : "border-border rounded-full border px-4 py-2"
+                    ? "bg-primary rounded-[20px] px-4 py-2"
+                    : "border-border rounded-[20px] border px-4 py-2"
                 }
               >
                 <Text

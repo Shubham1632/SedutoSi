@@ -71,9 +71,16 @@ export function useMovies() {
 
 export function useMovie(id: string) {
   const supabase = useSupabase();
+  const queryClient = useQueryClient();
   return useQuery({
     queryKey: ["movies", id],
     enabled: !!id,
+    // Render instantly from the already-fetched list (still revalidates in
+    // the background) instead of blocking on a fresh round-trip.
+    initialData: () =>
+      queryClient
+        .getQueryData<Movie[]>(["movies"])
+        ?.find((movie) => movie.id === id),
     queryFn: async () => {
       const { data, error } = await supabase
         .from("movies")
