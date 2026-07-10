@@ -22,6 +22,7 @@
     "@expo/metro-runtime": "~6.1.2",
     "@legendapp/list": "^2.0.14",
     "@react-native-async-storage/async-storage": "catalog:",
+    "@react-navigation/native": "^7.1.18",
     "@supabase/supabase-js": "catalog:",
     "@tanstack/react-query": "catalog:",
     "expo": "~54.0.20",
