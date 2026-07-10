@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 import { FlatList, Pressable, Text, TextInput, View } from "react-native";
-import { Stack, useRouter } from "expo-router";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { useRouter } from "expo-router";
 import { LegendList } from "@legendapp/list";
 
 import type { Cinema } from "@acme/app";
@@ -15,13 +16,16 @@ function SearchButton({
 }) {
   return (
     <Pressable onPress={onPress} hitSlop={12} style={{ paddingHorizontal: 8 }}>
-      <Text style={{ fontSize: 20, color: "#fff" }}>{active ? "✕" : "🔍"}</Text>
+      <Text className="text-foreground" style={{ fontSize: 20 }}>
+        {active ? "✕" : "🔍"}
+      </Text>
     </Pressable>
   );
 }
 
 export default function CinemasScreen() {
   const router = useRouter();
+  const insets = useSafeAreaInsets();
   const { data: cinemas, isLoading } = useCinemas();
   const [searchOpen, setSearchOpen] = useState(false);
   const [query, setQuery] = useState("");
@@ -55,27 +59,23 @@ export default function CinemasScreen() {
   }, [cinemas, activeFilter, query]);
 
   return (
-    <View className="bg-background flex-1">
-      <Stack.Screen
-        options={{
-          title: "Cinema Halls",
-          headerRight: () => (
-            <SearchButton
-              active={searchOpen}
-              onPress={() => {
-                setSearchOpen((open) => !open);
-                setQuery("");
-              }}
-            />
-          ),
-        }}
-      />
-
-      <View className="gap-1 px-4 pt-4">
-        <Text className="text-foreground text-2xl font-bold">Cinema Halls</Text>
-        <Text className="text-muted-foreground text-sm">
-          {`Milan ${cinemas?.length ? `· ${cinemas.length} locations` : ""}`}
-        </Text>
+    <View className="bg-background flex-1" style={{ paddingTop: insets.top }}>
+      <View className="flex-row items-start justify-between px-4 pt-4">
+        <View className="gap-1">
+          <Text className="text-foreground text-2xl font-bold">
+            Cinema Halls
+          </Text>
+          <Text className="text-muted-foreground text-sm">
+            {`Milan ${cinemas?.length ? `· ${cinemas.length} locations` : ""}`}
+          </Text>
+        </View>
+        <SearchButton
+          active={searchOpen}
+          onPress={() => {
+            setSearchOpen((open) => !open);
+            setQuery("");
+          }}
+        />
       </View>
 
       {searchOpen && (
@@ -149,25 +149,41 @@ export default function CinemasScreen() {
                   params: { cinemaId: item.id },
                 })
               }
-              className="bg-card overflow-hidden rounded-xl"
+              className="bg-card overflow-hidden rounded-2xl border border-gray-300 shadow-sm active:opacity-80 dark:border-gray-700"
             >
-              <View className="gap-2 p-4">
-                <View className="flex-row items-center justify-between">
-                  <Text className="text-foreground text-base font-semibold">
+              <View className="flex-row items-center gap-3 p-4">
+                <View className="bg-primary/15 h-12 w-12 items-center justify-center rounded-full">
+                  <Text style={{ fontSize: 22 }}>🏛️</Text>
+                </View>
+                <View className="flex-1 gap-1">
+                  <Text
+                    className="text-foreground text-base font-bold"
+                    numberOfLines={1}
+                  >
                     {item.name}
                   </Text>
-                </View>
-                <Text
-                  className="text-muted-foreground text-sm"
-                  numberOfLines={2}
-                >
-                  {item.address}
-                </Text>
-                {item.neighborhood ? (
-                  <Text className="text-primary text-sm font-medium">
-                    {item.neighborhood}
+                  <Text
+                    className="text-muted-foreground text-xs"
+                    numberOfLines={1}
+                  >
+                    📍 {item.address}
                   </Text>
-                ) : null}
+                </View>
+                <Text className="text-muted-foreground text-lg">›</Text>
+              </View>
+              <View className="flex-row items-center justify-between border-t border-gray-300 px-4 py-2.5 dark:border-gray-700">
+                {item.neighborhood ? (
+                  <View className="bg-primary/10 rounded-full px-2.5 py-1">
+                    <Text className="text-primary text-xs font-semibold">
+                      {item.neighborhood}
+                    </Text>
+                  </View>
+                ) : (
+                  <View />
+                )}
+                <Text className="text-primary text-xs font-semibold">
+                  View showtimes →
+                </Text>
               </View>
             </Pressable>
           )}

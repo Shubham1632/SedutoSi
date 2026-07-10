@@ -1,10 +1,11 @@
 import { useState } from "react";
-import { Alert, View } from "react-native";
+import { View } from "react-native";
 import { Link } from "expo-router";
 import { Controller, useForm } from "react-hook-form";
 
 import type { SignInInput } from "@acme/app";
 import { signInSchema, signInWithPassword, zodFormResolver } from "@acme/app";
+import { appAlert } from "@acme/ui-native/alert";
 import { Button } from "@acme/ui-native/button";
 import { Input } from "@acme/ui-native/input";
 import { Text } from "@acme/ui-native/text";
@@ -32,7 +33,7 @@ export default function SignIn() {
     try {
       await signInWithPassword(supabase, values);
     } catch (e) {
-      Alert.alert("Sign in failed", msg(e));
+      appAlert("Sign in failed", msg(e));
     }
   }
 
@@ -42,7 +43,7 @@ export default function SignIn() {
       await signInWithGoogle();
       // Session established on success — AuthGate routes into the app.
     } catch (e) {
-      Alert.alert("Google sign-in failed", msg(e));
+      appAlert("Google sign-in failed", msg(e));
     } finally {
       setGoogleLoading(false);
     }

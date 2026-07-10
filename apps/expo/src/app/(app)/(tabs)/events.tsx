@@ -1,10 +1,37 @@
 import { useMemo, useState } from "react";
-import { FlatList, Pressable, Text, TextInput, View } from "react-native";
-import { Stack, useRouter } from "expo-router";
+import {
+  FlatList,
+  Image,
+  Pressable,
+  Text,
+  TextInput,
+  View,
+} from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { useRouter } from "expo-router";
 import { LegendList } from "@legendapp/list";
 
 import type { LiveEvent } from "@acme/app";
 import { useEvents } from "@acme/app";
+
+const CATEGORY_ICON: Record<string, string> = {
+  music: "🎵",
+  concert: "🎵",
+  theater: "🎭",
+  theatre: "🎭",
+  comedy: "🎤",
+  sports: "⚽",
+  art: "🎨",
+  exhibition: "🖼️",
+  festival: "🎉",
+  food: "🍝",
+  film: "🎬",
+  workshop: "🛠️",
+};
+
+function categoryIcon(category: string) {
+  return CATEGORY_ICON[category.toLowerCase()] ?? "🎟️";
+}
 
 function SearchButton({
   active,
@@ -15,7 +42,9 @@ function SearchButton({
 }) {
   return (
     <Pressable onPress={onPress} hitSlop={12} style={{ paddingHorizontal: 8 }}>
-      <Text style={{ fontSize: 20, color: "#fff" }}>{active ? "✕" : "🔍"}</Text>
+      <Text className="text-foreground" style={{ fontSize: 20 }}>
+        {active ? "✕" : "🔍"}
+      </Text>
     </Pressable>
   );
 }
@@ -36,6 +65,7 @@ function formatEventDate(startsAt: string) {
 
 export default function EventsScreen() {
   const router = useRouter();
+  const insets = useSafeAreaInsets();
   const { data: events, isLoading } = useEvents();
   const [searchOpen, setSearchOpen] = useState(false);
   const [query, setQuery] = useState("");
@@ -65,27 +95,23 @@ export default function EventsScreen() {
   }, [events, activeFilter, query]);
 
   return (
-    <View className="bg-background flex-1">
-      <Stack.Screen
-        options={{
-          title: "Live Events",
-          headerRight: () => (
-            <SearchButton
-              active={searchOpen}
-              onPress={() => {
-                setSearchOpen((open) => !open);
-                setQuery("");
-              }}
-            />
-          ),
-        }}
-      />
-
-      <View className="gap-1 px-4 pt-4">
-        <Text className="text-foreground text-2xl font-bold">Live Events</Text>
-        <Text className="text-muted-foreground text-sm">
-          {`Milan ${events?.length ? `· ${events.length} upcoming` : ""}`}
-        </Text>
+    <View className="bg-background flex-1" style={{ paddingTop: insets.top }}>
+      <View className="flex-row items-start justify-between px-4 pt-4">
+        <View className="gap-1">
+          <Text className="text-foreground text-2xl font-bold">
+            Live Events
+          </Text>
+          <Text className="text-muted-foreground text-sm">
+            {`Milan ${events?.length ? `· ${events.length} upcoming` : ""}`}
+          </Text>
+        </View>
+        <SearchButton
+          active={searchOpen}
+          onPress={() => {
+            setSearchOpen((open) => !open);
+            setQuery("");
+          }}
+        />
       </View>
 
       {searchOpen && (
@@ -159,32 +185,76 @@ export default function EventsScreen() {
                   params: { eventId: item.id },
                 })
               }
-              className="bg-card overflow-hidden rounded-xl"
+              className="bg-card overflow-hidden rounded-2xl border border-gray-300 shadow-sm active:opacity-80 dark:border-gray-700"
             >
-              <View className="gap-2 p-4">
-                <View className="flex-row items-center justify-between">
-                  <Text className="text-foreground text-base font-semibold">
-                    {item.title}
+              <View>
+                {item.image_url ? (
+                  <Image
+                    source={{ uri: item.image_url }}
+                    style={{ width: "100%", height: 140 }}
+                    resizeMode="cover"
+                  />
+                ) : (
+                  <View
+                    className="bg-muted"
+                    style={{
+                      width: "100%",
+                      height: 140,
+                      alignItems: "center",
+                      justifyContent: "center",
+                      gap: 4,
+                    }}
+                  >
+                    <Text style={{ fontSize: 32, opacity: 0.4 }}>🖼️</Text>
+                    <Text className="text-muted-foreground text-[10px] font-medium tracking-wide uppercase">
+                      No image yet
+                    </Text>
+                  </View>
+                )}
+                <View className="bg-background/90 absolute top-2 left-2 flex-row items-center gap-1 rounded-full px-2.5 py-1">
+                  <Text style={{ fontSize: 11 }}>
+                    {categoryIcon(item.category)}
                   </Text>
-                  <Text className="text-primary text-xs font-medium uppercase">
+                  <Text className="text-foreground text-[10px] font-bold tracking-wide uppercase">
                     {item.category}
                   </Text>
                 </View>
-                <Text className="text-muted-foreground text-sm">
-                  {formatEventDate(item.starts_at)}
+                <View
+                  className={
+                    item.price != null
+                      ? "bg-background/90 absolute top-2 right-2 rounded-full px-2.5 py-1"
+                      : "bg-primary absolute top-2 right-2 rounded-full px-2.5 py-1"
+                  }
+                >
+                  <Text
+                    className={
+                      item.price != null
+                        ? "text-foreground text-xs font-bold"
+                        : "text-primary-foreground text-xs font-bold"
+                    }
+                  >
+                    {item.price != null ? `€${item.price.toFixed(2)}` : "FREE"}
+                  </Text>
+                </View>
+              </View>
+              <View className="gap-1.5 p-4">
+                <Text
+                  className="text-foreground text-base font-bold"
+                  numberOfLines={1}
+                >
+                  {item.title}
+                </Text>
+                <Text className="text-muted-foreground text-xs">
+                  🕐 {formatEventDate(item.starts_at)}
                 </Text>
                 {item.location ? (
-                  <Text className="text-muted-foreground text-sm">
-                    {item.location}
+                  <Text
+                    className="text-muted-foreground text-xs"
+                    numberOfLines={1}
+                  >
+                    📍 {item.location}
                   </Text>
                 ) : null}
-                {item.price != null ? (
-                  <Text className="text-foreground text-sm font-medium">
-                    €{item.price.toFixed(2)}
-                  </Text>
-                ) : (
-                  <Text className="text-primary text-sm font-medium">Free</Text>
-                )}
               </View>
             </Pressable>
           )}

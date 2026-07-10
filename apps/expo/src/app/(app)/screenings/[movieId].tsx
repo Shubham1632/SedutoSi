@@ -5,14 +5,18 @@ import { Stack, useLocalSearchParams, useRouter } from "expo-router";
 import type { Screening } from "@acme/app";
 import { useMovie, useScreenings } from "@acme/app";
 
-function formatDateTime(iso: string) {
-  return new Date(iso).toLocaleString("it-IT", {
+function formatScreeningParts(iso: string) {
+  const date = new Date(iso);
+  const dateLabel = date.toLocaleDateString("it-IT", {
     weekday: "short",
-    month: "short",
     day: "numeric",
+    month: "short",
+  });
+  const timeLabel = date.toLocaleTimeString("it-IT", {
     hour: "2-digit",
     minute: "2-digit",
   });
+  return { dateLabel, timeLabel };
 }
 
 type SortKey = "time" | "price" | "seats";
@@ -134,29 +138,68 @@ export default function ScreeningsScreen() {
                   cinema?: { name: string; neighborhood?: string };
                 }
               | undefined;
+            const { dateLabel, timeLabel } = formatScreeningParts(
+              item.starts_at,
+            );
+            const lowSeats = item.available_seats <= 10;
             return (
               <Pressable
                 onPress={() => router.push(`/booking/${item.id}`)}
-                className="bg-card gap-2 rounded-xl p-4"
+                className="bg-card gap-3 rounded-2xl border border-gray-300 p-4 shadow-sm active:opacity-80 dark:border-gray-700"
               >
-                <Text className="text-foreground text-base font-semibold">
-                  {formatDateTime(item.starts_at)}
-                </Text>
-                {screen?.cinema && (
-                  <Text className="text-muted-foreground text-sm">
-                    {screen.cinema.name}
-                    {screen.cinema.neighborhood
-                      ? ` — ${screen.cinema.neighborhood}`
-                      : ""}
-                  </Text>
-                )}
-                <View className="flex-row items-center justify-between pt-1">
-                  <Text className="text-primary text-base font-bold">
+                <View className="flex-row items-center gap-3">
+                  <View
+                    className="bg-primary/15 items-center justify-center rounded-xl px-3 py-2"
+                    style={{ minWidth: 72 }}
+                  >
+                    <Text className="text-primary text-base font-extrabold">
+                      {timeLabel}
+                    </Text>
+                    <Text className="text-primary/80 text-[10px] font-medium uppercase">
+                      {dateLabel}
+                    </Text>
+                  </View>
+                  <View className="flex-1 gap-1">
+                    {screen?.cinema && (
+                      <Text
+                        className="text-foreground text-sm font-semibold"
+                        numberOfLines={1}
+                      >
+                        🏛️ {screen.cinema.name}
+                      </Text>
+                    )}
+                    {screen?.cinema?.neighborhood ? (
+                      <Text
+                        className="text-muted-foreground text-xs"
+                        numberOfLines={1}
+                      >
+                        {screen.cinema.neighborhood}
+                      </Text>
+                    ) : null}
+                  </View>
+                </View>
+                <View className="flex-row items-center justify-between border-t border-gray-300 pt-3 dark:border-gray-700">
+                  <Text className="text-foreground text-lg font-extrabold">
                     €{Number(item.price).toFixed(2)}
                   </Text>
-                  <Text className="text-muted-foreground text-sm">
-                    {item.available_seats} seats left
-                  </Text>
+                  <View className="flex-row items-center gap-1.5">
+                    <View
+                      className={
+                        lowSeats
+                          ? "bg-destructive h-2 w-2 rounded-full"
+                          : "bg-primary h-2 w-2 rounded-full"
+                      }
+                    />
+                    <Text
+                      className={
+                        lowSeats
+                          ? "text-destructive text-xs font-semibold"
+                          : "text-muted-foreground text-xs font-medium"
+                      }
+                    >
+                      {item.available_seats} left
+                    </Text>
+                  </View>
                 </View>
               </Pressable>
             );

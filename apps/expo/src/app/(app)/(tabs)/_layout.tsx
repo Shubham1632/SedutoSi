@@ -1,5 +1,6 @@
 import { Text } from "react-native";
 import { Tabs } from "expo-router";
+import { useTheme } from "@react-navigation/native";
 
 function TabIcon({ icon, focused }: { icon: string; focused: boolean }) {
   return (
@@ -8,14 +9,16 @@ function TabIcon({ icon, focused }: { icon: string; focused: boolean }) {
 }
 
 export default function TabsLayout() {
+  const { colors } = useTheme();
+
   return (
     <Tabs
       screenOptions={{
-        headerStyle: { backgroundColor: "#c03484" },
-        headerTintColor: "#fff",
-        headerTitleStyle: { fontWeight: "700" },
-        tabBarActiveTintColor: "#c03484",
+        headerShown: false,
+
+        tabBarActiveTintColor: colors.primary,
         tabBarInactiveTintColor: "#9ca3af",
+        tabBarStyle: { backgroundColor: colors.card },
       }}
     >
       <Tabs.Screen

@@ -1,9 +1,10 @@
-import { Alert, Image, Pressable, View } from "react-native";
+import { Image, Pressable, View } from "react-native";
 import { Stack, useRouter } from "expo-router";
 import { LegendList } from "@legendapp/list";
 
 import type { Wishlist } from "@acme/app";
 import { useToggleWishlist, useWishlist } from "@acme/app";
+import { appAlert } from "@acme/ui-native/alert";
 import { Text } from "@acme/ui-native/text";
 
 export default function WishlistScreen() {
@@ -12,19 +13,15 @@ export default function WishlistScreen() {
   const toggleWishlist = useToggleWishlist();
 
   function onRemove(movieId: string) {
-    Alert.alert(
-      "Remove from wishlist",
-      "Remove this movie from your wishlist?",
-      [
-        { text: "Cancel", style: "cancel" },
-        {
-          text: "Remove",
-          style: "destructive",
-          onPress: () =>
-            void toggleWishlist.mutateAsync({ movieId, wishlisted: false }),
-        },
-      ],
-    );
+    appAlert("Remove from wishlist", "Remove this movie from your wishlist?", [
+      { text: "Cancel", style: "cancel" },
+      {
+        text: "Remove",
+        style: "destructive",
+        onPress: () =>
+          void toggleWishlist.mutateAsync({ movieId, wishlisted: false }),
+      },
+    ]);
   }
 
   return (

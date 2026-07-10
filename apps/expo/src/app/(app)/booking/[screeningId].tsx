@@ -1,8 +1,9 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Alert, Text, View } from "react-native";
+import { Text, View } from "react-native";
 import { Stack, useLocalSearchParams, useRouter } from "expo-router";
 
 import { useBookedSeats, useScreening } from "@acme/app";
+import { appAlert } from "@acme/ui-native/alert";
 import { Button } from "@acme/ui-native/button";
 
 import { SeatMap } from "~/components/seat-map";
@@ -44,7 +45,7 @@ export default function SeatSelectionScreen() {
     );
     previouslyTakenRef.current = bookedSeats;
     if (newlyTaken.length === 0) return;
-    Alert.alert(
+    appAlert(
       "Seat no longer available",
       `Seat${newlyTaken.length > 1 ? "s" : ""} ${newlyTaken.join(", ")} ${
         newlyTaken.length > 1 ? "were" : "was"
@@ -74,7 +75,7 @@ export default function SeatSelectionScreen() {
     setRawSelected((prev) => {
       if (prev.includes(id)) return prev.filter((s) => s !== id);
       if (selected.length >= maxSeats) {
-        Alert.alert(
+        appAlert(
           "Seat limit reached",
           `You can select up to ${maxSeats} seat${maxSeats > 1 ? "s" : ""}.`,
         );
