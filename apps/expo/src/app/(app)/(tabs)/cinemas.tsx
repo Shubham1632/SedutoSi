@@ -149,25 +149,41 @@ export default function CinemasScreen() {
                   params: { cinemaId: item.id },
                 })
               }
-              className="bg-background border-border overflow-hidden rounded-xl border"
+              className="bg-card border-gray-300 dark:border-gray-700 shadow-sm overflow-hidden rounded-2xl border active:opacity-80"
             >
-              <View className="gap-2 p-4">
-                <View className="flex-row items-center justify-between">
-                  <Text className="text-foreground text-base font-semibold">
+              <View className="flex-row items-center gap-3 p-4">
+                <View className="bg-primary/15 h-12 w-12 items-center justify-center rounded-full">
+                  <Text style={{ fontSize: 22 }}>🏛️</Text>
+                </View>
+                <View className="flex-1 gap-1">
+                  <Text
+                    className="text-foreground text-base font-bold"
+                    numberOfLines={1}
+                  >
                     {item.name}
                   </Text>
-                </View>
-                <Text
-                  className="text-muted-foreground text-sm"
-                  numberOfLines={2}
-                >
-                  {item.address}
-                </Text>
-                {item.neighborhood ? (
-                  <Text className="text-primary text-sm font-medium">
-                    {item.neighborhood}
+                  <Text
+                    className="text-muted-foreground text-xs"
+                    numberOfLines={1}
+                  >
+                    📍 {item.address}
                   </Text>
-                ) : null}
+                </View>
+                <Text className="text-muted-foreground text-lg">›</Text>
+              </View>
+              <View className="border-gray-300 dark:border-gray-700 flex-row items-center justify-between border-t px-4 py-2.5">
+                {item.neighborhood ? (
+                  <View className="bg-primary/10 rounded-full px-2.5 py-1">
+                    <Text className="text-primary text-xs font-semibold">
+                      {item.neighborhood}
+                    </Text>
+                  </View>
+                ) : (
+                  <View />
+                )}
+                <Text className="text-primary text-xs font-semibold">
+                  View showtimes →
+                </Text>
               </View>
             </Pressable>
           )}

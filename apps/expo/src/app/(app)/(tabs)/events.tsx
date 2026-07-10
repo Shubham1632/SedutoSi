@@ -1,11 +1,37 @@
 import { useMemo, useState } from "react";
-import { FlatList, Pressable, Text, TextInput, View } from "react-native";
+import {
+  FlatList,
+  Image,
+  Pressable,
+  Text,
+  TextInput,
+  View,
+} from "react-native";
 import { useRouter } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { LegendList } from "@legendapp/list";
 
 import type { LiveEvent } from "@acme/app";
 import { useEvents } from "@acme/app";
+
+const CATEGORY_ICON: Record<string, string> = {
+  music: "🎵",
+  concert: "🎵",
+  theater: "🎭",
+  theatre: "🎭",
+  comedy: "🎤",
+  sports: "⚽",
+  art: "🎨",
+  exhibition: "🖼️",
+  festival: "🎉",
+  food: "🍝",
+  film: "🎬",
+  workshop: "🛠️",
+};
+
+function categoryIcon(category: string) {
+  return CATEGORY_ICON[category.toLowerCase()] ?? "🎟️";
+}
 
 function SearchButton({
   active,
@@ -159,32 +185,69 @@ export default function EventsScreen() {
                   params: { eventId: item.id },
                 })
               }
-              className="bg-background border-border overflow-hidden rounded-xl border"
+              className="bg-card border-gray-300 dark:border-gray-700 shadow-sm overflow-hidden rounded-2xl border active:opacity-80"
             >
-              <View className="gap-2 p-4">
-                <View className="flex-row items-center justify-between">
-                  <Text className="text-foreground text-base font-semibold">
-                    {item.title}
+              <View>
+                {item.image_url ? (
+                  <Image
+                    source={{ uri: item.image_url }}
+                    style={{ width: "100%", height: 140 }}
+                    resizeMode="cover"
+                  />
+                ) : (
+                  <View
+                    className="bg-primary/15 items-center justify-center"
+                    style={{ width: "100%", height: 140 }}
+                  >
+                    <Text style={{ fontSize: 40 }}>
+                      {categoryIcon(item.category)}
+                    </Text>
+                  </View>
+                )}
+                <View className="bg-background/90 absolute top-2 left-2 flex-row items-center gap-1 rounded-full px-2.5 py-1">
+                  <Text style={{ fontSize: 11 }}>
+                    {categoryIcon(item.category)}
                   </Text>
-                  <Text className="text-primary text-xs font-medium uppercase">
+                  <Text className="text-foreground text-[10px] font-bold tracking-wide uppercase">
                     {item.category}
                   </Text>
                 </View>
-                <Text className="text-muted-foreground text-sm">
-                  {formatEventDate(item.starts_at)}
+                <View
+                  className={
+                    item.price != null
+                      ? "bg-background/90 absolute top-2 right-2 rounded-full px-2.5 py-1"
+                      : "bg-primary absolute top-2 right-2 rounded-full px-2.5 py-1"
+                  }
+                >
+                  <Text
+                    className={
+                      item.price != null
+                        ? "text-foreground text-xs font-bold"
+                        : "text-primary-foreground text-xs font-bold"
+                    }
+                  >
+                    {item.price != null ? `€${item.price.toFixed(2)}` : "FREE"}
+                  </Text>
+                </View>
+              </View>
+              <View className="gap-1.5 p-4">
+                <Text
+                  className="text-foreground text-base font-bold"
+                  numberOfLines={1}
+                >
+                  {item.title}
+                </Text>
+                <Text className="text-muted-foreground text-xs">
+                  🕐 {formatEventDate(item.starts_at)}
                 </Text>
                 {item.location ? (
-                  <Text className="text-muted-foreground text-sm">
-                    {item.location}
+                  <Text
+                    className="text-muted-foreground text-xs"
+                    numberOfLines={1}
+                  >
+                    📍 {item.location}
                   </Text>
                 ) : null}
-                {item.price != null ? (
-                  <Text className="text-foreground text-sm font-medium">
-                    €{item.price.toFixed(2)}
-                  </Text>
-                ) : (
-                  <Text className="text-primary text-sm font-medium">Free</Text>
-                )}
               </View>
             </Pressable>
           )}

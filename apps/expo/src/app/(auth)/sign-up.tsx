@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Alert, View } from "react-native";
+import { View } from "react-native";
 import { Link } from "expo-router";
 import { Controller, useForm } from "react-hook-form";
 
@@ -10,6 +10,7 @@ import {
   verifySignUpCode,
   zodFormResolver,
 } from "@acme/app";
+import { appAlert } from "@acme/ui-native/alert";
 import { Button } from "@acme/ui-native/button";
 import { Input } from "@acme/ui-native/input";
 import { Text } from "@acme/ui-native/text";
@@ -42,7 +43,7 @@ export default function SignUp() {
       // With email confirmations off there's a session already — AuthGate redirects.
       if (!session) setConfirmEmail(values.email);
     } catch (e) {
-      Alert.alert("Sign up failed", msg(e));
+      appAlert("Sign up failed", msg(e));
     }
   }
 
@@ -52,7 +53,7 @@ export default function SignUp() {
       await signInWithGoogle();
       // Session established on success — AuthGate routes into the app.
     } catch (e) {
-      Alert.alert("Google sign-in failed", msg(e));
+      appAlert("Google sign-in failed", msg(e));
     } finally {
       setGoogleLoading(false);
     }
@@ -168,7 +169,7 @@ function CheckEmail({ email, onBack }: { email: string; onBack: () => void }) {
       await verifySignUpCode(supabase, email, code.trim());
       // Session established — AuthGate routes into the app.
     } catch (e) {
-      Alert.alert("That code didn't work", msg(e));
+      appAlert("That code didn't work", msg(e));
       setVerifying(false);
     }
   }

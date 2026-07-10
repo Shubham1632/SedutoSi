@@ -18,25 +18,27 @@ const MAX_ZOOM = 3;
 
 type Colors = ReturnType<typeof seatColors>;
 
+// Selected/screen colors mirror the app's primary brand color (@acme/ui-native/theme-colors)
+// instead of a hardcoded blue/indigo, so seat selection reads as "on brand" in both themes.
 function seatColors(dark: boolean) {
   return dark
     ? {
         available: "#2C2A35",
         availableBorder: "#413E4D",
         occupied: "#6B3A42",
-        selected: "#6366F1",
-        selectedText: "#FFFFFF",
+        selected: "#f2934a",
+        selectedText: "#2B2118",
         label: "#7C7A86",
-        screen: "#6366F1",
+        screen: "#f2934a",
       }
     : {
         available: "#EEEBF4",
         availableBorder: "#DAD4E4",
         occupied: "#A79FB5",
-        selected: "#4F46E5",
+        selected: "#e2711d",
         selectedText: "#FFFFFF",
         label: "#8A8594",
-        screen: "#4F46E5",
+        screen: "#e2711d",
       };
 }
 

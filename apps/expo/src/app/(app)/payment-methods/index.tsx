@@ -1,9 +1,10 @@
-import { Alert, Pressable, View } from "react-native";
+import { Pressable, View } from "react-native";
 import { Stack } from "expo-router";
 import { LegendList } from "@legendapp/list";
 
 import type { PaymentMethod } from "@acme/app";
 import { useDeletePaymentMethod, usePaymentMethods } from "@acme/app";
+import { appAlert } from "@acme/ui-native/alert";
 import { Button } from "@acme/ui-native/button";
 import { Text } from "@acme/ui-native/text";
 
@@ -22,11 +23,11 @@ export default function PaymentMethodsScreen() {
     // table) — actual checkout is Stripe-hosted (see ~/lib/stripe-checkout.ts
     // and booking/payment.tsx), which never exposes raw card data to this
     // app, so there's no client-side card form to attach to it here.
-    Alert.alert("Add card", "Card entry via Stripe goes here.");
+    appAlert("Add card", "Card entry via Stripe goes here.");
   }
 
   function onRemove(id: string) {
-    Alert.alert("Remove card", "Remove this payment method?", [
+    appAlert("Remove card", "Remove this payment method?", [
       { text: "Cancel", style: "cancel" },
       {
         text: "Remove",

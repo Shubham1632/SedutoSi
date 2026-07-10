@@ -12,6 +12,7 @@ import {
 } from "@react-navigation/native";
 
 import { SupabaseProvider, useSession } from "@acme/api";
+import { AlertHost } from "@acme/ui-native/alert";
 import { darkColors, lightColors } from "@acme/ui-native/theme-colors";
 
 import { supabase } from "~/lib/supabase";
@@ -63,6 +64,7 @@ export default function RootLayout() {
         <ThemeProvider value={isDark ? AppDarkTheme : AppLightTheme}>
           <AuthGate />
           <StatusBar style={isDark ? "light" : "dark"} />
+          <AlertHost />
         </ThemeProvider>
       </SupabaseProvider>
     </SafeAreaProvider>

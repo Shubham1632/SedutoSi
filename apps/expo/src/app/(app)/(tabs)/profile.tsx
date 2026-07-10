@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Alert, Pressable, ScrollView, View } from "react-native";
+import { Pressable, ScrollView, View } from "react-native";
 import { useRouter } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useQueryClient } from "@tanstack/react-query";
@@ -15,6 +15,7 @@ import {
   useUpdateProfile,
   zodFormResolver,
 } from "@acme/app";
+import { appAlert } from "@acme/ui-native/alert";
 import { Button } from "@acme/ui-native/button";
 import { Input } from "@acme/ui-native/input";
 import { Text } from "@acme/ui-native/text";
@@ -117,7 +118,7 @@ export default function Profile() {
       // sign-in doesn't briefly show the previous user's stale cache.
       queryClient.clear();
     } catch (e) {
-      Alert.alert("Sign out failed", msg(e));
+      appAlert("Sign out failed", msg(e));
     } finally {
       setIsSigningOut(false);
     }
@@ -140,12 +141,12 @@ export default function Profile() {
       await updateProfile.mutateAsync(values);
       setIsEditing(false);
     } catch (e) {
-      Alert.alert("Save failed", msg(e));
+      appAlert("Save failed", msg(e));
     }
   }
 
   function onDelete() {
-    Alert.alert(
+    appAlert(
       "Delete account",
       "This permanently deletes your account and all your data.",
       [
@@ -158,7 +159,7 @@ export default function Profile() {
               try {
                 await deleteAccount.mutateAsync();
               } catch (e) {
-                Alert.alert("Delete failed", msg(e));
+                appAlert("Delete failed", msg(e));
               }
             })(),
         },
@@ -167,7 +168,7 @@ export default function Profile() {
   }
 
   function onSignOutPress() {
-    Alert.alert("Sign out", "Are you sure you want to sign out?", [
+    appAlert("Sign out", "Are you sure you want to sign out?", [
       { text: "Cancel", style: "cancel" },
       {
         text: "Sign out",
@@ -275,18 +276,18 @@ export default function Profile() {
         <MenuRow
           label="Help & Support"
           onPress={() =>
-            Alert.alert("Help & Support", "Contact us at support@sedutosi.com")
+            appAlert("Help & Support", "Contact us at support@sedutosi.com")
           }
         />
         <Divider />
         <MenuRow
           label="Rate the App"
-          onPress={() => Alert.alert("Thanks!", "Coming soon.")}
+          onPress={() => appAlert("Thanks!", "Coming soon.")}
         />
         <Divider />
         <MenuRow
           label="Share the App"
-          onPress={() => Alert.alert("Share", "Coming soon.")}
+          onPress={() => appAlert("Share", "Coming soon.")}
         />
       </Section>
 
@@ -294,12 +295,12 @@ export default function Profile() {
       <Section title="Legal">
         <MenuRow
           label="Terms & Conditions"
-          onPress={() => Alert.alert("Terms & Conditions", "Coming soon.")}
+          onPress={() => appAlert("Terms & Conditions", "Coming soon.")}
         />
         <Divider />
         <MenuRow
           label="Privacy Policy"
-          onPress={() => Alert.alert("Privacy Policy", "Coming soon.")}
+          onPress={() => appAlert("Privacy Policy", "Coming soon.")}
         />
       </Section>
 
