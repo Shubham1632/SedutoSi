@@ -1,11 +1,14 @@
-// Creates a Stripe Checkout session for a screening + a set of seats.
+// Creates a Stripe Checkout session for either a movie screening + a set of
+// seats, or a paid live event + a ticket quantity.
 //
 // The client never sees the Stripe secret key or sets the price — the total
-// is computed here from `screenings.price`, so a tampered client can't pay
-// less than the real total. It also can't buy a seat someone else already
-// holds: the requested seats are checked against `get_booked_seats` (see
-// 20260710000002_booking_seats.sql) before the session is created. That
-// check is best-effort (two people can still race between here and payment
+// is always computed here from `screenings.price` / `events.price`, so a
+// tampered client can't pay less than the real total. It also can't
+// overbook: for screenings the requested seats are checked against
+// `get_booked_seats` (20260710000002_booking_seats.sql); for events the
+// requested quantity is checked against `get_event_tickets_sold` +
+// `events.capacity` (20260711000001_live_event_bookings.sql). Both checks
+// are best-effort (two people can still race between here and payment
 // completing) — the hard check is in stripe-confirm-payment, which refunds
 // if the race is actually lost. Card, Apple Pay, Google Pay and Revolut Pay
 // all show up automatically on Stripe's hosted Checkout page as long as
@@ -49,8 +52,23 @@ Deno.serve(async (req) => {
     if (userError || !user) return json({ error: "Not authenticated" }, 401);
 
     const body = await req.json();
-    const screeningId = String(body.screeningId ?? "");
     const redirectTo = String(body.redirectTo ?? "");
+    if (!redirectTo) return json({ error: "Missing redirectTo" }, 400);
+
+    const eventId = body.eventId ? String(body.eventId) : null;
+
+    if (eventId) {
+      return await createEventCheckout({
+        stripe,
+        supabase,
+        user,
+        eventId,
+        quantity: Number(body.quantity ?? 0),
+        redirectTo,
+      });
+    }
+
+    const screeningId = String(body.screeningId ?? "");
     const seats = Array.isArray(body.seats)
       ? [...new Set(body.seats.map((s: unknown) => String(s)))]
       : [];
@@ -58,7 +76,6 @@ Deno.serve(async (req) => {
     if (!screeningId || seats.length < 1) {
       return json({ error: "Invalid screening or seats" }, 400);
     }
-    if (!redirectTo) return json({ error: "Missing redirectTo" }, 400);
 
     const { data: screening, error: screeningError } = await supabase
       .from("screenings")
@@ -119,3 +136,92 @@ Deno.serve(async (req) => {
     return json({ error: "Could not start checkout" }, 500);
   }
 });
+
+async function createEventCheckout({
+  stripe,
+  supabase,
+  user,
+  eventId,
+  quantity,
+  redirectTo,
+}: {
+  stripe: Stripe;
+  // deno-lint-ignore no-explicit-any
+  supabase: any;
+  user: { id: string; email?: string };
+  eventId: string;
+  quantity: number;
+  redirectTo: string;
+}) {
+  if (!eventId || !Number.isInteger(quantity) || quantity < 1) {
+    return json({ error: "Invalid event or quantity" }, 400);
+  }
+
+  const { data: event, error: eventError } = await supabase
+    .from("events")
+    .select("id, title, price, capacity")
+    .eq("id", eventId)
+    .single();
+
+  if (eventError || !event) {
+    return json({ error: "Event not found" }, 404);
+  }
+
+  const price = event.price == null ? 0 : Number(event.price);
+  if (price <= 0) {
+    return json(
+      { error: "This event is free — book it without Stripe" },
+      400,
+    );
+  }
+
+  if (event.capacity != null) {
+    const { data: sold, error: soldError } = await supabase.rpc(
+      "get_event_tickets_sold",
+      { p_event_id: eventId },
+    );
+    if (soldError) throw soldError;
+    const remaining = event.capacity - (sold ?? 0);
+    if (quantity > remaining) {
+      return json(
+        {
+          error:
+            remaining > 0
+              ? `Only ${remaining} ticket${remaining === 1 ? "" : "s"} left for this event`
+              : "This event is sold out",
+        },
+        409,
+      );
+    }
+  }
+
+  const unitAmount = Math.round(price * 100);
+
+  const session = await stripe.checkout.sessions.create({
+    mode: "payment",
+    customer_email: user.email,
+    line_items: [
+      {
+        price_data: {
+          currency: "eur",
+          unit_amount: unitAmount,
+          product_data: { name: event.title },
+        },
+        quantity,
+      },
+    ],
+    success_url: `${redirectTo}?status=success&session_id={CHECKOUT_SESSION_ID}`,
+    cancel_url: `${redirectTo}?status=cancel`,
+    metadata: {
+      user_id: user.id,
+      event_id: eventId,
+      quantity: String(quantity),
+    },
+  });
+
+  if (!session.url) {
+    return json({ error: "Stripe did not return a checkout URL" }, 502);
+  }
+
+  return json({ url: session.url });
+}

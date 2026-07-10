@@ -35,26 +35,23 @@ async function extractErrorMessage(
 }
 
 /**
- * Starts a Stripe Checkout session for a screening (price is computed
- * server-side from `screenings.price`) and returns the hosted checkout URL to
- * open in the system browser.
+ * Starts a Stripe Checkout session for either a screening (seats) or a paid
+ * event (quantity) — exactly one of the two must be provided. Price is always
+ * computed server-side (`screenings.price` / `events.price`), and the hosted
+ * checkout URL is returned to open in the system browser.
  */
 export function useCreateStripeCheckoutSession() {
   const supabase = useSupabase();
 
   return useMutation({
-    mutationFn: async ({
-      screeningId,
-      seats,
-      redirectTo,
-    }: {
-      screeningId: string;
-      seats: string[];
-      redirectTo: string;
-    }) => {
+    mutationFn: async (
+      params:
+        | { screeningId: string; seats: string[]; redirectTo: string }
+        | { eventId: string; quantity: number; redirectTo: string },
+    ) => {
       const result = await supabase.functions.invoke<{ url?: string }>(
         "stripe-create-checkout-session",
-        { body: { screeningId, seats, redirectTo } },
+        { body: params },
       );
       if (result.error) {
         throw new Error(
@@ -95,9 +92,58 @@ export function useConfirmStripePayment() {
     },
     onSuccess: (booking) => {
       void queryClient.invalidateQueries({ queryKey: ["bookings"] });
-      void queryClient.invalidateQueries({
-        queryKey: ["screenings", booking.screening_id, "booked-seats"],
-      });
+      if (booking.screening_id) {
+        void queryClient.invalidateQueries({
+          queryKey: ["screenings", booking.screening_id, "booked-seats"],
+        });
+      }
+      if (booking.event_id) {
+        void queryClient.invalidateQueries({
+          queryKey: ["events", booking.event_id, "tickets-sold"],
+        });
+      }
+    },
+  });
+}
+
+/**
+ * Books tickets for a free event (price is null/0) directly, skipping Stripe
+ * — Checkout can't charge €0. The `book-free-event` edge function still does
+ * the server-side capacity check and service-role insert, so a free booking
+ * is written the same verified way a paid one is (see the edge function for
+ * why bookings are never inserted straight from the client).
+ */
+export function useBookFreeEvent() {
+  const supabase = useSupabase();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({
+      eventId,
+      quantity,
+    }: {
+      eventId: string;
+      quantity: number;
+    }) => {
+      const result = await supabase.functions.invoke<{ booking?: Booking }>(
+        "book-free-event",
+        { body: { eventId, quantity } },
+      );
+      if (result.error) {
+        throw new Error(
+          await extractErrorMessage(result.error, "Could not book event."),
+        );
+      }
+      if (!result.data?.booking) throw new Error("Could not book event.");
+      return result.data.booking;
+    },
+    onSuccess: (booking) => {
+      void queryClient.invalidateQueries({ queryKey: ["bookings"] });
+      if (booking.event_id) {
+        void queryClient.invalidateQueries({
+          queryKey: ["events", booking.event_id, "tickets-sold"],
+        });
+      }
     },
   });
 }

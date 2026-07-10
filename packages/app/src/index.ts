@@ -5,6 +5,7 @@
  */
 
 export * from "./validators/auth";
+export * from "./validators/event";
 export * from "./auth";
 export * from "./auth-settings";
 export { zodFormResolver } from "./zod-resolver";
@@ -16,6 +17,7 @@ export { useWishlist, useToggleWishlist } from "./hooks/use-wishlist";
 export type { Wishlist } from "./hooks/use-wishlist";
 
 export * from "./hooks/use-events";
+export * from "./hooks/use-event-image-upload";
 export * from "./hooks/use-payment-methods";
 // Movie booking hooks
 export * from "./hooks/use-movies";

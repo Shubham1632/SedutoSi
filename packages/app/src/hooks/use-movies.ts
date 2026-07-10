@@ -4,6 +4,8 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 import { useSession, useSupabase } from "@acme/api";
 
+import type { LiveEvent } from "./use-events";
+
 export interface Movie {
   id: string;
   title: string;
@@ -46,8 +48,11 @@ export interface Screening {
 export interface Booking {
   id: string;
   user_id: string;
-  screening_id: string;
+  screening_id: string | null;
+  event_id: string | null;
+  /** Seat labels for a movie booking; always empty for a general-admission event booking. */
   seats: string[];
+  /** Seat count for movies, ticket quantity for events. */
   seats_count: number;
   total_price: number;
   status: "confirmed" | "cancelled";
@@ -55,7 +60,11 @@ export interface Booking {
   stripe_checkout_session_id?: string | null;
   stripe_payment_intent_id?: string | null;
   screening?: Screening;
+  event?: LiveEvent;
 }
+
+const BOOKING_SELECT =
+  "*, screening:screenings(*, movie:movies(*), screen:screens(*, cinema:cinemas(*))), event:events(*)";
 
 export function useMovies() {
   const supabase = useSupabase();
@@ -282,9 +291,7 @@ export function useMyBookings() {
       if (!user) throw new Error("Not authenticated");
       const { data, error } = await supabase
         .from("bookings")
-        .select(
-          "*, screening:screenings(*, movie:movies(*), screen:screens(*, cinema:cinemas(*)))",
-        )
+        .select(BOOKING_SELECT)
         .eq("user_id", user.id)
         .order("created_at", { ascending: false });
       if (error) throw error;
@@ -306,9 +313,7 @@ export function useBooking(id: string) {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("bookings")
-        .select(
-          "*, screening:screenings(*, movie:movies(*), screen:screens(*, cinema:cinemas(*)))",
-        )
+        .select(BOOKING_SELECT)
         .eq("id", id)
         .single();
       if (error) throw error;
