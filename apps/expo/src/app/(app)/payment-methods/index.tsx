@@ -18,10 +18,10 @@ export default function PaymentMethodsScreen() {
   const deleteMethod = useDeletePaymentMethod();
 
   function onAddCard() {
-    // TODO: wire up @stripe/stripe-react-native PaymentSheet here.
-    // Stripe handles card capture + tokenization; on success you get a
-    // paymentMethodId back, which you send to your backend to attach
-    // to the user. Raw card data never touches this app or your server.
+    // This screen is a separate, unwired mock (its own `payment_methods`
+    // table) — actual checkout is Stripe-hosted (see ~/lib/stripe-checkout.ts
+    // and booking/payment.tsx), which never exposes raw card data to this
+    // app, so there's no client-side card form to attach to it here.
     Alert.alert("Add card", "Card entry via Stripe goes here.");
   }
 

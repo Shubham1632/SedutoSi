@@ -19,3 +19,4 @@ export * from "./hooks/use-events";
 export * from "./hooks/use-payment-methods";
 // Movie booking hooks
 export * from "./hooks/use-movies";
+export * from "./hooks/use-stripe-checkout";

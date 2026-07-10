@@ -55,6 +55,7 @@ dist/
 supabase/.branches
 supabase/.temp
 supabase/.env
+supabase/functions/.env
 
 # testing
 test-results/

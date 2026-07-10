@@ -1,7 +1,7 @@
-import { Alert, ScrollView, Text, View } from "react-native";
+import { ScrollView, Text, View } from "react-native";
 import { Stack, useLocalSearchParams, useRouter } from "expo-router";
 
-import { useCreateBooking, useScreening } from "@acme/app";
+import { useScreening } from "@acme/app";
 import { Button } from "@acme/ui-native/button";
 
 import { screeningDisplay, sortSeats } from "~/lib/booking";
@@ -13,7 +13,6 @@ export default function BookingSummaryScreen() {
     seats?: string;
   }>();
   const { data: screening, isLoading } = useScreening(screeningId);
-  const createBooking = useCreateBooking();
 
   const selected = sortSeats((seats ?? "").split(",").filter(Boolean));
 
@@ -30,29 +29,11 @@ export default function BookingSummaryScreen() {
   const pricePerSeat = Number(screening.price);
   const total = selected.length * pricePerSeat;
 
-  async function onPay() {
-    try {
-      await createBooking.mutateAsync({
-        screeningId,
-        seatsCount: selected.length,
-        totalPrice: total,
-      });
-      Alert.alert(
-        "Booking Confirmed!",
-        `You've booked ${selected.length} seat${
-          selected.length > 1 ? "s" : ""
-        } (${selected.join(", ")}).`,
-        [
-          { text: "My Bookings", onPress: () => router.replace("/bookings") },
-          { text: "Home", onPress: () => router.replace("/") },
-        ],
-      );
-    } catch (e) {
-      Alert.alert(
-        "Booking failed",
-        e instanceof Error ? e.message : "Please try again.",
-      );
-    }
+  function onContinueToPayment() {
+    router.push({
+      pathname: "/booking/payment",
+      params: { screeningId, seats: selected.join(",") },
+    });
   }
 
   return (
@@ -113,10 +94,9 @@ export default function BookingSummaryScreen() {
       {/* Payment CTA */}
       <View className="border-border bg-card border-t px-5 pt-3 pb-6">
         <Button
-          title={`Pay €${total.toFixed(2)}`}
-          loading={createBooking.isPending}
+          title={`Continue to Payment · €${total.toFixed(2)}`}
           disabled={selected.length === 0}
-          onPress={() => void onPay()}
+          onPress={onContinueToPayment}
         />
       </View>
     </View>

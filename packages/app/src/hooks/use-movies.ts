@@ -1,6 +1,6 @@
 "use client";
 
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 import { useSession, useSupabase } from "@acme/api";
 
@@ -47,10 +47,13 @@ export interface Booking {
   id: string;
   user_id: string;
   screening_id: string;
+  seats: string[];
   seats_count: number;
   total_price: number;
   status: "confirmed" | "cancelled";
   created_at: string;
+  stripe_checkout_session_id?: string | null;
+  stripe_payment_intent_id?: string | null;
   screening?: Screening;
 }
 
@@ -246,6 +249,29 @@ export function useScreening(id: string) {
   });
 }
 
+/**
+ * Seats already sold for a screening, across every user — backed by the
+ * `get_booked_seats` security-definer function so this works without
+ * widening bookings' "select own" RLS policy. Polls while mounted (i.e.
+ * while the seat map is open) so a seat someone else just bought shows as
+ * taken without a manual refresh.
+ */
+export function useBookedSeats(screeningId: string) {
+  const supabase = useSupabase();
+  return useQuery({
+    queryKey: ["screenings", screeningId, "booked-seats"],
+    enabled: !!screeningId,
+    refetchInterval: 10_000,
+    queryFn: async () => {
+      const { data, error } = await supabase.rpc("get_booked_seats", {
+        p_screening_id: screeningId,
+      });
+      if (error) throw error;
+      return new Set(data);
+    },
+  });
+}
+
 export function useMyBookings() {
   const supabase = useSupabase();
   const { user } = useSession();
@@ -267,38 +293,26 @@ export function useMyBookings() {
   });
 }
 
-export function useCreateBooking() {
+/**
+ * A single booking (with its screening joined in), e.g. for the payment
+ * success screen. Bookings are only ever created by the `stripe-confirm-payment`
+ * edge function after a verified Stripe payment — see `use-stripe-checkout.ts`.
+ */
+export function useBooking(id: string) {
   const supabase = useSupabase();
-  const queryClient = useQueryClient();
-  const { user } = useSession();
-
-  return useMutation({
-    mutationFn: async ({
-      screeningId,
-      seatsCount,
-      totalPrice,
-    }: {
-      screeningId: string;
-      seatsCount: number;
-      totalPrice: number;
-    }) => {
-      if (!user) throw new Error("Not authenticated");
+  return useQuery({
+    queryKey: ["bookings", "detail", id],
+    enabled: !!id,
+    queryFn: async () => {
       const { data, error } = await supabase
         .from("bookings")
-        .insert({
-          user_id: user.id,
-          screening_id: screeningId,
-          seats_count: seatsCount,
-          total_price: totalPrice,
-          status: "confirmed",
-        })
-        .select()
+        .select(
+          "*, screening:screenings(*, movie:movies(*), screen:screens(*, cinema:cinemas(*)))",
+        )
+        .eq("id", id)
         .single();
       if (error) throw error;
       return data as Booking;
-    },
-    onSuccess: () => {
-      void queryClient.invalidateQueries({ queryKey: ["bookings"] });
     },
   });
 }

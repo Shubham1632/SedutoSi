@@ -1,14 +1,14 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Alert, Text, View } from "react-native";
 import { Stack, useLocalSearchParams, useRouter } from "expo-router";
 
-import { useScreening } from "@acme/app";
+import { useBookedSeats, useScreening } from "@acme/app";
 import { Button } from "@acme/ui-native/button";
 
 import { SeatMap } from "~/components/seat-map";
 import {
+  cosmeticOccupiedSeats,
   MAX_SEATS,
-  occupiedSeats,
   screeningDisplay,
   sortSeats,
 } from "~/lib/booking";
@@ -17,9 +17,43 @@ export default function SeatSelectionScreen() {
   const { screeningId } = useLocalSearchParams<{ screeningId: string }>();
   const router = useRouter();
   const { data: screening, isLoading } = useScreening(screeningId);
-  const [selected, setSelected] = useState<string[]>([]);
+  const { data: bookedSeats } = useBookedSeats(screeningId);
+  const [rawSelected, setRawSelected] = useState<string[]>([]);
 
-  const occupied = useMemo(() => occupiedSeats(screeningId), [screeningId]);
+  const cosmetic = useMemo(
+    () => cosmeticOccupiedSeats(screeningId),
+    [screeningId],
+  );
+  const occupied = useMemo(
+    () => new Set([...cosmetic, ...(bookedSeats ?? [])]),
+    [cosmetic, bookedSeats],
+  );
+  // Someone else may have booked a seat the user picked while this screen
+  // stayed open (booked-seats polls every 10s) — never show/submit it as
+  // selected once that happens, even though it's still in `rawSelected`.
+  const selected = useMemo(
+    () => rawSelected.filter((id) => !occupied.has(id)),
+    [rawSelected, occupied],
+  );
+
+  const previouslyTakenRef = useRef<Set<string>>(new Set());
+  useEffect(() => {
+    if (!bookedSeats) return;
+    const newlyTaken = rawSelected.filter(
+      (id) => bookedSeats.has(id) && !previouslyTakenRef.current.has(id),
+    );
+    previouslyTakenRef.current = bookedSeats;
+    if (newlyTaken.length === 0) return;
+    Alert.alert(
+      "Seat no longer available",
+      `Seat${newlyTaken.length > 1 ? "s" : ""} ${newlyTaken.join(", ")} ${
+        newlyTaken.length > 1 ? "were" : "was"
+      } just booked by someone else and removed from your selection.`,
+    );
+    // rawSelected intentionally omitted: this only needs to run when the
+    // booked-seats set changes, not on every keystroke of selection.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [bookedSeats]);
 
   if (isLoading || !screening) {
     return (
@@ -37,9 +71,9 @@ export default function SeatSelectionScreen() {
 
   function toggleSeat(id: string) {
     if (occupied.has(id)) return;
-    setSelected((prev) => {
+    setRawSelected((prev) => {
       if (prev.includes(id)) return prev.filter((s) => s !== id);
-      if (prev.length >= maxSeats) {
+      if (selected.length >= maxSeats) {
         Alert.alert(
           "Seat limit reached",
           `You can select up to ${maxSeats} seat${maxSeats > 1 ? "s" : ""}.`,
@@ -51,9 +85,16 @@ export default function SeatSelectionScreen() {
   }
 
   function onContinue() {
+    const seats = sortSeats(selected);
+    // This screen stays mounted (React Navigation keeps prior stack screens
+    // alive) and keeps polling booked-seats in the background while the user
+    // is on summary/payment. Clear the selection now so that when their own
+    // payment succeeds a moment later, the "did someone else take my seat"
+    // watcher above has nothing left to (wrongly) flag as taken.
+    setRawSelected([]);
     router.push({
       pathname: "/booking/summary",
-      params: { screeningId, seats: sortSeats(selected).join(",") },
+      params: { screeningId, seats: seats.join(",") },
     });
   }
 
