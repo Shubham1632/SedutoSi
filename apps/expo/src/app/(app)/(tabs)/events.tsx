@@ -7,8 +7,8 @@ import {
   TextInput,
   View,
 } from "react-native";
-import { useRouter } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { useRouter } from "expo-router";
 import { LegendList } from "@legendapp/list";
 
 import type { LiveEvent } from "@acme/app";
@@ -185,7 +185,7 @@ export default function EventsScreen() {
                   params: { eventId: item.id },
                 })
               }
-              className="bg-card border-gray-300 dark:border-gray-700 shadow-sm overflow-hidden rounded-2xl border active:opacity-80"
+              className="bg-card overflow-hidden rounded-2xl border border-gray-300 shadow-sm active:opacity-80 dark:border-gray-700"
             >
               <View>
                 {item.image_url ? (

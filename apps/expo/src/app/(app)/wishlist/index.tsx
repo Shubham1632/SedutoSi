@@ -13,19 +13,15 @@ export default function WishlistScreen() {
   const toggleWishlist = useToggleWishlist();
 
   function onRemove(movieId: string) {
-    appAlert(
-      "Remove from wishlist",
-      "Remove this movie from your wishlist?",
-      [
-        { text: "Cancel", style: "cancel" },
-        {
-          text: "Remove",
-          style: "destructive",
-          onPress: () =>
-            void toggleWishlist.mutateAsync({ movieId, wishlisted: false }),
-        },
-      ],
-    );
+    appAlert("Remove from wishlist", "Remove this movie from your wishlist?", [
+      { text: "Cancel", style: "cancel" },
+      {
+        text: "Remove",
+        style: "destructive",
+        onPress: () =>
+          void toggleWishlist.mutateAsync({ movieId, wishlisted: false }),
+      },
+    ]);
   }
 
   return (

@@ -145,7 +145,7 @@ export default function ScreeningsScreen() {
             return (
               <Pressable
                 onPress={() => router.push(`/booking/${item.id}`)}
-                className="bg-card border-gray-300 dark:border-gray-700 shadow-sm gap-3 rounded-2xl border p-4 active:opacity-80"
+                className="bg-card gap-3 rounded-2xl border border-gray-300 p-4 shadow-sm active:opacity-80 dark:border-gray-700"
               >
                 <View className="flex-row items-center gap-3">
                   <View
@@ -178,7 +178,7 @@ export default function ScreeningsScreen() {
                     ) : null}
                   </View>
                 </View>
-                <View className="border-gray-300 dark:border-gray-700 flex-row items-center justify-between border-t pt-3">
+                <View className="flex-row items-center justify-between border-t border-gray-300 pt-3 dark:border-gray-700">
                   <Text className="text-foreground text-lg font-extrabold">
                     €{Number(item.price).toFixed(2)}
                   </Text>

@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react";
 import { FlatList, Pressable, Text, TextInput, View } from "react-native";
-import { useRouter } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { useRouter } from "expo-router";
 import { LegendList } from "@legendapp/list";
 
 import type { Cinema } from "@acme/app";
@@ -149,7 +149,7 @@ export default function CinemasScreen() {
                   params: { cinemaId: item.id },
                 })
               }
-              className="bg-card border-gray-300 dark:border-gray-700 shadow-sm overflow-hidden rounded-2xl border active:opacity-80"
+              className="bg-card overflow-hidden rounded-2xl border border-gray-300 shadow-sm active:opacity-80 dark:border-gray-700"
             >
               <View className="flex-row items-center gap-3 p-4">
                 <View className="bg-primary/15 h-12 w-12 items-center justify-center rounded-full">
@@ -171,7 +171,7 @@ export default function CinemasScreen() {
                 </View>
                 <Text className="text-muted-foreground text-lg">›</Text>
               </View>
-              <View className="border-gray-300 dark:border-gray-700 flex-row items-center justify-between border-t px-4 py-2.5">
+              <View className="flex-row items-center justify-between border-t border-gray-300 px-4 py-2.5 dark:border-gray-700">
                 {item.neighborhood ? (
                   <View className="bg-primary/10 rounded-full px-2.5 py-1">
                     <Text className="text-primary text-xs font-semibold">
