@@ -159,7 +159,7 @@ export default function EventsScreen() {
                   params: { eventId: item.id },
                 })
               }
-              className="bg-card overflow-hidden rounded-xl"
+              className="bg-background border-border overflow-hidden rounded-xl border"
             >
               <View className="gap-2 p-4">
                 <View className="flex-row items-center justify-between">

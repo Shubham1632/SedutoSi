@@ -23,7 +23,7 @@ function seatColors(dark: boolean) {
     ? {
         available: "#2C2A35",
         availableBorder: "#413E4D",
-        occupied: "#3E3B47",
+        occupied: "#6B3A42",
         selected: "#6366F1",
         selectedText: "#FFFFFF",
         label: "#7C7A86",
@@ -32,7 +32,7 @@ function seatColors(dark: boolean) {
     : {
         available: "#EEEBF4",
         availableBorder: "#DAD4E4",
-        occupied: "#C6C1D1",
+        occupied: "#A79FB5",
         selected: "#4F46E5",
         selectedText: "#FFFFFF",
         label: "#8A8594",
@@ -213,7 +213,7 @@ function Seat({
         borderColor: colors.availableBorder,
         alignItems: "center",
         justifyContent: "center",
-        opacity: status === "occupied" ? 0.55 : 1,
+        opacity: status === "occupied" ? 0.7 : 1,
       }}
     >
       {status === "selected" && (

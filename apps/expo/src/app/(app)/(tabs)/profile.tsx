@@ -87,7 +87,7 @@ function Section({
           {title}
         </Text>
       ) : null}
-      <View className="bg-card border-border overflow-hidden rounded-2xl border">
+      <View className="bg-background border-border overflow-hidden rounded-2xl border">
         {children}
       </View>
     </View>
@@ -192,7 +192,7 @@ export default function Profile() {
       <Text className="text-foreground text-2xl font-bold">Profile</Text>
 
       {/* Header card */}
-      <View className="bg-card border-border gap-5 rounded-2xl border p-6">
+      <View className="bg-background border-border gap-5 rounded-2xl border p-6">
         <View className="flex-row items-center gap-4">
           <View className="bg-primary h-16 w-16 items-center justify-center rounded-full">
             <Text className="text-primary-foreground text-xl font-bold">

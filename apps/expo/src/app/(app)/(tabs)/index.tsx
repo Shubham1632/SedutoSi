@@ -1,5 +1,12 @@
 import { useMemo, useState } from "react";
-import { Image, Pressable, Text, TextInput, View } from "react-native";
+import {
+  FlatList,
+  Image,
+  Pressable,
+  Text,
+  TextInput,
+  View,
+} from "react-native";
 import { useRouter } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { LegendList } from "@legendapp/list";
@@ -84,7 +91,7 @@ export default function MoviesScreen() {
       <View
         style={{ paddingHorizontal: 16, paddingTop: 12, paddingBottom: 12 }}
       >
-        <LegendList
+        <FlatList
           data={filters}
           horizontal
           showsHorizontalScrollIndicator={false}
