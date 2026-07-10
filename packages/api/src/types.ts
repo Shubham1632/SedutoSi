@@ -44,8 +44,11 @@ export type Database = {
           created_at: string;
           id: string;
           screening_id: string;
+          seats: string[];
           seats_count: number;
           status: string;
+          stripe_checkout_session_id: string | null;
+          stripe_payment_intent_id: string | null;
           total_price: number;
           user_id: string;
         };
@@ -53,8 +56,11 @@ export type Database = {
           created_at?: string;
           id?: string;
           screening_id: string;
+          seats?: string[];
           seats_count?: number;
           status?: string;
+          stripe_checkout_session_id?: string | null;
+          stripe_payment_intent_id?: string | null;
           total_price: number;
           user_id: string;
         };
@@ -62,8 +68,11 @@ export type Database = {
           created_at?: string;
           id?: string;
           screening_id?: string;
+          seats?: string[];
           seats_count?: number;
           status?: string;
+          stripe_checkout_session_id?: string | null;
+          stripe_payment_intent_id?: string | null;
           total_price?: number;
           user_id?: string;
         };
@@ -365,7 +374,7 @@ export type Database = {
       [_ in never]: never;
     };
     Functions: {
-      [_ in never]: never;
+      get_booked_seats: { Args: { p_screening_id: string }; Returns: string[] };
     };
     Enums: {
       [_ in never]: never;
