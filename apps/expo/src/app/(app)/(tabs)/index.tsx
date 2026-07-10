@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 import { Image, Pressable, Text, TextInput, View } from "react-native";
-import { Stack, useRouter } from "expo-router";
+import { useRouter } from "expo-router";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { LegendList } from "@legendapp/list";
 
 import type { Movie } from "@acme/app";
@@ -15,13 +16,16 @@ function SearchButton({
 }) {
   return (
     <Pressable onPress={onPress} hitSlop={12} style={{ paddingHorizontal: 8 }}>
-      <Text style={{ fontSize: 20, color: "#fff" }}>{active ? "✕" : "🔍"}</Text>
+      <Text className="text-foreground" style={{ fontSize: 20 }}>
+        {active ? "✕" : "🔍"}
+      </Text>
     </Pressable>
   );
 }
 
 export default function MoviesScreen() {
   const router = useRouter();
+  const insets = useSafeAreaInsets();
   const { data: movies, isLoading } = useMovies();
   const [searchOpen, setSearchOpen] = useState(false);
   const [query, setQuery] = useState("");
@@ -46,26 +50,23 @@ export default function MoviesScreen() {
   }, [movies, activeFilter, query]);
 
   return (
-    <View className="bg-background flex-1">
-      <Stack.Screen
-        options={{
-          headerRight: () => (
-            <SearchButton
-              active={searchOpen}
-              onPress={() => {
-                setSearchOpen((open) => !open);
-                setQuery("");
-              }}
-            />
-          ),
-        }}
-      />
-
-      <View className="gap-1 px-4 pt-4">
-        <Text className="text-foreground text-2xl font-bold">Now Showing</Text>
-        <Text className="text-muted-foreground text-sm">
-          Milan {movies?.length ? `· ${movies.length} Movies` : ""}
-        </Text>
+    <View className="bg-background flex-1" style={{ paddingTop: insets.top }}>
+      <View className="flex-row items-start justify-between px-4 pt-4">
+        <View className="gap-1">
+          <Text className="text-foreground text-2xl font-bold">
+            Now Showing
+          </Text>
+          <Text className="text-muted-foreground text-sm">
+            Milan {movies?.length ? `· ${movies.length} Movies` : ""}
+          </Text>
+        </View>
+        <SearchButton
+          active={searchOpen}
+          onPress={() => {
+            setSearchOpen((open) => !open);
+            setQuery("");
+          }}
+        />
       </View>
 
       {searchOpen && (

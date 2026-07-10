@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Alert, Pressable, ScrollView, View } from "react-native";
-import { Stack, useRouter } from "expo-router";
+import { useRouter } from "expo-router";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useQueryClient } from "@tanstack/react-query";
 import { Controller, useForm } from "react-hook-form";
 
@@ -51,9 +52,9 @@ function MenuRow({
   return (
     <Pressable
       onPress={onPress}
-      className="flex-row items-center gap-3 px-4 py-3.5 active:opacity-70"
+      className="flex-row items-center gap-3 px-5 py-4 active:opacity-70"
     >
-      <View className="flex-1">
+      <View className="flex-1 gap-0.5">
         <Text
           className={
             destructive
@@ -80,9 +81,9 @@ function Section({
   children: React.ReactNode;
 }) {
   return (
-    <View className="gap-2">
+    <View className="gap-2.5">
       {title ? (
-        <Text className="text-muted-foreground px-1 text-xs font-semibold tracking-wide uppercase">
+        <Text className="text-muted-foreground px-1.5 text-xs font-semibold tracking-wide uppercase">
           {title}
         </Text>
       ) : null}
@@ -94,10 +95,11 @@ function Section({
 }
 
 function Divider() {
-  return <View className="bg-border ml-4 h-px" />;
+  return <View className="bg-border ml-5 h-px" />;
 }
 
 export default function Profile() {
+  const insets = useSafeAreaInsets();
   const { user } = useSession();
   const profile = useProfile();
   const updateProfile = useUpdateProfile();
@@ -180,19 +182,24 @@ export default function Profile() {
   return (
     <ScrollView
       className="bg-background flex-1"
-      contentContainerClassName="gap-6 p-4 pb-10"
+      contentContainerStyle={{
+        paddingTop: insets.top + 20,
+        paddingHorizontal: 20,
+        paddingBottom: 56,
+        rowGap: 28,
+      }}
     >
-      <Stack.Screen options={{ title: "Profile" }} />
+      <Text className="text-foreground text-2xl font-bold">Profile</Text>
 
       {/* Header card */}
-      <View className="bg-card border-border gap-4 rounded-2xl border p-5">
+      <View className="bg-card border-border gap-5 rounded-2xl border p-6">
         <View className="flex-row items-center gap-4">
           <View className="bg-primary h-16 w-16 items-center justify-center rounded-full">
             <Text className="text-primary-foreground text-xl font-bold">
               {initials(displayName, user?.email)}
             </Text>
           </View>
-          <View className="flex-1 gap-0.5">
+          <View className="flex-1 gap-1">
             <Text className="text-foreground text-lg font-bold">
               {displayName ?? "Add your name"}
             </Text>
@@ -209,8 +216,8 @@ export default function Profile() {
         </View>
 
         {isEditing ? (
-          <View className="border-border gap-3 border-t pt-4">
-            <View className="gap-1">
+          <View className="border-border gap-3 border-t pt-5">
+            <View className="gap-1.5">
               <Text className="text-sm font-medium">Display name</Text>
               <Controller
                 control={control}
@@ -306,7 +313,7 @@ export default function Profile() {
         <MenuRow label="Delete Account" destructive onPress={onDelete} />
       </Section>
 
-      <Text className="text-muted-foreground text-center text-xs">
+      <Text className="text-muted-foreground mt-1 text-center text-xs">
         SedutoSi v1.0.0
       </Text>
     </ScrollView>

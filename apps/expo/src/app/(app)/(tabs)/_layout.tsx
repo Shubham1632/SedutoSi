@@ -1,9 +1,5 @@
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
-/* eslint-disable @typescript-eslint/no-unsafe-call */
-import { Image, Text } from "react-native";
+import { Text } from "react-native";
 import { Tabs } from "expo-router";
-import { logo } from "@/assets/logo.png";
 import { useTheme } from "@react-navigation/native";
 
 function TabIcon({ icon, focused }: { icon: string; focused: boolean }) {
@@ -18,16 +14,8 @@ export default function TabsLayout() {
   return (
     <Tabs
       screenOptions={{
-        headerStyle: { backgroundColor: colors.card },
-        headerTintColor: colors.text,
-        headerTitleStyle: { fontWeight: "700" },
-        headerTitle: () => (
-          <Image
-            source={logo}
-            style={{ height: 28, width: 120, resizeMode: "contain" }}
-            accessibilityLabel="App logo"
-          />
-        ),
+        headerShown: false,
+
         tabBarActiveTintColor: colors.primary,
         tabBarInactiveTintColor: "#9ca3af",
         tabBarStyle: { backgroundColor: colors.card },

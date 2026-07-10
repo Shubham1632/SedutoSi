@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 import { FlatList, Pressable, Text, TextInput, View } from "react-native";
-import { Stack, useRouter } from "expo-router";
+import { useRouter } from "expo-router";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { LegendList } from "@legendapp/list";
 
 import type { LiveEvent } from "@acme/app";
@@ -15,7 +16,9 @@ function SearchButton({
 }) {
   return (
     <Pressable onPress={onPress} hitSlop={12} style={{ paddingHorizontal: 8 }}>
-      <Text style={{ fontSize: 20, color: "#fff" }}>{active ? "✕" : "🔍"}</Text>
+      <Text className="text-foreground" style={{ fontSize: 20 }}>
+        {active ? "✕" : "🔍"}
+      </Text>
     </Pressable>
   );
 }
@@ -36,6 +39,7 @@ function formatEventDate(startsAt: string) {
 
 export default function EventsScreen() {
   const router = useRouter();
+  const insets = useSafeAreaInsets();
   const { data: events, isLoading } = useEvents();
   const [searchOpen, setSearchOpen] = useState(false);
   const [query, setQuery] = useState("");
@@ -65,27 +69,23 @@ export default function EventsScreen() {
   }, [events, activeFilter, query]);
 
   return (
-    <View className="bg-background flex-1">
-      <Stack.Screen
-        options={{
-          title: "Live Events",
-          headerRight: () => (
-            <SearchButton
-              active={searchOpen}
-              onPress={() => {
-                setSearchOpen((open) => !open);
-                setQuery("");
-              }}
-            />
-          ),
-        }}
-      />
-
-      <View className="gap-1 px-4 pt-4">
-        <Text className="text-foreground text-2xl font-bold">Live Events</Text>
-        <Text className="text-muted-foreground text-sm">
-          {`Milan ${events?.length ? `· ${events.length} upcoming` : ""}`}
-        </Text>
+    <View className="bg-background flex-1" style={{ paddingTop: insets.top }}>
+      <View className="flex-row items-start justify-between px-4 pt-4">
+        <View className="gap-1">
+          <Text className="text-foreground text-2xl font-bold">
+            Live Events
+          </Text>
+          <Text className="text-muted-foreground text-sm">
+            {`Milan ${events?.length ? `· ${events.length} upcoming` : ""}`}
+          </Text>
+        </View>
+        <SearchButton
+          active={searchOpen}
+          onPress={() => {
+            setSearchOpen((open) => !open);
+            setQuery("");
+          }}
+        />
       </View>
 
       {searchOpen && (

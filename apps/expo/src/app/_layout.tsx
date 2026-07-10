@@ -4,6 +4,7 @@ import { useEffect } from "react";
 import { useColorScheme } from "react-native";
 import { Slot, useRouter, useSegments } from "expo-router";
 import { StatusBar } from "expo-status-bar";
+import { SafeAreaProvider } from "react-native-safe-area-context";
 import {
   DarkTheme,
   DefaultTheme,
@@ -57,11 +58,13 @@ export default function RootLayout() {
   const isDark = colorScheme === "dark";
 
   return (
-    <SupabaseProvider client={supabase}>
-      <ThemeProvider value={isDark ? AppDarkTheme : AppLightTheme}>
-        <AuthGate />
-        <StatusBar style={isDark ? "light" : "dark"} />
-      </ThemeProvider>
-    </SupabaseProvider>
+    <SafeAreaProvider>
+      <SupabaseProvider client={supabase}>
+        <ThemeProvider value={isDark ? AppDarkTheme : AppLightTheme}>
+          <AuthGate />
+          <StatusBar style={isDark ? "light" : "dark"} />
+        </ThemeProvider>
+      </SupabaseProvider>
+    </SafeAreaProvider>
   );
 }
