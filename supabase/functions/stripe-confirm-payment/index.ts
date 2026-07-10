@@ -7,6 +7,12 @@
 // CLAUDE.md's golden rule #2): RLS can't tell "verified by this function"
 // apart from "inserted by the app", so the INSERT policy was removed and this
 // is the one place allowed to bypass it.
+//
+// stripe-create-checkout-session already checked the seats weren't taken
+// before payment, but two people can still race between then and here (both
+// pay for the same seat within the same few seconds). This is the hard
+// check: if someone else's booking landed first, the loser's payment is
+// refunded instead of silently double-selling the seat.
 import { createClient } from "jsr:@supabase/supabase-js@2";
 import Stripe from "npm:stripe@^18.0.0";
 
@@ -75,19 +81,42 @@ Deno.serve(async (req) => {
     }
 
     const screeningId = session.metadata?.screening_id;
-    if (!screeningId) return json({ error: "Missing screening on session" }, 500);
+    const seats = (session.metadata?.seats ?? "").split(",").filter(Boolean);
+    if (!screeningId || seats.length < 1) {
+      return json({ error: "Missing screening or seats on session" }, 500);
+    }
 
-    const seatsCount = Number(session.metadata?.seats_count ?? 1);
     const totalPrice = (session.amount_total ?? 0) / 100;
     const paymentIntentId =
       typeof session.payment_intent === "string" ? session.payment_intent : null;
+
+    // Hard race check: someone else may have booked one of these seats for
+    // this screening between checkout-session creation and now.
+    const { data: bookedSeats, error: bookedSeatsError } = await supabaseAdmin.rpc(
+      "get_booked_seats",
+      { p_screening_id: screeningId },
+    );
+    if (bookedSeatsError) throw bookedSeatsError;
+    const alreadyTaken = seats.filter((s) => (bookedSeats ?? []).includes(s));
+    if (alreadyTaken.length > 0) {
+      if (paymentIntentId) {
+        await stripe.refunds.create({ payment_intent: paymentIntentId });
+      }
+      return json(
+        {
+          error: `Seat${alreadyTaken.length > 1 ? "s" : ""} ${alreadyTaken.join(", ")} ${alreadyTaken.length > 1 ? "were" : "was"} just booked by someone else. You have been refunded — please pick different seats.`,
+        },
+        409,
+      );
+    }
 
     const { data: booking, error: insertError } = await supabaseAdmin
       .from("bookings")
       .insert({
         user_id: user.id,
         screening_id: screeningId,
-        seats_count: seatsCount,
+        seats,
+        seats_count: seats.length,
         total_price: totalPrice,
         status: "confirmed",
         stripe_checkout_session_id: sessionId,

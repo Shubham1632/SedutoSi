@@ -43,7 +43,7 @@ export default function StripePaymentScreen() {
       const redirectTo = getStripeRedirectTo();
       const url = await createSession.mutateAsync({
         screeningId,
-        seatsCount: selected.length,
+        seats: selected,
         redirectTo,
       });
       const result = await openStripeCheckout(url, redirectTo);

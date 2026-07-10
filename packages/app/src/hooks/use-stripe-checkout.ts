@@ -45,16 +45,16 @@ export function useCreateStripeCheckoutSession() {
   return useMutation({
     mutationFn: async ({
       screeningId,
-      seatsCount,
+      seats,
       redirectTo,
     }: {
       screeningId: string;
-      seatsCount: number;
+      seats: string[];
       redirectTo: string;
     }) => {
       const result = await supabase.functions.invoke<{ url?: string }>(
         "stripe-create-checkout-session",
-        { body: { screeningId, seatsCount, redirectTo } },
+        { body: { screeningId, seats, redirectTo } },
       );
       if (result.error) {
         throw new Error(
@@ -93,8 +93,11 @@ export function useConfirmStripePayment() {
       }
       return result.data.booking;
     },
-    onSuccess: () => {
+    onSuccess: (booking) => {
       void queryClient.invalidateQueries({ queryKey: ["bookings"] });
+      void queryClient.invalidateQueries({
+        queryKey: ["screenings", booking.screening_id, "booked-seats"],
+      });
     },
   });
 }

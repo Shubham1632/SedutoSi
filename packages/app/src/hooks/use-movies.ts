@@ -47,6 +47,7 @@ export interface Booking {
   id: string;
   user_id: string;
   screening_id: string;
+  seats: string[];
   seats_count: number;
   total_price: number;
   status: "confirmed" | "cancelled";
@@ -244,6 +245,29 @@ export function useScreening(id: string) {
         .single();
       if (error) throw error;
       return data as Screening;
+    },
+  });
+}
+
+/**
+ * Seats already sold for a screening, across every user — backed by the
+ * `get_booked_seats` security-definer function so this works without
+ * widening bookings' "select own" RLS policy. Polls while mounted (i.e.
+ * while the seat map is open) so a seat someone else just bought shows as
+ * taken without a manual refresh.
+ */
+export function useBookedSeats(screeningId: string) {
+  const supabase = useSupabase();
+  return useQuery({
+    queryKey: ["screenings", screeningId, "booked-seats"],
+    enabled: !!screeningId,
+    refetchInterval: 10_000,
+    queryFn: async () => {
+      const { data, error } = await supabase.rpc("get_booked_seats", {
+        p_screening_id: screeningId,
+      });
+      if (error) throw error;
+      return new Set(data);
     },
   });
 }

@@ -40,8 +40,14 @@ function hash(seed: string) {
   return Math.abs(h);
 }
 
-/** The (deterministic, cosmetic) set of already-taken seats for a screening. */
-export function occupiedSeats(screeningId: string) {
+/**
+ * A deterministic, cosmetic set of "taken" seats for a screening — filler so
+ * the theater doesn't look empty. Real occupancy (`useBookedSeats`) is
+ * unioned on top of this in the seat selection screen; the two are
+ * independent, so a seat can look cosmetically taken without ever having
+ * been actually booked, and vice versa.
+ */
+export function cosmeticOccupiedSeats(screeningId: string) {
   const set = new Set<string>();
   if (!screeningId) return set;
   for (const row of ROWS) {

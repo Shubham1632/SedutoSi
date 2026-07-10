@@ -1,11 +1,16 @@
-// Creates a Stripe Checkout session for a screening + seat count.
+// Creates a Stripe Checkout session for a screening + a set of seats.
 //
 // The client never sees the Stripe secret key or sets the price — the total
 // is computed here from `screenings.price`, so a tampered client can't pay
-// less than the real total. Card, Apple Pay, Google Pay and Revolut Pay all
-// show up automatically on Stripe's hosted Checkout page as long as they're
-// enabled for the account in the Stripe Dashboard (Settings → Payment
-// methods) — nothing else to configure here.
+// less than the real total. It also can't buy a seat someone else already
+// holds: the requested seats are checked against `get_booked_seats` (see
+// 20260710000002_booking_seats.sql) before the session is created. That
+// check is best-effort (two people can still race between here and payment
+// completing) — the hard check is in stripe-confirm-payment, which refunds
+// if the race is actually lost. Card, Apple Pay, Google Pay and Revolut Pay
+// all show up automatically on Stripe's hosted Checkout page as long as
+// they're enabled for the account in the Stripe Dashboard (Settings →
+// Payment methods) — nothing else to configure here.
 import { createClient } from "jsr:@supabase/supabase-js@2";
 import Stripe from "npm:stripe@^18.0.0";
 
@@ -45,25 +50,37 @@ Deno.serve(async (req) => {
 
     const body = await req.json();
     const screeningId = String(body.screeningId ?? "");
-    const seatsCount = Number(body.seatsCount);
     const redirectTo = String(body.redirectTo ?? "");
+    const seats = Array.isArray(body.seats)
+      ? [...new Set(body.seats.map((s: unknown) => String(s)))]
+      : [];
 
-    if (!screeningId || !Number.isInteger(seatsCount) || seatsCount < 1) {
-      return json({ error: "Invalid screening or seat count" }, 400);
+    if (!screeningId || seats.length < 1) {
+      return json({ error: "Invalid screening or seats" }, 400);
     }
     if (!redirectTo) return json({ error: "Missing redirectTo" }, 400);
 
     const { data: screening, error: screeningError } = await supabase
       .from("screenings")
-      .select("id, price, available_seats, movie:movies(title)")
+      .select("id, price, movie:movies(title)")
       .eq("id", screeningId)
       .single();
 
     if (screeningError || !screening) {
       return json({ error: "Screening not found" }, 404);
     }
-    if (seatsCount > screening.available_seats) {
-      return json({ error: "Not enough seats available" }, 400);
+
+    const { data: bookedSeats, error: bookedSeatsError } = await supabase.rpc(
+      "get_booked_seats",
+      { p_screening_id: screeningId },
+    );
+    if (bookedSeatsError) throw bookedSeatsError;
+    const alreadyTaken = seats.filter((s) => (bookedSeats ?? []).includes(s));
+    if (alreadyTaken.length > 0) {
+      return json(
+        { error: `Seat${alreadyTaken.length > 1 ? "s" : ""} ${alreadyTaken.join(", ")} ${alreadyTaken.length > 1 ? "are" : "is"} no longer available` },
+        409,
+      );
     }
 
     const unitAmount = Math.round(Number(screening.price) * 100);
@@ -80,7 +97,7 @@ Deno.serve(async (req) => {
             unit_amount: unitAmount,
             product_data: { name: movieTitle },
           },
-          quantity: seatsCount,
+          quantity: seats.length,
         },
       ],
       success_url: `${redirectTo}?status=success&session_id={CHECKOUT_SESSION_ID}`,
@@ -88,7 +105,7 @@ Deno.serve(async (req) => {
       metadata: {
         user_id: user.id,
         screening_id: screeningId,
-        seats_count: String(seatsCount),
+        seats: seats.join(","),
       },
     });
 
