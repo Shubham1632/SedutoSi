@@ -30,14 +30,22 @@ export function sortSeats(seats: string[]) {
 
 // Stable pseudo-random hash so "occupied" seats look realistic yet stay
 // consistent for a given screening across visits (occupancy isn't tracked
-// server-side — it's cosmetic).
+// server-side — it's cosmetic). djb2's own output is weak for strings that
+// only differ in their last character or two (e.g. "F10" vs "F11" vs "F12"),
+// which made consecutive seat numbers hash to nearby values and cluster into
+// long unnatural streaks — a Murmur3-style finalizer mixes those bits properly.
 function hash(seed: string) {
   let h = 5381;
   for (let i = 0; i < seed.length; i++) {
     h = (h << 5) + h + seed.charCodeAt(i);
     h |= 0;
   }
-  return Math.abs(h);
+  h ^= h >>> 16;
+  h = Math.imul(h, 0x85ebca6b);
+  h ^= h >>> 13;
+  h = Math.imul(h, 0xc2b2ae35);
+  h ^= h >>> 16;
+  return h >>> 0;
 }
 
 /**

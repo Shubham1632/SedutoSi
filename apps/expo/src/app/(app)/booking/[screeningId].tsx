@@ -20,7 +20,10 @@ export default function SeatSelectionScreen() {
   const { data: bookedSeats } = useBookedSeats(screeningId);
   const [rawSelected, setRawSelected] = useState<string[]>([]);
 
-  const cosmetic = useMemo(() => cosmeticOccupiedSeats(screeningId), [screeningId]);
+  const cosmetic = useMemo(
+    () => cosmeticOccupiedSeats(screeningId),
+    [screeningId],
+  );
   const occupied = useMemo(
     () => new Set([...cosmetic, ...(bookedSeats ?? [])]),
     [cosmetic, bookedSeats],
