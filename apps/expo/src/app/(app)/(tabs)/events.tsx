@@ -196,11 +196,18 @@ export default function EventsScreen() {
                   />
                 ) : (
                   <View
-                    className="bg-primary/15 items-center justify-center"
-                    style={{ width: "100%", height: 140 }}
+                    className="bg-muted"
+                    style={{
+                      width: "100%",
+                      height: 140,
+                      alignItems: "center",
+                      justifyContent: "center",
+                      gap: 4,
+                    }}
                   >
-                    <Text style={{ fontSize: 40 }}>
-                      {categoryIcon(item.category)}
+                    <Text style={{ fontSize: 32, opacity: 0.4 }}>🖼️</Text>
+                    <Text className="text-muted-foreground text-[10px] font-medium tracking-wide uppercase">
+                      No image yet
                     </Text>
                   </View>
                 )}
