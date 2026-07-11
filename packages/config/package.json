@@ -10,10 +10,6 @@
     "./env": {
       "types": "./dist/env.d.ts",
       "default": "./src/env.ts"
-    },
-    "./constants": {
-      "types": "./dist/constants.d.ts",
-      "default": "./src/constants.ts"
     }
   },
   "license": "Apache-2.0",

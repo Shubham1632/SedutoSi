@@ -16,9 +16,6 @@ import { darkColors, lightColors } from "@acme/ui-native/theme-colors";
 import { supabase } from "~/lib/supabase";
 
 import "../styles.css";
-// Side-effect: installed extensions register their native boot handlers
-// (e.g. notifications' foreground handler) via the generated registry.
-import "~/ext/registry.generated";
 
 const AppLightTheme = {
   ...DefaultTheme,
@@ -30,10 +27,6 @@ const AppDarkTheme = {
   colors: { ...DarkTheme.colors, ...darkColors },
 };
 
-/**
- * Redirects between the (auth) and (app) route groups based on session state.
- * Route groups (parens) don't appear in the URL, so targets are "/sign-in" / "/".
- */
 function AuthGate() {
   const { user, isLoading } = useSession();
   const segments = useSegments();

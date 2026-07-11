@@ -65,7 +65,6 @@ export default function EventPaymentScreen() {
       const result = await openStripeCheckout(url, redirectTo);
 
       if (result.status === "cancel" || !result.sessionId) {
-        // User backed out of checkout — stay here so they can retry.
         return;
       }
 

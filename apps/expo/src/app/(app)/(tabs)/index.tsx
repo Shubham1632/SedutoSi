@@ -144,7 +144,7 @@ export default function MoviesScreen() {
           data={filteredMovies}
           keyExtractor={(item) => item.id}
           numColumns={numColumns}
-          key={numColumns} // force remount when column count changes
+          key={numColumns}
           contentContainerStyle={{ padding: 16, gap: 16 }}
           columnWrapperStyle={{ gap: 16 }}
           renderItem={({ item }: { item: Movie }) => (

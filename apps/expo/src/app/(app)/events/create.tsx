@@ -63,11 +63,6 @@ function FieldError({ message }: { message?: string }) {
   return <Text className="text-destructive text-sm">{message}</Text>;
 }
 
-/**
- * Cross-platform date+time picker: iOS shows one combined picker; Android's
- * native picker only supports one mode at a time, so this asks for the date
- * first, then chains into a time picker for the same day.
- */
 function DateTimeField({
   label,
   value,
@@ -93,7 +88,6 @@ function DateTimeField({
       setPendingDate(selected);
       setStep("time");
     } else {
-      // iOS's "datetime" mode already returns the full combined value.
       onChange(selected);
     }
   }
@@ -165,9 +159,6 @@ export default function CreateEventScreen() {
 
   const imageUri = watch("imageUri");
   const category = watch("category");
-  // react-hook-form types this as always-defined `Date` because the schema
-  // requires it, but there's no defaultValues entry for it — it genuinely is
-  // undefined until the user picks a date.
   const startsAt = watch("startsAt") as Date | undefined;
 
   const minStartsAt = new Date(Date.now() + EVENT_MIN_LEAD_TIME_MS);
@@ -223,7 +214,6 @@ export default function CreateEventScreen() {
       <Stack.Screen options={{ title: "Add Live Event" }} />
       <ScrollView contentContainerClassName="p-5 pb-10">
         <ResponsiveContainer style={{ gap: 20 }}>
-          {/* Cover image */}
           <View className="gap-1.5">
             <FieldLabel>Cover image</FieldLabel>
             <Pressable
@@ -249,7 +239,6 @@ export default function CreateEventScreen() {
             <FieldError message={errors.imageUri?.message} />
           </View>
 
-          {/* Title */}
           <View className="gap-1.5">
             <FieldLabel>Title</FieldLabel>
             <Controller
@@ -267,7 +256,6 @@ export default function CreateEventScreen() {
             <FieldError message={errors.title?.message} />
           </View>
 
-          {/* Description */}
           <View className="gap-1.5">
             <FieldLabel>Description</FieldLabel>
             <Controller
@@ -292,7 +280,6 @@ export default function CreateEventScreen() {
             <FieldError message={errors.description?.message} />
           </View>
 
-          {/* Category */}
           <View className="gap-1.5">
             <FieldLabel>Category</FieldLabel>
             <View className="flex-row flex-wrap gap-2">
@@ -326,7 +313,6 @@ export default function CreateEventScreen() {
             <FieldError message={errors.category?.message} />
           </View>
 
-          {/* Location */}
           <View className="gap-1.5">
             <FieldLabel>Location</FieldLabel>
             <Controller
@@ -344,7 +330,6 @@ export default function CreateEventScreen() {
             <FieldError message={errors.location?.message} />
           </View>
 
-          {/* Starts / ends at */}
           <Controller
             control={control}
             name="startsAt"
@@ -373,7 +358,6 @@ export default function CreateEventScreen() {
           />
           <FieldError message={errors.endsAt?.message} />
 
-          {/* Price + capacity */}
           <View className="flex-row gap-4">
             <View className="flex-1 gap-1.5">
               <FieldLabel>Price € (blank = free)</FieldLabel>

@@ -50,9 +50,7 @@ export interface Booking {
   user_id: string;
   screening_id: string | null;
   event_id: string | null;
-  /** Seat labels for a movie booking; always empty for a general-admission event booking. */
   seats: string[];
-  /** Seat count for movies, ticket quantity for events. */
   seats_count: number;
   total_price: number;
   status: "confirmed" | "cancelled";
@@ -87,8 +85,6 @@ export function useMovie(id: string) {
   return useQuery({
     queryKey: ["movies", id],
     enabled: !!id,
-    // Render instantly from the already-fetched list (still revalidates in
-    // the background) instead of blocking on a fresh round-trip.
     initialData: () =>
       queryClient
         .getQueryData<Movie[]>(["movies"])
@@ -206,7 +202,6 @@ export function useScreeningsByCinemaAndMovie(
         .order("starts_at");
 
       if (date) {
-        // filter for the exact date (UTC day)
         const start = new Date(`${date}T00:00:00Z`).toISOString();
         const end = new Date(
           new Date(start).getTime() + 24 * 60 * 60 * 1000,
@@ -258,13 +253,6 @@ export function useScreening(id: string) {
   });
 }
 
-/**
- * Seats already sold for a screening, across every user — backed by the
- * `get_booked_seats` security-definer function so this works without
- * widening bookings' "select own" RLS policy. Polls while mounted (i.e.
- * while the seat map is open) so a seat someone else just bought shows as
- * taken without a manual refresh.
- */
 export function useBookedSeats(screeningId: string) {
   const supabase = useSupabase();
   return useQuery({
@@ -300,11 +288,6 @@ export function useMyBookings() {
   });
 }
 
-/**
- * A single booking (with its screening joined in), e.g. for the payment
- * success screen. Bookings are only ever created by the `stripe-confirm-payment`
- * edge function after a verified Stripe payment — see `use-stripe-checkout.ts`.
- */
 export function useBooking(id: string) {
   const supabase = useSupabase();
   return useQuery({

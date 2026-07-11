@@ -24,8 +24,6 @@ const msg = (e: unknown) =>
   e instanceof Error ? e.message : "Something went wrong";
 
 export default function SignUp() {
-  // Set when sign-up needs email confirmation (the Supabase project default):
-  // swaps the form for a 6-digit code entry. No email links/deep-links involved.
   const [confirmEmail, setConfirmEmail] = useState<string | null>(null);
   const [googleLoading, setGoogleLoading] = useState(false);
 
@@ -41,7 +39,6 @@ export default function SignUp() {
   async function onSubmit(values: SignUpInput) {
     try {
       const { session } = await signUpWithPassword(supabase, values);
-      // With email confirmations off there's a session already — AuthGate redirects.
       if (!session) setConfirmEmail(values.email);
     } catch (e) {
       appAlert("Sign up failed", msg(e));
@@ -52,7 +49,6 @@ export default function SignUp() {
     setGoogleLoading(true);
     try {
       await signInWithGoogle();
-      // Session established on success — AuthGate routes into the app.
     } catch (e) {
       appAlert("Google sign-in failed", msg(e));
     } finally {
@@ -163,7 +159,6 @@ export default function SignUp() {
   );
 }
 
-/** Post-sign-up email confirmation: a 6-digit code, no email links/deep-links. */
 function CheckEmail({ email, onBack }: { email: string; onBack: () => void }) {
   const [code, setCode] = useState("");
   const [verifying, setVerifying] = useState(false);
@@ -172,7 +167,6 @@ function CheckEmail({ email, onBack }: { email: string; onBack: () => void }) {
     setVerifying(true);
     try {
       await verifySignUpCode(supabase, email, code.trim());
-      // Session established — AuthGate routes into the app.
     } catch (e) {
       appAlert("That code didn't work", msg(e));
       setVerifying(false);

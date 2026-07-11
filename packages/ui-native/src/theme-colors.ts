@@ -1,7 +1,3 @@
-// Mirrors the CSS variables in apps/expo/src/styles.css.
-// Kept as plain hex/rgb here because React Navigation's header, tab bar,
-// and status bar are native components — they can't read Tailwind/NativeWind
-// CSS variables, so these need to be manually kept in sync with styles.css.
 export const lightColors: Record<string, string> = {
   background: "#fbfaf7",
   card: "#ffffff",

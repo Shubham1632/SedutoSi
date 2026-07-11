@@ -1,13 +1,3 @@
--- Live events: user-created events, capacity-based (general admission) booking,
--- and an image bucket for event cover photos.
---
--- `public.events` and `public.wishlist` predate this migration but were never
--- captured in a committed migration (they exist directly on the live DB), so
--- this file recreates the known shape of `events` with `create table if not
--- exists` — a no-op against the live DB, but what makes a clean `supabase db
--- reset` (or a fresh clone) end up with the table at all. The new columns are
--- added separately with `add column if not exists` so they apply either way.
-
 create table if not exists public.events (
   id          uuid primary key default gen_random_uuid(),
   title       text not null,
@@ -35,15 +25,10 @@ create policy "events: public read"
   on public.events for select to anon, authenticated
   using (true);
 
--- Requirement: any signed-in user can add their own live event directly.
 drop policy if exists "events: users create own" on public.events;
 create policy "events: users create own"
   on public.events for insert to authenticated
   with check (created_by = (select auth.uid()));
-
--- ============================================================================
--- Bookings: generalize to cover both movie screenings and live events.
--- ============================================================================
 
 alter table public.bookings alter column screening_id drop not null;
 alter table public.bookings add column if not exists event_id uuid
@@ -63,12 +48,6 @@ begin
   end if;
 end $$;
 
--- Event bookings are general admission (no seat map): `seats_count` is reused
--- as the ticket quantity and `seats` stays '{}' for them.
-
--- Tickets sold for an event, across every user — mirrors get_booked_seats
--- (20260710000002_booking_seats.sql): security definer so capacity can be
--- checked without widening bookings' "select own" RLS policy.
 create or replace function public.get_event_tickets_sold(p_event_id uuid)
 returns integer
 language sql
@@ -84,16 +63,12 @@ $$;
 
 grant execute on function public.get_event_tickets_sold(uuid) to anon, authenticated;
 
--- ============================================================================
--- Storage: event cover images, uploaded by the organizer when creating an event.
--- ============================================================================
-
 insert into storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
 values (
   'event-images',
   'event-images',
   true,
-  5242880, -- 5MiB
+  5242880,
   array['image/png', 'image/jpeg', 'image/webp']
 )
 on conflict (id) do nothing;
@@ -103,8 +78,6 @@ create policy "event images: public read"
   on storage.objects for select to anon, authenticated
   using (bucket_id = 'event-images');
 
--- Uploads must land under a folder named after the uploader's own user id
--- (checked by the client — see packages/app's event image upload helper).
 drop policy if exists "event images: users upload own" on storage.objects;
 create policy "event images: users upload own"
   on storage.objects for insert to authenticated

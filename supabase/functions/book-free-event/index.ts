@@ -1,10 +1,3 @@
-// Books tickets for a FREE live event (price is null or 0) — Stripe Checkout
-// can't charge €0, so this is the free-event equivalent of
-// stripe-confirm-payment: it still does the server-side capacity check and
-// the service-role insert, so a free booking is written the same verified
-// way a paid one is (bookings are never inserted straight from the client —
-// see the RLS policy change in 20260710000001_stripe_payments.sql / the
-// comment at the top of stripe-confirm-payment).
 import { createClient } from "jsr:@supabase/supabase-js@2";
 
 import { corsHeaders, json } from "../_shared/cors.ts";

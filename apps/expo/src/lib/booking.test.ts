@@ -76,9 +76,6 @@ describe("cosmeticOccupiedSeats", () => {
 
 describe("formatDateTime", () => {
   it("formats an ISO string into a long, human-readable date/time", () => {
-    // Avoid asserting the exact hour: toLocaleString renders in the runner's
-    // local timezone, not UTC. Just check the overall shape: a weekday, a
-    // day-of-month, a month name, and an HH:MM time.
     const formatted = formatDateTime("2026-03-05T18:30:00.000Z");
     expect(formatted).toMatch(/^[A-Za-z]+ \d{1,2} [A-Za-z]+ at \d{2}:\d{2}$/);
     expect(formatted).toContain("March");

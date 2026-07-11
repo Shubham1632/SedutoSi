@@ -1,14 +1,5 @@
 import type { AppSupabaseClient } from "@acme/api";
 
-/**
- * A minimal in-memory stand-in for the Supabase JS client's chainable query
- * builder, for integration-testing react-query hooks (packages/app/src/hooks)
- * without a live database. Each table is backed by a handler you supply that
- * receives the captured chain (filters, operation, payload) and returns the
- * response — so tests assert both the *shape of the query the hook built* and
- * the *data the hook derives from the response*.
- */
-
 export interface FilterCall {
   method: string;
   args: unknown[];
@@ -144,19 +135,11 @@ export interface FakeSupabaseOptions {
   tables?: Record<string, TableHandler>;
   rpc?: Record<string, RpcHandler>;
   session?: { user: { id: string } } | null;
-  /** Overrides/extends the default auth.getSession/onAuthStateChange stubs —
-   * e.g. `{ signInWithPassword: () => ({ error: null }) }`. */
   auth?: Record<string, AnyFn>;
-  /** Keyed by storage bucket name (the argument to `storage.from(bucket)`). */
   storage?: Record<string, StorageBucketHandlers>;
-  /** Keyed by edge function name (the argument to `functions.invoke(name)`). */
   functions?: Record<string, AnyFn>;
 }
 
-/**
- * Records every `.from(table)` call so tests can assert which tables/filters
- * a hook actually queried, in addition to what data it returned.
- */
 export function createFakeSupabase(options: FakeSupabaseOptions = {}) {
   const calls: { table: string }[] = [];
   const session = options.session ?? null;

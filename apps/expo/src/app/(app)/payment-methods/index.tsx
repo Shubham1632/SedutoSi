@@ -21,10 +21,6 @@ export default function PaymentMethodsScreen() {
   const deleteMethod = useDeletePaymentMethod();
 
   function onAddCard() {
-    // This screen is a separate, unwired mock (its own `payment_methods`
-    // table) — actual checkout is Stripe-hosted (see ~/lib/stripe-checkout.ts
-    // and booking/payment.tsx), which never exposes raw card data to this
-    // app, so there's no client-side card form to attach to it here.
     appAlert("Add card", "Card entry via Stripe goes here.");
   }
 

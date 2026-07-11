@@ -69,7 +69,6 @@ describe("useUploadEventImage", () => {
     const [path, , opts] = call;
     expect(path).toMatch(/^user-1\/\d+-[a-z0-9]+\.jpg$/);
     expect(opts).toEqual({ contentType: "image/jpeg", upsert: false });
-    // No cache-busting query param — accumulating images don't need it.
     expect(result.current.upload.data).toBe(
       "https://cdn/event-images/user-1/x.jpg",
     );

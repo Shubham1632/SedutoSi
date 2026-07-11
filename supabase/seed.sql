@@ -1,12 +1,3 @@
--- Seed data for local dev. Runs after migrations on `supabase db reset`.
--- CinemaMilano — demo movies, cinemas and screenings for Milan, Italy.
--- Movie data sourced from TMDB (https://www.themoviedb.org/) — now playing /
--- popular / upcoming titles at generation time, with real posters, genres,
--- runtimes, original language and certifications where available.
-
--- ============================================================================
--- Cinemas in Milan
--- ============================================================================
 insert into public.cinemas (id, name, address, neighborhood) values
   ('c1111111-1111-1111-1111-000000000065', 'Anteo Palazzo del Cinema', 'Via Milazzo 9, 20121 Milano', 'Porta Volta'),
   ('c1111111-1111-1111-1111-000000000066', 'Cinema Mexico', 'Via Savona 57, 20144 Milano', 'Navigli'),
@@ -22,9 +13,6 @@ insert into public.cinemas (id, name, address, neighborhood) values
   ('c1111111-1111-1111-1111-000000000070', 'Apollo Spazio Cinema', 'Galleria De Cristoforis 1, 20122 Milano', 'Centro')
 on conflict (id) do nothing;
 
--- ============================================================================
--- Screens (two per cinema)
--- ============================================================================
 insert into public.screens (id, cinema_id, name, total_seats) values
   ('a2222222-1111-1111-1111-0000000000c9', 'c1111111-1111-1111-1111-000000000065', 'Sala Uno', 80),
   ('a2222222-1111-1111-1111-0000000000ca', 'c1111111-1111-1111-1111-000000000065', 'Sala Due', 100),
@@ -52,9 +40,6 @@ insert into public.screens (id, cinema_id, name, total_seats) values
   ('a2222222-1111-1111-1111-000000000138', 'c1111111-1111-1111-1111-000000000070', 'Sala Due', 120)
 on conflict (id) do nothing;
 
--- ============================================================================
--- Movies (from TMDB)
--- ============================================================================
 insert into public.movies (id, title, description, genre, duration_minutes, language, rating, poster_url, release_date) values
   ('b3333333-1111-1111-1111-00000000012d', 'Disclosure Day', 'A cybersecurity expert becomes a whistleblower after uncovering secrets about aliens, putting him on the run from a corporation. Meanwhile, a meteorologist experiencing strange phenomena joins forces with him to prove there''s life beyond our understanding.', 'Science Fiction', 145, 'English', 'T', 'https://image.tmdb.org/t/p/w500/AnJ8IQJI23hNpYXVNaythu061Ru.jpg', '2026-06-10'),
   ('b3333333-1111-1111-1111-00000000012e', 'Toy Story 5', 'When Bonnie receives a Lilypad tablet as a gift and becomes obsessed, Buzz, Woody, Jessie and the rest of the gang''s jobs become exponentially harder when they have to go head to head with the all-new threat to playtime.', 'Animation', 102, 'English', 'T', 'https://image.tmdb.org/t/p/w500/a6H2U7pjibMia41TwyFVd1PVQw3.jpg', '2026-06-17'),
@@ -84,9 +69,6 @@ insert into public.movies (id, title, description, genre, duration_minutes, lang
   ('b3333333-1111-1111-1111-000000000146', 'Cycle of Time', 'In 1950s France, Helene and Michel lead a simple life until a freak accident in 2025 leads to Helene becoming a bank executive and Michel struggling with unemployment and depression. Their children grow up in a technology-dominated world.', 'Comedy', 103, 'French', null, 'https://image.tmdb.org/t/p/w500/63QJSYPjR3i3mwr4PmpvwfyLgDo.jpg', '2025-10-08')
 on conflict (id) do nothing;
 
--- ============================================================================
--- Screenings (future dates relative to seed time, spread across cinemas)
--- ============================================================================
 insert into public.screenings (movie_id, screen_id, starts_at, ends_at, price, available_seats) values
   ('b3333333-1111-1111-1111-00000000012d', 'a2222222-1111-1111-1111-0000000000fc', (now() + interval '5 days' + interval '14:30:00'), (now() + interval '5 days' + interval '14:30:00') + interval '121 minutes', 8.87, 77),
   ('b3333333-1111-1111-1111-00000000012d', 'a2222222-1111-1111-1111-00000000012d', (now() + interval '2 days' + interval '21:45:00'), (now() + interval '2 days' + interval '21:45:00') + interval '134 minutes', 9.04, 41),

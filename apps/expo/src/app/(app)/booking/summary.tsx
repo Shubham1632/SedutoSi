@@ -43,7 +43,6 @@ export default function BookingSummaryScreen() {
 
       <ScrollView contentContainerClassName="p-5 gap-5">
         <ResponsiveContainer style={{ gap: 20 }}>
-          {/* Movie / showtime */}
           <View className="bg-card border-border gap-1 rounded-2xl border p-5">
             <Text className="text-foreground text-xl font-bold">
               {info.title}
@@ -56,7 +55,6 @@ export default function BookingSummaryScreen() {
             )}
           </View>
 
-          {/* Seats */}
           <View className="bg-card border-border gap-3 rounded-2xl border p-5">
             <Text className="text-muted-foreground text-xs font-medium uppercase">
               Your seats
@@ -72,7 +70,6 @@ export default function BookingSummaryScreen() {
             </View>
           </View>
 
-          {/* Price breakdown */}
           <View className="bg-card border-border gap-3 rounded-2xl border p-5">
             <View className="flex-row items-center justify-between">
               <Text className="text-muted-foreground text-sm">
@@ -100,7 +97,6 @@ export default function BookingSummaryScreen() {
         </ResponsiveContainer>
       </ScrollView>
 
-      {/* Payment CTA */}
       <View className="border-border bg-card border-t px-5 pt-3 pb-6">
         <ResponsiveContainer>
           <Button

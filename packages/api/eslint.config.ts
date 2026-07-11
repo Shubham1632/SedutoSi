@@ -8,9 +8,6 @@ export default defineConfig(
   },
   baseConfig,
   {
-    // `src/types.ts` is generated verbatim by `pnpm db:gen-types` (supabase
-    // gen types) — exempt it from stylistic rules so a regen never needs
-    // hand-fixing. Prettier still formats it.
     files: ["src/types.ts"],
     rules: {
       "@typescript-eslint/consistent-type-definitions": "off",

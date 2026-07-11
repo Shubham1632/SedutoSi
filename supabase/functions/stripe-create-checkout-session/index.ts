@@ -1,19 +1,3 @@
-// Creates a Stripe Checkout session for either a movie screening + a set of
-// seats, or a paid live event + a ticket quantity.
-//
-// The client never sees the Stripe secret key or sets the price — the total
-// is always computed here from `screenings.price` / `events.price`, so a
-// tampered client can't pay less than the real total. It also can't
-// overbook: for screenings the requested seats are checked against
-// `get_booked_seats` (20260710000002_booking_seats.sql); for events the
-// requested quantity is checked against `get_event_tickets_sold` +
-// `events.capacity` (20260711000001_live_event_bookings.sql). Both checks
-// are best-effort (two people can still race between here and payment
-// completing) — the hard check is in stripe-confirm-payment, which refunds
-// if the race is actually lost. Card, Apple Pay, Google Pay and Revolut Pay
-// all show up automatically on Stripe's hosted Checkout page as long as
-// they're enabled for the account in the Stripe Dashboard (Settings →
-// Payment methods) — nothing else to configure here.
 import { createClient } from "jsr:@supabase/supabase-js@2";
 import Stripe from "npm:stripe@^18.0.0";
 
@@ -27,10 +11,6 @@ Deno.serve(async (req) => {
   try {
     const stripeSecretKey = Deno.env.get("STRIPE_SECRET_KEY");
     if (!stripeSecretKey) {
-      // Constructing the Stripe client with no key throws — guard first so
-      // that shows up as a clear JSON error instead of an opaque 5xx (locally,
-      // this var lives in supabase/functions/.env, NOT the project root .env
-      // — see supabase/functions/.env.example).
       console.error("[stripe-create-checkout-session] STRIPE_SECRET_KEY is not set");
       return json({ error: "Stripe is not configured on the server" }, 500);
     }

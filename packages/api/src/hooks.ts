@@ -11,11 +11,6 @@ export interface SessionState {
   isLoading: boolean;
 }
 
-/**
- * Subscribe to Supabase auth state. Cross-platform: the client is provided
- * per-platform via `<SupabaseProvider>`. Returns the current session/user and
- * a loading flag for the initial fetch.
- */
 export function useSession(): SessionState {
   const supabase = useSupabase();
   const [session, setSession] = useState<Session | null>(null);

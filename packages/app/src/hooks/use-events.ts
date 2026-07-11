@@ -68,12 +68,6 @@ export function useEvent(id: string) {
   });
 }
 
-/**
- * Creates a live event directly (no moderation step) with the signed-in user
- * as organizer. The RLS insert policy ("events: users create own") requires
- * created_by to match auth.uid(), so a spoofed created_by is rejected server-side
- * even though it's also set here.
- */
 export function useCreateEvent() {
   const supabase = useSupabase();
   const { user } = useSession();
@@ -107,13 +101,6 @@ export function useCreateEvent() {
   });
 }
 
-/**
- * Tickets already sold for an event, across every user — backed by the
- * `get_event_tickets_sold` security-definer function (mirrors
- * `useBookedSeats` for screenings) so this works without widening bookings'
- * "select own" RLS policy. Polls while mounted so capacity updates live
- * during the booking flow.
- */
 export function useEventTicketsSold(eventId: string) {
   const supabase = useSupabase();
   return useQuery({

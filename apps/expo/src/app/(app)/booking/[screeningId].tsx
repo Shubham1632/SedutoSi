@@ -30,9 +30,6 @@ export default function SeatSelectionScreen() {
     () => new Set([...cosmetic, ...(bookedSeats ?? [])]),
     [cosmetic, bookedSeats],
   );
-  // Someone else may have booked a seat the user picked while this screen
-  // stayed open (booked-seats polls every 10s) — never show/submit it as
-  // selected once that happens, even though it's still in `rawSelected`.
   const selected = useMemo(
     () => rawSelected.filter((id) => !occupied.has(id)),
     [rawSelected, occupied],
@@ -52,8 +49,6 @@ export default function SeatSelectionScreen() {
         newlyTaken.length > 1 ? "were" : "was"
       } just booked by someone else and removed from your selection.`,
     );
-    // rawSelected intentionally omitted: this only needs to run when the
-    // booked-seats set changes, not on every keystroke of selection.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [bookedSeats]);
 
@@ -88,11 +83,6 @@ export default function SeatSelectionScreen() {
 
   function onContinue() {
     const seats = sortSeats(selected);
-    // This screen stays mounted (React Navigation keeps prior stack screens
-    // alive) and keeps polling booked-seats in the background while the user
-    // is on summary/payment. Clear the selection now so that when their own
-    // payment succeeds a moment later, the "did someone else take my seat"
-    // watcher above has nothing left to (wrongly) flag as taken.
     setRawSelected([]);
     router.push({
       pathname: "/booking/summary",
@@ -104,7 +94,6 @@ export default function SeatSelectionScreen() {
     <View className="bg-background flex-1">
       <Stack.Screen options={{ title: "Select Seats" }} />
 
-      {/* Screening summary + live seat count */}
       <View className="border-border bg-card border-b px-5 py-4">
         <ResponsiveContainer maxWidth={800}>
           <View className="flex-row items-start justify-between gap-3">
@@ -145,7 +134,6 @@ export default function SeatSelectionScreen() {
         onToggleSeat={toggleSeat}
       />
 
-      {/* Footer: live price + continue CTA */}
       <View className="border-border bg-card border-t px-5 pt-3 pb-6">
         <ResponsiveContainer maxWidth={800}>
           <View className="mb-3 flex-row items-end justify-between">

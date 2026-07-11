@@ -42,7 +42,6 @@ export default function SignIn() {
     setGoogleLoading(true);
     try {
       await signInWithGoogle();
-      // Session established on success — AuthGate routes into the app.
     } catch (e) {
       appAlert("Google sign-in failed", msg(e));
     } finally {

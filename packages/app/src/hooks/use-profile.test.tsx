@@ -11,8 +11,6 @@ import { useProfile, useUpdateProfile } from "./use-profile";
 const USER_ID = "user-1";
 const session = { user: { id: USER_ID } };
 
-/** Waits for the (async) session to resolve before exercising a user-scoped
- * hook — otherwise the first render's query key would be keyed by `undefined`. */
 function useProfileReady() {
   const s = useSession();
   const profile = useProfile();

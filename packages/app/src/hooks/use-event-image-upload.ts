@@ -11,14 +11,6 @@ function extensionFromUri(uri: string, fallback: string) {
   return match?.[1]?.toLowerCase() ?? fallback;
 }
 
-/**
- * Uploads a locally-picked image (a `file://`/`content://`/blob URI from
- * expo-image-picker) to the public `event-images` storage bucket and returns
- * its public URL. Runs client-side with the user's own session — the
- * "event images: users upload own" storage policy (see
- * 20260711000001_live_event_bookings.sql) only allows writing under a folder
- * named after the caller's own auth.uid(), which this enforces by construction.
- */
 export function useUploadEventImage() {
   const supabase = useSupabase();
   const { user } = useSession();

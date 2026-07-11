@@ -1,16 +1,6 @@
 import type { FieldErrors, FieldValues, Resolver } from "react-hook-form";
 import type { ZodType } from "zod/v4";
 
-/**
- * A minimal react-hook-form resolver for zod schemas, written directly
- * against zod's `safeParseAsync` instead of going through
- * `@hookform/resolvers` — that package's `zodResolver`/`standardSchemaResolver`
- * exports have version-compatibility issues with this repo's zod/react-hook-form
- * versions (a type mismatch with `zodResolver`, and a runtime crash —
- * "path.split is not a function" — with `standardSchemaResolver`). Schemas here
- * are flat (no nested objects/arrays), so this only needs to map top-level
- * zod issues onto react-hook-form's flat error shape.
- */
 export function zodFormResolver<T extends FieldValues>(
   schema: ZodType<T>,
 ): Resolver<T> {

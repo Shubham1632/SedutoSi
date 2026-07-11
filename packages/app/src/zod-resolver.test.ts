@@ -36,7 +36,6 @@ describe("zodFormResolver", () => {
   });
 
   it("keeps only the first issue per field", async () => {
-    // A schema where a single field can fail two refinements at once.
     const multiIssueSchema = z.object({
       code: z
         .string()
@@ -61,8 +60,6 @@ describe("zodFormResolver", () => {
       fields: {},
       shouldUseNativeValidation: false,
     });
-    // The refine's issue has an empty path, so it can't be mapped onto a
-    // specific field and is dropped rather than crashing.
     expect(result.errors).toEqual({});
   });
 });
