@@ -205,8 +205,7 @@ export default function BookingDetailScreen() {
               {booking.seats_count !== 1 ? "s" : ""}
             </Text>
             <Text className="text-foreground text-sm">
-              Booked{" "}
-              {new Date(booking.created_at).toLocaleDateString("en-GB")}
+              Booked {new Date(booking.created_at).toLocaleDateString("en-GB")}
             </Text>
           </View>
           <View className="border-border flex-row items-center justify-between border-t pt-3">
