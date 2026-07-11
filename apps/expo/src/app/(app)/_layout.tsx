@@ -1,6 +1,3 @@
- 
- 
- 
 import { Stack } from "expo-router";
 import { useTheme } from "@react-navigation/native";
 
