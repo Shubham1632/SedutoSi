@@ -160,65 +160,65 @@ export default function ScreeningsScreen() {
             const lowSeats = item.available_seats <= 10;
             return (
               <View style={numColumns > 1 ? { flex: 1 } : undefined}>
-              <Pressable
-                onPress={() => router.push(`/booking/${item.id}`)}
-                className="bg-card gap-3 rounded-2xl border border-gray-300 p-4 shadow-sm active:opacity-80 dark:border-gray-700"
-              >
-                <View className="flex-row items-center gap-3">
-                  <View
-                    className="bg-primary/15 items-center justify-center rounded-xl px-3 py-2"
-                    style={{ minWidth: 72 }}
-                  >
-                    <Text className="text-primary text-base font-extrabold">
-                      {timeLabel}
-                    </Text>
-                    <Text className="text-primary/80 text-[10px] font-medium uppercase">
-                      {dateLabel}
-                    </Text>
-                  </View>
-                  <View className="flex-1 gap-1">
-                    {screen?.cinema && (
-                      <Text
-                        className="text-foreground text-sm font-semibold"
-                        numberOfLines={1}
-                      >
-                        🏛️ {screen.cinema.name}
-                      </Text>
-                    )}
-                    {screen?.cinema?.neighborhood ? (
-                      <Text
-                        className="text-muted-foreground text-xs"
-                        numberOfLines={1}
-                      >
-                        {screen.cinema.neighborhood}
-                      </Text>
-                    ) : null}
-                  </View>
-                </View>
-                <View className="flex-row items-center justify-between border-t border-gray-300 pt-3 dark:border-gray-700">
-                  <Text className="text-foreground text-lg font-extrabold">
-                    €{Number(item.price).toFixed(2)}
-                  </Text>
-                  <View className="flex-row items-center gap-1.5">
+                <Pressable
+                  onPress={() => router.push(`/booking/${item.id}`)}
+                  className="bg-card gap-3 rounded-2xl border border-gray-300 p-4 shadow-sm active:opacity-80 dark:border-gray-700"
+                >
+                  <View className="flex-row items-center gap-3">
                     <View
-                      className={
-                        lowSeats
-                          ? "bg-destructive h-2 w-2 rounded-full"
-                          : "bg-primary h-2 w-2 rounded-full"
-                      }
-                    />
-                    <Text
-                      className={
-                        lowSeats
-                          ? "text-destructive text-xs font-semibold"
-                          : "text-muted-foreground text-xs font-medium"
-                      }
+                      className="bg-primary/15 items-center justify-center rounded-xl px-3 py-2"
+                      style={{ minWidth: 72 }}
                     >
-                      {item.available_seats} left
-                    </Text>
+                      <Text className="text-primary text-base font-extrabold">
+                        {timeLabel}
+                      </Text>
+                      <Text className="text-primary/80 text-[10px] font-medium uppercase">
+                        {dateLabel}
+                      </Text>
+                    </View>
+                    <View className="flex-1 gap-1">
+                      {screen?.cinema && (
+                        <Text
+                          className="text-foreground text-sm font-semibold"
+                          numberOfLines={1}
+                        >
+                          🏛️ {screen.cinema.name}
+                        </Text>
+                      )}
+                      {screen?.cinema?.neighborhood ? (
+                        <Text
+                          className="text-muted-foreground text-xs"
+                          numberOfLines={1}
+                        >
+                          {screen.cinema.neighborhood}
+                        </Text>
+                      ) : null}
+                    </View>
                   </View>
-                </View>
-              </Pressable>
+                  <View className="flex-row items-center justify-between border-t border-gray-300 pt-3 dark:border-gray-700">
+                    <Text className="text-foreground text-lg font-extrabold">
+                      €{Number(item.price).toFixed(2)}
+                    </Text>
+                    <View className="flex-row items-center gap-1.5">
+                      <View
+                        className={
+                          lowSeats
+                            ? "bg-destructive h-2 w-2 rounded-full"
+                            : "bg-primary h-2 w-2 rounded-full"
+                        }
+                      />
+                      <Text
+                        className={
+                          lowSeats
+                            ? "text-destructive text-xs font-semibold"
+                            : "text-muted-foreground text-xs font-medium"
+                        }
+                      >
+                        {item.available_seats} left
+                      </Text>
+                    </View>
+                  </View>
+                </Pressable>
               </View>
             );
           }}

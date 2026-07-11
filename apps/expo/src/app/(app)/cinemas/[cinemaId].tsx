@@ -165,69 +165,71 @@ export default function CinemaDetailScreen() {
                 const movie = item.movie;
                 return (
                   <View style={numColumns > 1 ? { flex: 1 } : undefined}>
-                  <Pressable
-                    onPress={() => {
-                      router.push({
-                        pathname: "/cinemas/[cinemaId]/[movieId]",
-                        params: {
-                          cinemaId,
-                          movieId: movie.id,
-                          ...(selectedDateKey ? { date: selectedDateKey } : {}),
-                        },
-                      });
-                    }}
-                    className="bg-card overflow-hidden rounded-2xl border border-gray-300 shadow-sm active:opacity-80 dark:border-gray-700"
-                  >
-                    {movie.poster_url ? (
-                      <Image
-                        source={{ uri: movie.poster_url }}
-                        style={{ width: "100%", height: 200 }}
-                        resizeMode="cover"
-                      />
-                    ) : (
-                      <View
-                        className="bg-muted items-center justify-center"
-                        style={{ height: 200 }}
-                      >
-                        <Text style={{ fontSize: 48 }}>🎬</Text>
-                      </View>
-                    )}
-                    <View className="gap-2 border-t border-gray-300 p-4 dark:border-gray-700">
-                      <Text className="text-foreground text-lg font-bold">
-                        {movie.title}
-                      </Text>
-                      <Text className="text-muted-foreground text-sm">
-                        {[movie.genre, movie.language]
-                          .filter(Boolean)
-                          .join(" · ")}
-                      </Text>
-                      <View className="flex-row items-center justify-between pt-2">
+                    <Pressable
+                      onPress={() => {
+                        router.push({
+                          pathname: "/cinemas/[cinemaId]/[movieId]",
+                          params: {
+                            cinemaId,
+                            movieId: movie.id,
+                            ...(selectedDateKey
+                              ? { date: selectedDateKey }
+                              : {}),
+                          },
+                        });
+                      }}
+                      className="bg-card overflow-hidden rounded-2xl border border-gray-300 shadow-sm active:opacity-80 dark:border-gray-700"
+                    >
+                      {movie.poster_url ? (
+                        <Image
+                          source={{ uri: movie.poster_url }}
+                          style={{ width: "100%", height: 200 }}
+                          resizeMode="cover"
+                        />
+                      ) : (
+                        <View
+                          className="bg-muted items-center justify-center"
+                          style={{ height: 200 }}
+                        >
+                          <Text style={{ fontSize: 48 }}>🎬</Text>
+                        </View>
+                      )}
+                      <View className="gap-2 border-t border-gray-300 p-4 dark:border-gray-700">
+                        <Text className="text-foreground text-lg font-bold">
+                          {movie.title}
+                        </Text>
                         <Text className="text-muted-foreground text-sm">
-                          Showtimes
+                          {[movie.genre, movie.language]
+                            .filter(Boolean)
+                            .join(" · ")}
                         </Text>
-                        <Text className="text-primary text-sm font-medium">
-                          {item.showtimes.length} times
-                        </Text>
+                        <View className="flex-row items-center justify-between pt-2">
+                          <Text className="text-muted-foreground text-sm">
+                            Showtimes
+                          </Text>
+                          <Text className="text-primary text-sm font-medium">
+                            {item.showtimes.length} times
+                          </Text>
+                        </View>
+                        <View className="flex-row flex-wrap gap-2 pt-3">
+                          {item.showtimes.slice(0, 3).map((showtime) => (
+                            <View
+                              key={showtime.id}
+                              className="bg-muted rounded-full border border-gray-300 px-3 py-2 dark:border-gray-700"
+                            >
+                              <Text className="text-foreground text-xs">
+                                {formatTime(showtime.starts_at)}
+                              </Text>
+                            </View>
+                          ))}
+                        </View>
+                        {item.showtimes.length > 3 ? (
+                          <Text className="text-muted-foreground pt-2 text-xs">
+                            +{item.showtimes.length - 3} more
+                          </Text>
+                        ) : null}
                       </View>
-                      <View className="flex-row flex-wrap gap-2 pt-3">
-                        {item.showtimes.slice(0, 3).map((showtime) => (
-                          <View
-                            key={showtime.id}
-                            className="bg-muted rounded-full border border-gray-300 px-3 py-2 dark:border-gray-700"
-                          >
-                            <Text className="text-foreground text-xs">
-                              {formatTime(showtime.starts_at)}
-                            </Text>
-                          </View>
-                        ))}
-                      </View>
-                      {item.showtimes.length > 3 ? (
-                        <Text className="text-muted-foreground pt-2 text-xs">
-                          +{item.showtimes.length - 3} more
-                        </Text>
-                      ) : null}
-                    </View>
-                  </Pressable>
+                    </Pressable>
                   </View>
                 );
               }}

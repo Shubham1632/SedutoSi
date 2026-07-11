@@ -93,27 +93,27 @@ export default function CinemaMovieScreen() {
                 | undefined;
               return (
                 <View style={numColumns > 1 ? { flex: 1 } : undefined}>
-                <Pressable
-                  onPress={() => router.push(`/booking/${item.id}`)}
-                  className="bg-card gap-3 rounded-2xl border border-gray-300 p-4 shadow-sm active:opacity-80 dark:border-gray-700"
-                >
-                  <Text className="text-foreground text-base font-semibold">
-                    {formatDateTime(item.starts_at)}
-                  </Text>
-                  {screen?.name ? (
-                    <Text className="text-muted-foreground text-sm">
-                      Hall: {screen.name}
+                  <Pressable
+                    onPress={() => router.push(`/booking/${item.id}`)}
+                    className="bg-card gap-3 rounded-2xl border border-gray-300 p-4 shadow-sm active:opacity-80 dark:border-gray-700"
+                  >
+                    <Text className="text-foreground text-base font-semibold">
+                      {formatDateTime(item.starts_at)}
                     </Text>
-                  ) : null}
-                  <View className="flex-row items-center justify-between pt-1">
-                    <Text className="text-primary text-base font-bold">
-                      €{Number(item.price).toFixed(2)}
-                    </Text>
-                    <Text className="text-muted-foreground text-sm">
-                      {item.available_seats} seats left
-                    </Text>
-                  </View>
-                </Pressable>
+                    {screen?.name ? (
+                      <Text className="text-muted-foreground text-sm">
+                        Hall: {screen.name}
+                      </Text>
+                    ) : null}
+                    <View className="flex-row items-center justify-between pt-1">
+                      <Text className="text-primary text-base font-bold">
+                        €{Number(item.price).toFixed(2)}
+                      </Text>
+                      <Text className="text-muted-foreground text-sm">
+                        {item.available_seats} seats left
+                      </Text>
+                    </View>
+                  </Pressable>
                 </View>
               );
             }}

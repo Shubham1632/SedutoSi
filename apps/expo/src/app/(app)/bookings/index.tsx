@@ -124,87 +124,89 @@ export default function BookingsScreen() {
 
             return (
               <View style={numColumns > 1 ? { flex: 1 } : undefined}>
-              <Pressable
-                onPress={() => router.push(`/bookings/${item.id}`)}
-                className="bg-card overflow-hidden rounded-2xl border border-gray-300 shadow-sm active:opacity-80 dark:border-gray-700"
-              >
-                <View className="flex-row">
-                  {imageUrl ? (
-                    <Image
-                      source={{ uri: imageUrl }}
-                      style={{ width: 96, height: "auto" }}
-                      className="self-stretch"
-                      resizeMode="cover"
-                    />
-                  ) : (
-                    <View
-                      className="bg-muted items-center justify-center"
-                      style={{ width: 96 }}
-                    >
-                      <Text style={{ fontSize: 32 }}>
-                        {isEvent ? "🎟️" : "🎬"}
-                      </Text>
-                    </View>
-                  )}
-
-                  <View className="flex-1 justify-between gap-2 p-4">
-                    <View className="flex-row items-start justify-between gap-2">
-                      <Text
-                        className="text-foreground flex-1 text-base font-bold"
-                        numberOfLines={2}
-                      >
-                        {title}
-                      </Text>
+                <Pressable
+                  onPress={() => router.push(`/bookings/${item.id}`)}
+                  className="bg-card overflow-hidden rounded-2xl border border-gray-300 shadow-sm active:opacity-80 dark:border-gray-700"
+                >
+                  <View className="flex-row">
+                    {imageUrl ? (
+                      <Image
+                        source={{ uri: imageUrl }}
+                        style={{ width: 96, height: "auto" }}
+                        className="self-stretch"
+                        resizeMode="cover"
+                      />
+                    ) : (
                       <View
-                        style={{
-                          backgroundColor: isConfirmed ? "#dcfce7" : "#fee2e2",
-                          borderRadius: 999,
-                          borderWidth: 1,
-                          borderColor: isConfirmed ? "#86efac" : "#fca5a5",
-                          paddingHorizontal: 8,
-                          paddingVertical: 2,
-                        }}
+                        className="bg-muted items-center justify-center"
+                        style={{ width: 96 }}
                       >
+                        <Text style={{ fontSize: 32 }}>
+                          {isEvent ? "🎟️" : "🎬"}
+                        </Text>
+                      </View>
+                    )}
+
+                    <View className="flex-1 justify-between gap-2 p-4">
+                      <View className="flex-row items-start justify-between gap-2">
                         <Text
+                          className="text-foreground flex-1 text-base font-bold"
+                          numberOfLines={2}
+                        >
+                          {title}
+                        </Text>
+                        <View
                           style={{
-                            color: isConfirmed ? "#15803d" : "#dc2626",
-                            fontSize: 11,
-                            fontWeight: "600",
+                            backgroundColor: isConfirmed
+                              ? "#dcfce7"
+                              : "#fee2e2",
+                            borderRadius: 999,
+                            borderWidth: 1,
+                            borderColor: isConfirmed ? "#86efac" : "#fca5a5",
+                            paddingHorizontal: 8,
+                            paddingVertical: 2,
                           }}
                         >
-                          {item.status}
+                          <Text
+                            style={{
+                              color: isConfirmed ? "#15803d" : "#dc2626",
+                              fontSize: 11,
+                              fontWeight: "600",
+                            }}
+                          >
+                            {item.status}
+                          </Text>
+                        </View>
+                      </View>
+
+                      {startsAt && (
+                        <Text className="text-muted-foreground text-sm">
+                          {formatDateTime(startsAt)}
+                        </Text>
+                      )}
+                      {subtitle && (
+                        <Text
+                          className="text-muted-foreground text-sm"
+                          numberOfLines={1}
+                        >
+                          {subtitle}
+                        </Text>
+                      )}
+
+                      <View className="flex-row items-center justify-between border-t border-gray-100 pt-2 dark:border-gray-800">
+                        <Text className="text-muted-foreground text-sm">
+                          {item.seats_count} {unitLabel}
+                          {item.seats_count !== 1 ? "s" : ""}
+                        </Text>
+                        <Text className="text-primary font-semibold">
+                          {Number(item.total_price) > 0
+                            ? `€${Number(item.total_price).toFixed(2)}`
+                            : "Free"}
                         </Text>
                       </View>
                     </View>
-
-                    {startsAt && (
-                      <Text className="text-muted-foreground text-sm">
-                        {formatDateTime(startsAt)}
-                      </Text>
-                    )}
-                    {subtitle && (
-                      <Text
-                        className="text-muted-foreground text-sm"
-                        numberOfLines={1}
-                      >
-                        {subtitle}
-                      </Text>
-                    )}
-
-                    <View className="flex-row items-center justify-between border-t border-gray-100 pt-2 dark:border-gray-800">
-                      <Text className="text-muted-foreground text-sm">
-                        {item.seats_count} {unitLabel}
-                        {item.seats_count !== 1 ? "s" : ""}
-                      </Text>
-                      <Text className="text-primary font-semibold">
-                        {Number(item.total_price) > 0
-                          ? `€${Number(item.total_price).toFixed(2)}`
-                          : "Free"}
-                      </Text>
-                    </View>
                   </View>
-                </View>
-              </Pressable>
+                </Pressable>
               </View>
             );
           }}

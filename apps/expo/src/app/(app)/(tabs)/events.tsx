@@ -192,85 +192,87 @@ export default function EventsScreen() {
           columnWrapperStyle={numColumns > 1 ? { gap: 16 } : undefined}
           renderItem={({ item }: { item: LiveEvent }) => (
             <View style={numColumns > 1 ? { flex: 1 } : undefined}>
-            <Pressable
-              onPress={() =>
-                router.push({
-                  pathname: "/events/[eventId]",
-                  params: { eventId: item.id },
-                })
-              }
-              className="bg-card overflow-hidden rounded-2xl border border-gray-300 shadow-sm active:opacity-80 dark:border-gray-700"
-            >
-              <View>
-                {item.image_url ? (
-                  <Image
-                    source={{ uri: item.image_url }}
-                    style={{ width: "100%", height: 140 }}
-                    resizeMode="cover"
-                  />
-                ) : (
-                  <View
-                    className="bg-muted"
-                    style={{
-                      width: "100%",
-                      height: 140,
-                      alignItems: "center",
-                      justifyContent: "center",
-                      gap: 4,
-                    }}
-                  >
-                    <Text style={{ fontSize: 32, opacity: 0.4 }}>🖼️</Text>
-                    <Text className="text-muted-foreground text-[10px] font-medium tracking-wide uppercase">
-                      No image yet
+              <Pressable
+                onPress={() =>
+                  router.push({
+                    pathname: "/events/[eventId]",
+                    params: { eventId: item.id },
+                  })
+                }
+                className="bg-card overflow-hidden rounded-2xl border border-gray-300 shadow-sm active:opacity-80 dark:border-gray-700"
+              >
+                <View>
+                  {item.image_url ? (
+                    <Image
+                      source={{ uri: item.image_url }}
+                      style={{ width: "100%", height: 140 }}
+                      resizeMode="cover"
+                    />
+                  ) : (
+                    <View
+                      className="bg-muted"
+                      style={{
+                        width: "100%",
+                        height: 140,
+                        alignItems: "center",
+                        justifyContent: "center",
+                        gap: 4,
+                      }}
+                    >
+                      <Text style={{ fontSize: 32, opacity: 0.4 }}>🖼️</Text>
+                      <Text className="text-muted-foreground text-[10px] font-medium tracking-wide uppercase">
+                        No image yet
+                      </Text>
+                    </View>
+                  )}
+                  <View className="bg-background/90 absolute top-2 left-2 flex-row items-center gap-1 rounded-full px-2.5 py-1">
+                    <Text style={{ fontSize: 11 }}>
+                      {categoryIcon(item.category)}
+                    </Text>
+                    <Text className="text-foreground text-[10px] font-bold tracking-wide uppercase">
+                      {item.category}
                     </Text>
                   </View>
-                )}
-                <View className="bg-background/90 absolute top-2 left-2 flex-row items-center gap-1 rounded-full px-2.5 py-1">
-                  <Text style={{ fontSize: 11 }}>
-                    {categoryIcon(item.category)}
-                  </Text>
-                  <Text className="text-foreground text-[10px] font-bold tracking-wide uppercase">
-                    {item.category}
-                  </Text>
-                </View>
-                <View
-                  className={
-                    item.price != null
-                      ? "bg-background/90 absolute top-2 right-2 rounded-full px-2.5 py-1"
-                      : "bg-primary absolute top-2 right-2 rounded-full px-2.5 py-1"
-                  }
-                >
-                  <Text
+                  <View
                     className={
                       item.price != null
-                        ? "text-foreground text-xs font-bold"
-                        : "text-primary-foreground text-xs font-bold"
+                        ? "bg-background/90 absolute top-2 right-2 rounded-full px-2.5 py-1"
+                        : "bg-primary absolute top-2 right-2 rounded-full px-2.5 py-1"
                     }
                   >
-                    {item.price != null ? `€${item.price.toFixed(2)}` : "FREE"}
-                  </Text>
+                    <Text
+                      className={
+                        item.price != null
+                          ? "text-foreground text-xs font-bold"
+                          : "text-primary-foreground text-xs font-bold"
+                      }
+                    >
+                      {item.price != null
+                        ? `€${item.price.toFixed(2)}`
+                        : "FREE"}
+                    </Text>
+                  </View>
                 </View>
-              </View>
-              <View className="gap-1.5 p-4">
-                <Text
-                  className="text-foreground text-base font-bold"
-                  numberOfLines={1}
-                >
-                  {item.title}
-                </Text>
-                <Text className="text-muted-foreground text-xs">
-                  🕐 {formatEventDate(item.starts_at)}
-                </Text>
-                {item.location ? (
+                <View className="gap-1.5 p-4">
                   <Text
-                    className="text-muted-foreground text-xs"
+                    className="text-foreground text-base font-bold"
                     numberOfLines={1}
                   >
-                    📍 {item.location}
+                    {item.title}
                   </Text>
-                ) : null}
-              </View>
-            </Pressable>
+                  <Text className="text-muted-foreground text-xs">
+                    🕐 {formatEventDate(item.starts_at)}
+                  </Text>
+                  {item.location ? (
+                    <Text
+                      className="text-muted-foreground text-xs"
+                      numberOfLines={1}
+                    >
+                      📍 {item.location}
+                    </Text>
+                  ) : null}
+                </View>
+              </Pressable>
             </View>
           )}
         />
