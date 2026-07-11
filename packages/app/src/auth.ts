@@ -226,7 +226,9 @@ export function isAnonymousUser(user: User | null | undefined): boolean {
  * cleared. Never overwrites an avatar the user already has (including one
  * they uploaded themselves) — best-effort, so callers can ignore failures.
  */
-export async function syncOAuthAvatar(client: AppSupabaseClient): Promise<void> {
+export async function syncOAuthAvatar(
+  client: AppSupabaseClient,
+): Promise<void> {
   const { data: userData } = await client.auth.getUser();
   if (!userData.user) return;
   const metadata = userData.user.user_metadata as Record<string, unknown>;

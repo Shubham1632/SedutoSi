@@ -45,9 +45,7 @@ export function useUploadAvatar() {
         .upload(path, arrayBuffer, { contentType, upsert: true });
       if (error) throw error;
 
-      const { data } = supabase.storage
-        .from(AVATARS_BUCKET)
-        .getPublicUrl(path);
+      const { data } = supabase.storage.from(AVATARS_BUCKET).getPublicUrl(path);
       // Cache-bust: the path is stable across uploads, so append a fresh
       // query param or the old image would keep showing from cache.
       return `${data.publicUrl}?v=${Date.now()}`;
