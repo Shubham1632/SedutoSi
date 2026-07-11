@@ -7,6 +7,7 @@ import { LegendList } from "@legendapp/list";
 import type { Cinema } from "@acme/app";
 import { useCinemas } from "@acme/app";
 
+import { openMapsSearch } from "~/lib/maps";
 import { useResponsive } from "~/lib/use-responsive";
 
 function SearchButton({
@@ -170,12 +171,14 @@ export default function CinemasScreen() {
                     >
                       {item.name}
                     </Text>
-                    <Text
-                      className="text-muted-foreground text-xs"
-                      numberOfLines={1}
-                    >
-                      📍 {item.address}
-                    </Text>
+                    <Pressable onPress={() => openMapsSearch(item.address)}>
+                      <Text
+                        className="text-muted-foreground text-xs"
+                        numberOfLines={1}
+                      >
+                        📍 {item.address}
+                      </Text>
+                    </Pressable>
                   </View>
                   <Text className="text-muted-foreground text-lg">›</Text>
                 </View>

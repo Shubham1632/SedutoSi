@@ -1,10 +1,11 @@
-import { Image, ScrollView, Text, View } from "react-native";
+import { Image, Pressable, ScrollView, Text, View } from "react-native";
 import QRCode from "react-native-qrcode-svg";
 import { Stack, useLocalSearchParams } from "expo-router";
 
 import { useBooking } from "@acme/app";
 
 import { formatDateTime, sortSeats } from "~/lib/booking";
+import { openMapsSearch } from "~/lib/maps";
 
 export default function BookingDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -164,12 +165,17 @@ export default function BookingDetailScreen() {
                     <Text className="text-muted-foreground text-sm">
                       Address
                     </Text>
-                    <Text
-                      className="text-foreground flex-1 text-right text-sm font-medium"
-                      numberOfLines={2}
+                    <Pressable
+                      onPress={() => openMapsSearch(cinema.address)}
+                      className="flex-1"
                     >
-                      {cinema.address}
-                    </Text>
+                      <Text
+                        className="text-foreground text-right text-sm font-medium"
+                        numberOfLines={2}
+                      >
+                        {cinema.address}
+                      </Text>
+                    </Pressable>
                   </View>
                 )}
               </>

@@ -1,11 +1,19 @@
 import { useMemo } from "react";
-import { ActivityIndicator, Image, ScrollView, Text, View } from "react-native";
+import {
+  ActivityIndicator,
+  Image,
+  Pressable,
+  ScrollView,
+  Text,
+  View,
+} from "react-native";
 import { Stack, useLocalSearchParams, useRouter } from "expo-router";
 
 import { useEvent, useEventTicketsSold } from "@acme/app";
 import { Button } from "@acme/ui-native/button";
 
 import { ResponsiveContainer } from "~/components/responsive-container";
+import { openMapsSearch } from "~/lib/maps";
 
 function formatEventDateTime(startsAt: string, endsAt?: string | null) {
   const start = new Date(startsAt);
@@ -84,9 +92,11 @@ export default function EventDetailScreen() {
             </Text>
 
             {event.location ? (
-              <Text className="text-foreground text-sm font-medium">
-                📍 {event.location}
-              </Text>
+              <Pressable onPress={() => openMapsSearch(event.location ?? "")}>
+                <Text className="text-foreground text-sm font-medium">
+                  📍 {event.location}
+                </Text>
+              </Pressable>
             ) : null}
 
             {event.description ? (
