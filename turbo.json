@@ -35,6 +35,10 @@
     "test": {
       "dependsOn": ["^topo", "^build"]
     },
+    "test:coverage": {
+      "dependsOn": ["^topo", "^build"],
+      "outputs": ["coverage/**"]
+    },
     "ui-add": {
       "cache": false,
       "interactive": true
