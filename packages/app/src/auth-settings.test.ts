@@ -12,7 +12,10 @@ import {
 describe("auth-settings normalizer", () => {
   it("falls back to kit defaults for null/empty input", () => {
     const s = normalizeAuthSettings(null);
-    expect(s.orderedMethods).toEqual(["magicLink", "emailOtp", "password"]);
+    // Only password is enabled by default: magic link / OTP / OAuth / SSO all
+    // rely on a deep-link redirect that Expo Go can't handle. See
+    // DEFAULT_LOGIN_METHODS in auth-settings.ts.
+    expect(s.orderedMethods).toEqual(["password"]);
     expect(s.methods.google).toBe(false);
     expect(s.termsUrl).toBe("/terms");
     expect(s).toEqual(DEFAULT_AUTH_SETTINGS);

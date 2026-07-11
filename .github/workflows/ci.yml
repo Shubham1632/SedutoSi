@@ -15,7 +15,7 @@ env:
 
 jobs:
   build:
-    name: Typecheck, lint & build
+    name: Typecheck, Test, lint & build
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -43,6 +43,9 @@ jobs:
 
       - name: Format check
         run: pnpm format
+
+      - name: Test
+        run: pnpm test
 
       - name: Build (Expo export smoke test)
         run: pnpm -F @acme/expo smoke:export

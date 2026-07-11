@@ -20,6 +20,7 @@
     "lint": "turbo run lint --continue -- --cache --cache-location .cache/.eslintcache",
     "lint:fix": "turbo run lint --continue -- --fix --cache --cache-location .cache/.eslintcache",
     "test": "turbo run test",
+    "test:coverage": "turbo run test:coverage",
     "typecheck": "turbo run typecheck",
     "android": "pnpm -F @acme/expo android",
     "ios": "pnpm -F @acme/expo ios"
