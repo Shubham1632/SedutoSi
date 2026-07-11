@@ -156,7 +156,7 @@ export default function CinemaDetailScreen() {
                         },
                       });
                     }}
-                    className="bg-card overflow-hidden rounded-2xl"
+                    className="bg-card overflow-hidden rounded-2xl border border-gray-300 shadow-sm active:opacity-80 dark:border-gray-700"
                   >
                     {movie.poster_url ? (
                       <Image
@@ -172,7 +172,7 @@ export default function CinemaDetailScreen() {
                         <Text style={{ fontSize: 48 }}>🎬</Text>
                       </View>
                     )}
-                    <View className="gap-2 p-4">
+                    <View className="gap-2 border-t border-gray-300 p-4 dark:border-gray-700">
                       <Text className="text-foreground text-lg font-bold">
                         {movie.title}
                       </Text>
@@ -193,7 +193,7 @@ export default function CinemaDetailScreen() {
                         {item.showtimes.slice(0, 3).map((showtime) => (
                           <View
                             key={showtime.id}
-                            className="bg-muted rounded-full px-3 py-2"
+                            className="bg-muted rounded-full border border-gray-300 px-3 py-2 dark:border-gray-700"
                           >
                             <Text className="text-foreground text-xs">
                               {formatTime(showtime.starts_at)}
