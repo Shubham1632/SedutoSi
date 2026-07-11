@@ -2,7 +2,7 @@ import * as QueryParams from "expo-auth-session/build/QueryParams";
 import Constants from "expo-constants";
 import * as WebBrowser from "expo-web-browser";
 
-import { signInWithOAuth } from "@acme/app";
+import { signInWithOAuth, syncOAuthAvatar } from "@acme/app";
 
 import { supabase } from "~/lib/supabase";
 
@@ -51,6 +51,7 @@ export async function signInWithGoogle(): Promise<"success" | "cancelled"> {
       params.code,
     );
     if (exchangeError) throw exchangeError;
+    await syncOAuthAvatar(supabase).catch(() => undefined);
     return "success";
   }
 
@@ -60,6 +61,7 @@ export async function signInWithGoogle(): Promise<"success" | "cancelled"> {
       refresh_token: params.refresh_token,
     });
     if (sessionError) throw sessionError;
+    await syncOAuthAvatar(supabase).catch(() => undefined);
     return "success";
   }
 

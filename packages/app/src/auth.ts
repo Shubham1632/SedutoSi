@@ -219,6 +219,36 @@ export function isAnonymousUser(user: User | null | undefined): boolean {
 }
 
 /**
+ * Copy the OAuth provider's profile photo onto `profiles.avatar_url` if the
+ * user doesn't already have one set. `handle_new_user()` only does this once,
+ * at `auth.users` insert time, so it misses a user who already had an
+ * account before linking/signing in with Google, or whose profile avatar was
+ * cleared. Never overwrites an avatar the user already has (including one
+ * they uploaded themselves) — best-effort, so callers can ignore failures.
+ */
+export async function syncOAuthAvatar(client: AppSupabaseClient): Promise<void> {
+  const { data: userData } = await client.auth.getUser();
+  if (!userData.user) return;
+  const metadata = userData.user.user_metadata as Record<string, unknown>;
+  const providerAvatar =
+    (metadata.avatar_url as string | undefined) ??
+    (metadata.picture as string | undefined);
+  if (!providerAvatar) return;
+
+  const { data: profile } = await client
+    .from("profiles")
+    .select("avatar_url")
+    .eq("id", userData.user.id)
+    .single();
+  if (profile?.avatar_url) return;
+
+  await client
+    .from("profiles")
+    .update({ avatar_url: providerAvatar })
+    .eq("id", userData.user.id);
+}
+
+/**
  * Convert the current anonymous user to a permanent one by attaching an email.
  * Supabase sends a confirmation email (with `enable_confirmations`); the user
  * becomes permanent on click. Optionally stamp profile data (name/phone/address)
