@@ -1,6 +1,13 @@
 import { useState } from "react";
-import { Pressable, ScrollView, View } from "react-native";
+import {
+  ActivityIndicator,
+  Image,
+  Pressable,
+  ScrollView,
+  View,
+} from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import * as ImagePicker from "expo-image-picker";
 import { useRouter } from "expo-router";
 import { useQueryClient } from "@tanstack/react-query";
 import { Controller, useForm } from "react-hook-form";
@@ -13,6 +20,7 @@ import {
   useDeleteAccount,
   useProfile,
   useUpdateProfile,
+  useUploadAvatar,
   zodFormResolver,
 } from "@acme/app";
 import { appAlert } from "@acme/ui-native/alert";
@@ -104,11 +112,46 @@ export default function Profile() {
   const { user } = useSession();
   const profile = useProfile();
   const updateProfile = useUpdateProfile();
+  const uploadAvatar = useUploadAvatar();
   const deleteAccount = useDeleteAccount();
   const queryClient = useQueryClient();
   const router = useRouter();
   const [isSigningOut, setIsSigningOut] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
+  const [isUploadingAvatar, setIsUploadingAvatar] = useState(false);
+
+  async function onPickAvatar() {
+    const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    if (!permission.granted) {
+      appAlert(
+        "Permission needed",
+        "Allow photo library access to change your avatar.",
+      );
+      return;
+    }
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ["images"],
+      allowsEditing: true,
+      aspect: [1, 1],
+      quality: 0.8,
+    });
+    if (result.canceled || !result.assets[0]) return;
+
+    setIsUploadingAvatar(true);
+    try {
+      const avatarUrl = await uploadAvatar.mutateAsync({
+        uri: result.assets[0].uri,
+      });
+      await updateProfile.mutateAsync({
+        displayName: profile.data?.display_name ?? "",
+        avatarUrl,
+      });
+    } catch (e) {
+      appAlert("Could not update avatar", msg(e));
+    } finally {
+      setIsUploadingAvatar(false);
+    }
+  }
 
   async function onSignOut() {
     setIsSigningOut(true);
@@ -195,11 +238,40 @@ export default function Profile() {
       {/* Header card */}
       <View className="bg-background border-border gap-5 rounded-2xl border p-6">
         <View className="flex-row items-center gap-4">
-          <View className="bg-primary h-16 w-16 items-center justify-center rounded-full">
-            <Text className="text-primary-foreground text-xl font-bold">
-              {initials(displayName, user?.email)}
-            </Text>
-          </View>
+          <Pressable
+            onPress={() => void onPickAvatar()}
+            disabled={isUploadingAvatar}
+            className="h-16 w-16 active:opacity-70"
+          >
+            {profile.data?.avatar_url ? (
+              <Image
+                source={{ uri: profile.data.avatar_url }}
+                style={{ width: 64, height: 64, borderRadius: 32 }}
+              />
+            ) : (
+              <View className="bg-primary h-16 w-16 items-center justify-center rounded-full">
+                <Text className="text-primary-foreground text-xl font-bold">
+                  {initials(displayName, user?.email)}
+                </Text>
+              </View>
+            )}
+            <View
+              className="bg-primary border-background absolute right-0 bottom-0 h-6 w-6 items-center justify-center rounded-full border-2"
+              pointerEvents="none"
+            >
+              {isUploadingAvatar ? (
+                <ActivityIndicator
+                  size="small"
+                  color="white"
+                  style={{ transform: [{ scale: 0.6 }] }}
+                />
+              ) : (
+                <Text className="text-primary-foreground text-[10px] font-bold">
+                  ✎
+                </Text>
+              )}
+            </View>
+          </Pressable>
           <View className="flex-1 gap-1">
             <Text className="text-foreground text-lg font-bold">
               {displayName ?? "Add your name"}

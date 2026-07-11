@@ -18,6 +18,7 @@ export type { Wishlist } from "./hooks/use-wishlist";
 
 export * from "./hooks/use-events";
 export * from "./hooks/use-event-image-upload";
+export * from "./hooks/use-avatar-upload";
 export * from "./hooks/use-payment-methods";
 // Movie booking hooks
 export * from "./hooks/use-movies";

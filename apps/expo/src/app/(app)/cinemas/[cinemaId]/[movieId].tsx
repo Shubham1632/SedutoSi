@@ -78,7 +78,7 @@ export default function CinemaMovieScreen() {
               return (
                 <Pressable
                   onPress={() => router.push(`/booking/${item.id}`)}
-                  className="bg-card gap-3 rounded-xl p-4"
+                  className="bg-card gap-3 rounded-2xl border border-gray-300 p-4 shadow-sm active:opacity-80 dark:border-gray-700"
                 >
                   <Text className="text-foreground text-base font-semibold">
                     {formatDateTime(item.starts_at)}
