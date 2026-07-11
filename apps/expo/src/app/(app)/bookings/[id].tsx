@@ -50,44 +50,19 @@ export default function BookingDetailScreen() {
             <Text style={{ fontSize: 56 }}>{isEvent ? "🎟️" : "🎬"}</Text>
           </View>
         )}
-        <View
-          className="absolute inset-x-0 bottom-0 justify-end p-5"
-          style={{ backgroundColor: "rgba(0,0,0,0.45)" }}
-        >
-          <View className="flex-row items-center gap-2">
-            <View
-              style={{
-                backgroundColor: isConfirmed ? "#dcfce7" : "#fee2e2",
-                borderRadius: 999,
-                paddingHorizontal: 8,
-                paddingVertical: 2,
-              }}
-            >
-              <Text
-                style={{
-                  color: isConfirmed ? "#15803d" : "#dc2626",
-                  fontSize: 11,
-                  fontWeight: "600",
-                }}
-              >
-                {booking.status}
-              </Text>
-            </View>
-          </View>
-          <Text className="mt-1 text-2xl font-extrabold text-white">
-            {title}
-          </Text>
-          {startsAt && (
-            <Text className="text-sm text-white/85">
-              {formatDateTime(startsAt)}
-            </Text>
-          )}
-        </View>
       </View>
 
-      <View className="gap-5 p-5">
-        {/* Ticket / QR card */}
-        <View className="bg-card border-border overflow-hidden rounded-2xl border">
+      <View
+        style={{
+          marginTop: -32,
+          paddingTop: 20,
+          paddingBottom: 20,
+          paddingHorizontal: 20,
+          gap: 20,
+        }}
+      >
+        {/* Ticket / QR card — floats slightly over the banner above */}
+        <View className="bg-card border-border overflow-hidden rounded-2xl border shadow-lg">
           <View className="items-center gap-3 p-6">
             <View className="rounded-2xl bg-white p-4">
               <QRCode value={ticketCode} size={180} />
@@ -109,6 +84,44 @@ export default function BookingDetailScreen() {
           />
 
           <View className="gap-3 p-5">
+            <View className="flex-row items-start justify-between gap-3">
+              <Text
+                className="text-foreground flex-1 text-lg font-bold"
+                numberOfLines={2}
+              >
+                {title}
+              </Text>
+              <View
+                style={{
+                  backgroundColor: isConfirmed ? "#dcfce7" : "#fee2e2",
+                  borderRadius: 999,
+                  paddingHorizontal: 8,
+                  paddingVertical: 2,
+                }}
+              >
+                <Text
+                  style={{
+                    color: isConfirmed ? "#15803d" : "#dc2626",
+                    fontSize: 11,
+                    fontWeight: "600",
+                  }}
+                >
+                  {booking.status}
+                </Text>
+              </View>
+            </View>
+
+            {startsAt && (
+              <View className="flex-row items-center justify-between">
+                <Text className="text-muted-foreground text-sm">
+                  {isEvent ? "Date & time" : "Showtime"}
+                </Text>
+                <Text className="text-foreground text-sm font-medium">
+                  {formatDateTime(startsAt)}
+                </Text>
+              </View>
+            )}
+
             {isEvent ? (
               event?.location && (
                 <View className="flex-row items-center justify-between gap-4">
@@ -192,7 +205,8 @@ export default function BookingDetailScreen() {
               {booking.seats_count !== 1 ? "s" : ""}
             </Text>
             <Text className="text-foreground text-sm">
-              Booked {new Date(booking.created_at).toLocaleDateString("it-IT")}
+              Booked{" "}
+              {new Date(booking.created_at).toLocaleDateString("en-GB")}
             </Text>
           </View>
           <View className="border-border flex-row items-center justify-between border-t pt-3">

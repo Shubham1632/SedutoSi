@@ -9,7 +9,7 @@ export const MAX_SEATS = 8; // hard cap per booking
 export type SeatStatus = "available" | "selected" | "occupied";
 
 export function formatDateTime(iso: string) {
-  return new Date(iso).toLocaleString("it-IT", {
+  return new Date(iso).toLocaleString("en-GB", {
     weekday: "long",
     month: "long",
     day: "numeric",

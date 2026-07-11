@@ -9,7 +9,7 @@ import {
 } from "@acme/app";
 
 function formatDateTime(iso: string) {
-  return new Date(iso).toLocaleString("it-IT", {
+  return new Date(iso).toLocaleString("en-GB", {
     weekday: "short",
     month: "short",
     day: "numeric",
