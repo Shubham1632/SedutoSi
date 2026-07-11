@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 
 import {
   isAiGatewayConfigured,
+  isMcpConfigured,
   parseClientEnv,
   parseServerEnv,
   serverEnvSchema,
@@ -51,6 +52,22 @@ describe("isAiGatewayConfigured", () => {
 
   it("is true on Vercel via the injected OIDC token (no API key)", () => {
     expect(isAiGatewayConfigured({ VERCEL_OIDC_TOKEN: "oidc" })).toBe(true);
+  });
+});
+
+describe("isMcpConfigured", () => {
+  it("is false with no signing secret", () => {
+    expect(isMcpConfigured({})).toBe(false);
+  });
+
+  it("is true once a signing secret is set", () => {
+    expect(isMcpConfigured({ MCP_JWT_SECRET: "secret" })).toBe(true);
+  });
+
+  it("is false when explicitly switched off, even with a secret set", () => {
+    expect(
+      isMcpConfigured({ MCP_JWT_SECRET: "secret", MCP_ENABLED: "off" }),
+    ).toBe(false);
   });
 });
 
