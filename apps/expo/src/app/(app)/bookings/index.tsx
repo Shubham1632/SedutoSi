@@ -49,7 +49,7 @@ export default function BookingsScreen() {
               className={
                 selected
                   ? "bg-primary rounded-full px-4 py-2"
-                  : "border-border rounded-full border px-4 py-2"
+                  : "rounded-full border border-gray-300 px-4 py-2 dark:border-gray-700"
               }
             >
               <Text
@@ -109,14 +109,7 @@ export default function BookingsScreen() {
             return (
               <Pressable
                 onPress={() => router.push(`/bookings/${item.id}`)}
-                className="bg-card border-border overflow-hidden rounded-2xl border active:opacity-80"
-                style={{
-                  shadowColor: "#000",
-                  shadowOpacity: 0.08,
-                  shadowRadius: 8,
-                  shadowOffset: { width: 0, height: 3 },
-                  elevation: 2,
-                }}
+                className="bg-card overflow-hidden rounded-2xl border border-gray-300 shadow-sm active:opacity-80 dark:border-gray-700"
               >
                 <View className="flex-row">
                   {imageUrl ? (
@@ -149,6 +142,8 @@ export default function BookingsScreen() {
                         style={{
                           backgroundColor: isConfirmed ? "#dcfce7" : "#fee2e2",
                           borderRadius: 999,
+                          borderWidth: 1,
+                          borderColor: isConfirmed ? "#86efac" : "#fca5a5",
                           paddingHorizontal: 8,
                           paddingVertical: 2,
                         }}
@@ -179,7 +174,7 @@ export default function BookingsScreen() {
                       </Text>
                     )}
 
-                    <View className="flex-row items-center justify-between pt-1">
+                    <View className="flex-row items-center justify-between border-t border-gray-100 pt-2 dark:border-gray-800">
                       <Text className="text-muted-foreground text-sm">
                         {item.seats_count} {unitLabel}
                         {item.seats_count !== 1 ? "s" : ""}
