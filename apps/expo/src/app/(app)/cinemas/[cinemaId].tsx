@@ -5,14 +5,14 @@ import { Stack, useLocalSearchParams, useRouter } from "expo-router";
 import { useCinema, useCinemaMovies } from "@acme/app";
 
 function formatTime(iso: string) {
-  return new Date(iso).toLocaleTimeString("it-IT", {
+  return new Date(iso).toLocaleTimeString("en-GB", {
     hour: "2-digit",
     minute: "2-digit",
   });
 }
 
 function formatDate(iso: string) {
-  return new Date(iso).toLocaleDateString("it-IT", {
+  return new Date(iso).toLocaleDateString("en-GB", {
     weekday: "short",
     day: "numeric",
     month: "short",

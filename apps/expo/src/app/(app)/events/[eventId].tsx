@@ -1,7 +1,9 @@
-import { ActivityIndicator, Text, View } from "react-native";
-import { Stack, useLocalSearchParams } from "expo-router";
+import { useMemo } from "react";
+import { ActivityIndicator, Image, ScrollView, Text, View } from "react-native";
+import { Stack, useLocalSearchParams, useRouter } from "expo-router";
 
-import { useEvent } from "@acme/app";
+import { useEvent, useEventTicketsSold } from "@acme/app";
+import { Button } from "@acme/ui-native/button";
 
 function formatEventDateTime(startsAt: string, endsAt?: string | null) {
   const start = new Date(startsAt);
@@ -24,7 +26,14 @@ function formatEventDateTime(startsAt: string, endsAt?: string | null) {
 
 export default function EventDetailScreen() {
   const { eventId } = useLocalSearchParams<{ eventId: string }>();
+  const router = useRouter();
   const { data: event, isLoading } = useEvent(eventId);
+  const { data: ticketsSold } = useEventTicketsSold(eventId);
+
+  const remaining = useMemo(() => {
+    if (event?.capacity == null) return null;
+    return Math.max(0, event.capacity - (ticketsSold ?? 0));
+  }, [event, ticketsSold]);
 
   if (isLoading || !event) {
     return (
@@ -35,39 +44,82 @@ export default function EventDetailScreen() {
     );
   }
 
+  const soldOut = remaining !== null && remaining <= 0;
+
   return (
     <View className="bg-background flex-1">
       <Stack.Screen options={{ title: event.title }} />
 
-      <View className="gap-4 p-4">
-        <View className="gap-1">
-          <Text className="text-primary text-xs font-medium uppercase">
-            {event.category}
+      <ScrollView contentContainerClassName="gap-4 pb-4">
+        {event.image_url ? (
+          <Image
+            source={{ uri: event.image_url }}
+            style={{ width: "100%", height: 220 }}
+            resizeMode="cover"
+          />
+        ) : (
+          <View
+            className="bg-muted items-center justify-center"
+            style={{ width: "100%", height: 220 }}
+          >
+            <Text style={{ fontSize: 48, opacity: 0.4 }}>🖼️</Text>
+          </View>
+        )}
+
+        <View className="gap-4 px-4">
+          <View className="gap-1">
+            <Text className="text-primary text-xs font-medium uppercase">
+              {event.category}
+            </Text>
+            <Text className="text-foreground text-2xl font-bold">
+              {event.title}
+            </Text>
+          </View>
+
+          <Text className="text-muted-foreground text-sm">
+            {formatEventDateTime(event.starts_at, event.ends_at)}
           </Text>
-          <Text className="text-foreground text-2xl font-bold">
-            {event.title}
-          </Text>
+
+          {event.location ? (
+            <Text className="text-foreground text-sm font-medium">
+              📍 {event.location}
+            </Text>
+          ) : null}
+
+          {event.description ? (
+            <Text className="text-foreground text-sm leading-5">
+              {event.description}
+            </Text>
+          ) : null}
+
+          <View className="flex-row items-center justify-between">
+            <Text className="text-foreground text-lg font-semibold">
+              {event.price != null && event.price > 0
+                ? `€${event.price.toFixed(2)}`
+                : "Free"}
+            </Text>
+            {remaining !== null && (
+              <Text className="text-muted-foreground text-xs">
+                {soldOut
+                  ? "Sold out"
+                  : `${remaining} ticket${remaining === 1 ? "" : "s"} left`}
+              </Text>
+            )}
+          </View>
         </View>
+      </ScrollView>
 
-        <Text className="text-muted-foreground text-sm">
-          {formatEventDateTime(event.starts_at, event.ends_at)}
-        </Text>
-
-        {event.location ? (
-          <Text className="text-foreground text-sm font-medium">
-            📍 {event.location}
-          </Text>
-        ) : null}
-
-        {event.description ? (
-          <Text className="text-foreground text-sm leading-5">
-            {event.description}
-          </Text>
-        ) : null}
-
-        <Text className="text-foreground text-lg font-semibold">
-          {event.price != null ? `€${event.price.toFixed(2)}` : "Free"}
-        </Text>
+      <View className="border-border bg-card border-t px-5 pt-3 pb-6">
+        <Button
+          title={soldOut ? "Sold Out" : "Book Tickets"}
+          disabled={soldOut}
+          onPress={() =>
+            router.push({
+              pathname: "/event-booking/[eventId]",
+              params: { eventId },
+            })
+          }
+        />
       </View>
     </View>
   );

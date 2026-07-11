@@ -1,4 +1,5 @@
-// Verifies a completed Stripe Checkout session and records the booking.
+// Verifies a completed Stripe Checkout session and records the booking, for
+// either a movie screening or a paid live event.
 //
 // Bookings are only ever written here, after Stripe confirms the session is
 // `paid` and its metadata matches the caller — never inserted directly by the
@@ -6,20 +7,21 @@
 // The insert uses the service-role key deliberately (the sanctioned use per
 // CLAUDE.md's golden rule #2): RLS can't tell "verified by this function"
 // apart from "inserted by the app", so the INSERT policy was removed and this
-// is the one place allowed to bypass it.
+// is the one place (along with book-free-event, for free events) allowed to
+// bypass it.
 //
-// stripe-create-checkout-session already checked the seats weren't taken
+// stripe-create-checkout-session already checked seats/capacity weren't taken
 // before payment, but two people can still race between then and here (both
-// pay for the same seat within the same few seconds). This is the hard
-// check: if someone else's booking landed first, the loser's payment is
-// refunded instead of silently double-selling the seat.
+// pay within the same few seconds). This is the hard check: if someone else's
+// booking landed first, the loser's payment is refunded instead of silently
+// double-selling the seat or overselling the event.
 import { createClient } from "jsr:@supabase/supabase-js@2";
 import Stripe from "npm:stripe@^18.0.0";
 
 import { corsHeaders, json } from "../_shared/cors.ts";
 
 const BOOKING_SELECT =
-  "*, screening:screenings(*, movie:movies(*), screen:screens(*, cinema:cinemas(*)))";
+  "*, screening:screenings(*, movie:movies(*), screen:screens(*, cinema:cinemas(*))), event:events(*)";
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") {
@@ -80,15 +82,28 @@ Deno.serve(async (req) => {
       return json({ error: "This payment does not belong to your account" }, 403);
     }
 
+    const paymentIntentId =
+      typeof session.payment_intent === "string" ? session.payment_intent : null;
+    const totalPrice = (session.amount_total ?? 0) / 100;
+
+    if (session.metadata?.event_id) {
+      return await confirmEventBooking({
+        stripe,
+        supabaseAdmin,
+        user,
+        sessionId,
+        eventId: session.metadata.event_id,
+        quantity: Number(session.metadata.quantity ?? 0),
+        totalPrice,
+        paymentIntentId,
+      });
+    }
+
     const screeningId = session.metadata?.screening_id;
     const seats = (session.metadata?.seats ?? "").split(",").filter(Boolean);
     if (!screeningId || seats.length < 1) {
       return json({ error: "Missing screening or seats on session" }, 500);
     }
-
-    const totalPrice = (session.amount_total ?? 0) / 100;
-    const paymentIntentId =
-      typeof session.payment_intent === "string" ? session.payment_intent : null;
 
     // Hard race check: someone else may have booked one of these seats for
     // this screening between checkout-session creation and now.
@@ -145,3 +160,89 @@ Deno.serve(async (req) => {
     return json({ error: "Could not confirm payment" }, 500);
   }
 });
+
+async function confirmEventBooking({
+  stripe,
+  supabaseAdmin,
+  user,
+  sessionId,
+  eventId,
+  quantity,
+  totalPrice,
+  paymentIntentId,
+}: {
+  stripe: Stripe;
+  // deno-lint-ignore no-explicit-any
+  supabaseAdmin: any;
+  user: { id: string };
+  sessionId: string;
+  eventId: string;
+  quantity: number;
+  totalPrice: number;
+  paymentIntentId: string | null;
+}) {
+  if (!eventId || quantity < 1) {
+    return json({ error: "Missing event or quantity on session" }, 500);
+  }
+
+  const { data: event, error: eventError } = await supabaseAdmin
+    .from("events")
+    .select("id, capacity")
+    .eq("id", eventId)
+    .single();
+  if (eventError || !event) {
+    return json({ error: "Event not found" }, 404);
+  }
+
+  // Hard race check: someone else may have booked tickets for this event
+  // between checkout-session creation and now.
+  if (event.capacity != null) {
+    const { data: sold, error: soldError } = await supabaseAdmin.rpc(
+      "get_event_tickets_sold",
+      { p_event_id: eventId },
+    );
+    if (soldError) throw soldError;
+    const remaining = event.capacity - (sold ?? 0);
+    if (quantity > remaining) {
+      if (paymentIntentId) {
+        await stripe.refunds.create({ payment_intent: paymentIntentId });
+      }
+      return json(
+        {
+          error:
+            "This event sold out just before your payment completed. You have been refunded.",
+        },
+        409,
+      );
+    }
+  }
+
+  const { data: booking, error: insertError } = await supabaseAdmin
+    .from("bookings")
+    .insert({
+      user_id: user.id,
+      event_id: eventId,
+      seats: [],
+      seats_count: quantity,
+      total_price: totalPrice,
+      status: "confirmed",
+      stripe_checkout_session_id: sessionId,
+      stripe_payment_intent_id: paymentIntentId,
+    })
+    .select(BOOKING_SELECT)
+    .single();
+
+  if (insertError) {
+    if (insertError.code === "23505") {
+      const { data: fallback } = await supabaseAdmin
+        .from("bookings")
+        .select(BOOKING_SELECT)
+        .eq("stripe_checkout_session_id", sessionId)
+        .single();
+      if (fallback) return json({ booking: fallback });
+    }
+    throw insertError;
+  }
+
+  return json({ booking });
+}

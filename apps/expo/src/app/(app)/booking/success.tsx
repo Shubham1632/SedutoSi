@@ -4,14 +4,15 @@ import { Stack, useLocalSearchParams, useRouter } from "expo-router";
 import { useBooking } from "@acme/app";
 import { Button } from "@acme/ui-native/button";
 
-import { screeningDisplay } from "~/lib/booking";
+import { bookingDisplay } from "~/lib/booking";
 
 export default function PaymentSuccessScreen() {
   const router = useRouter();
   const { bookingId } = useLocalSearchParams<{ bookingId: string }>();
   const { data: booking, isLoading } = useBooking(bookingId);
 
-  const info = booking?.screening ? screeningDisplay(booking.screening) : null;
+  const info = booking ? bookingDisplay(booking) : null;
+  const unitLabel = booking?.event_id ? "ticket" : "seat";
 
   return (
     <View className="bg-background flex-1">
@@ -33,7 +34,9 @@ export default function PaymentSuccessScreen() {
             Payment Successful
           </Text>
           <Text className="text-muted-foreground text-center text-sm">
-            Your tickets are booked. Enjoy the movie!
+            {booking?.event_id
+              ? "Your tickets are booked. See you there!"
+              : "Your tickets are booked. Enjoy the movie!"}
           </Text>
         </View>
 
@@ -58,11 +61,13 @@ export default function PaymentSuccessScreen() {
             )}
             <View className="border-border mt-2 flex-row items-center justify-between border-t pt-3">
               <Text className="text-muted-foreground text-sm">
-                {booking.seats_count} seat
+                {booking.seats_count} {unitLabel}
                 {booking.seats_count !== 1 ? "s" : ""}
               </Text>
               <Text className="text-primary text-xl font-extrabold">
-                €{Number(booking.total_price).toFixed(2)}
+                {Number(booking.total_price) > 0
+                  ? `€${Number(booking.total_price).toFixed(2)}`
+                  : "Free"}
               </Text>
             </View>
           </View>

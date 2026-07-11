@@ -42,8 +42,9 @@ export type Database = {
       bookings: {
         Row: {
           created_at: string;
+          event_id: string | null;
           id: string;
-          screening_id: string;
+          screening_id: string | null;
           seats: string[];
           seats_count: number;
           status: string;
@@ -54,8 +55,9 @@ export type Database = {
         };
         Insert: {
           created_at?: string;
+          event_id?: string | null;
           id?: string;
-          screening_id: string;
+          screening_id?: string | null;
           seats?: string[];
           seats_count?: number;
           status?: string;
@@ -66,8 +68,9 @@ export type Database = {
         };
         Update: {
           created_at?: string;
+          event_id?: string | null;
           id?: string;
-          screening_id?: string;
+          screening_id?: string | null;
           seats?: string[];
           seats_count?: number;
           status?: string;
@@ -77,6 +80,13 @@ export type Database = {
           user_id?: string;
         };
         Relationships: [
+          {
+            foreignKeyName: "bookings_event_id_fkey";
+            columns: ["event_id"];
+            isOneToOne: false;
+            referencedRelation: "events";
+            referencedColumns: ["id"];
+          },
           {
             foreignKeyName: "bookings_screening_id_fkey";
             columns: ["screening_id"];
@@ -119,8 +129,10 @@ export type Database = {
       };
       events: {
         Row: {
+          capacity: number | null;
           category: string;
           created_at: string;
+          created_by: string | null;
           description: string | null;
           ends_at: string | null;
           id: string;
@@ -131,8 +143,10 @@ export type Database = {
           title: string;
         };
         Insert: {
+          capacity?: number | null;
           category?: string;
           created_at?: string;
+          created_by?: string | null;
           description?: string | null;
           ends_at?: string | null;
           id?: string;
@@ -143,8 +157,10 @@ export type Database = {
           title: string;
         };
         Update: {
+          capacity?: number | null;
           category?: string;
           created_at?: string;
+          created_by?: string | null;
           description?: string | null;
           ends_at?: string | null;
           id?: string;
@@ -154,7 +170,15 @@ export type Database = {
           starts_at?: string;
           title?: string;
         };
-        Relationships: [];
+        Relationships: [
+          {
+            foreignKeyName: "events_created_by_fkey";
+            columns: ["created_by"];
+            isOneToOne: false;
+            referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          },
+        ];
       };
       movies: {
         Row: {
@@ -375,6 +399,7 @@ export type Database = {
     };
     Functions: {
       get_booked_seats: { Args: { p_screening_id: string }; Returns: string[] };
+      get_event_tickets_sold: { Args: { p_event_id: string }; Returns: number };
     };
     Enums: {
       [_ in never]: never;

@@ -7,12 +7,12 @@ import { useMovie, useScreenings } from "@acme/app";
 
 function formatScreeningParts(iso: string) {
   const date = new Date(iso);
-  const dateLabel = date.toLocaleDateString("it-IT", {
+  const dateLabel = date.toLocaleDateString("en-GB", {
     weekday: "short",
     day: "numeric",
     month: "short",
   });
-  const timeLabel = date.toLocaleTimeString("it-IT", {
+  const timeLabel = date.toLocaleTimeString("en-GB", {
     hour: "2-digit",
     minute: "2-digit",
   });

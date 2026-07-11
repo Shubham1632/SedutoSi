@@ -47,6 +47,13 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     "expo-secure-store",
     "expo-web-browser",
     [
+      "expo-image-picker",
+      {
+        photosPermission:
+          "SedutoSi uses your photo library to pick a cover image for a live event you're creating.",
+      },
+    ],
+    [
       "expo-splash-screen",
       {
         backgroundColor: "#E4E4E7",

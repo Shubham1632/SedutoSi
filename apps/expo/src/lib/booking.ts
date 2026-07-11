@@ -1,4 +1,4 @@
-import type { Screening } from "@acme/app";
+import type { Booking, LiveEvent, Screening } from "@acme/app";
 
 // --- Seat map layout (identical for every screening for now) -----------------
 export const ROWS = ["A", "B", "C", "D", "E", "F", "G", "H", "J", "K"] as const;
@@ -9,7 +9,7 @@ export const MAX_SEATS = 8; // hard cap per booking
 export type SeatStatus = "available" | "selected" | "occupied";
 
 export function formatDateTime(iso: string) {
-  return new Date(iso).toLocaleString("it-IT", {
+  return new Date(iso).toLocaleString("en-GB", {
     weekday: "long",
     month: "long",
     day: "numeric",
@@ -81,4 +81,24 @@ export function screeningDisplay(screening: Screening) {
       ? `${cinema.name}${screen.name ? ` · ${screen.name}` : ""}`
       : undefined,
   };
+}
+
+/** Flattened, display-ready fields from a live event row. */
+export function eventDisplay(event: LiveEvent) {
+  return {
+    title: event.title,
+    when: formatDateTime(event.starts_at),
+    where: event.location ?? undefined,
+  };
+}
+
+/**
+ * Flattened, display-ready fields from a booking — a booking is always
+ * exactly one of a movie screening or a live event (enforced by the
+ * `bookings_screening_or_event_check` constraint).
+ */
+export function bookingDisplay(booking: Booking) {
+  if (booking.screening) return screeningDisplay(booking.screening);
+  if (booking.event) return eventDisplay(booking.event);
+  return { title: "Booking", when: "", where: undefined };
 }

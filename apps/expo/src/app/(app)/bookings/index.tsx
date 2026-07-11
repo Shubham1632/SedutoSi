@@ -1,11 +1,20 @@
+import { useMemo, useState } from "react";
 import { FlatList, Image, Pressable, Text, View } from "react-native";
 import { Stack, useRouter } from "expo-router";
 
 import type { Booking } from "@acme/app";
 import { useMyBookings } from "@acme/app";
 
+type BookingFilter = "all" | "movies" | "events";
+
+const FILTERS: { key: BookingFilter; label: string }[] = [
+  { key: "all", label: "All" },
+  { key: "movies", label: "Movies" },
+  { key: "events", label: "Events" },
+];
+
 function formatDateTime(iso: string) {
-  return new Date(iso).toLocaleString("it-IT", {
+  return new Date(iso).toLocaleString("en-GB", {
     weekday: "short",
     month: "short",
     day: "numeric",
@@ -17,54 +26,95 @@ function formatDateTime(iso: string) {
 export default function BookingsScreen() {
   const router = useRouter();
   const { data: bookings, isLoading } = useMyBookings();
+  const [filter, setFilter] = useState<BookingFilter>("all");
+
+  const filteredBookings = useMemo(() => {
+    if (!bookings) return bookings;
+    if (filter === "movies") return bookings.filter((b) => b.screening_id);
+    if (filter === "events") return bookings.filter((b) => b.event_id);
+    return bookings;
+  }, [bookings, filter]);
 
   return (
     <View className="bg-background flex-1">
       <Stack.Screen options={{ title: "My Bookings" }} />
+
+      <View className="flex-row gap-2 px-4 pt-4">
+        {FILTERS.map(({ key, label }) => {
+          const selected = key === filter;
+          return (
+            <Pressable
+              key={key}
+              onPress={() => setFilter(key)}
+              className={
+                selected
+                  ? "bg-primary rounded-full px-4 py-2"
+                  : "rounded-full border border-gray-300 px-4 py-2 dark:border-gray-700"
+              }
+            >
+              <Text
+                className={
+                  selected
+                    ? "text-primary-foreground text-sm font-medium"
+                    : "text-foreground text-sm font-medium"
+                }
+              >
+                {label}
+              </Text>
+            </Pressable>
+          );
+        })}
+      </View>
+
       {isLoading ? (
         <View className="flex-1 items-center justify-center">
           <Text className="text-muted-foreground">Loading…</Text>
         </View>
-      ) : !bookings?.length ? (
+      ) : !filteredBookings?.length ? (
         <View className="flex-1 items-center justify-center gap-2 p-6">
           <Text className="text-foreground text-center text-lg">
             No bookings yet
           </Text>
           <Text className="text-muted-foreground text-center">
-            Book a movie from the home screen.
+            {filter === "events"
+              ? "Book a live event to see it here."
+              : filter === "movies"
+                ? "Book a movie from the home screen."
+                : "Book a movie or live event to see it here."}
           </Text>
         </View>
       ) : (
         <FlatList
-          data={bookings}
+          data={filteredBookings}
           keyExtractor={(item) => item.id}
           contentContainerClassName="p-4 gap-4"
           renderItem={({ item }: { item: Booking }) => {
-            const screening = item.screening as
-              | {
-                  starts_at?: string;
-                  movie?: { title?: string; poster_url?: string | null };
-                  screen?: { cinema?: { name?: string } };
-                }
-              | undefined;
             const isConfirmed = item.status === "confirmed";
+            const isEvent = !!item.event_id;
+
+            const imageUrl = isEvent
+              ? item.event?.image_url
+              : item.screening?.movie?.poster_url;
+            const title = isEvent
+              ? (item.event?.title ?? "Event")
+              : (item.screening?.movie?.title ?? "Movie");
+            const startsAt = isEvent
+              ? item.event?.starts_at
+              : item.screening?.starts_at;
+            const subtitle = isEvent
+              ? item.event?.location
+              : item.screening?.screen?.cinema?.name;
+            const unitLabel = isEvent ? "ticket" : "seat";
 
             return (
               <Pressable
                 onPress={() => router.push(`/bookings/${item.id}`)}
-                className="bg-card border-border overflow-hidden rounded-2xl border active:opacity-80"
-                style={{
-                  shadowColor: "#000",
-                  shadowOpacity: 0.08,
-                  shadowRadius: 8,
-                  shadowOffset: { width: 0, height: 3 },
-                  elevation: 2,
-                }}
+                className="bg-card overflow-hidden rounded-2xl border border-gray-300 shadow-sm active:opacity-80 dark:border-gray-700"
               >
                 <View className="flex-row">
-                  {screening?.movie?.poster_url ? (
+                  {imageUrl ? (
                     <Image
-                      source={{ uri: screening.movie.poster_url }}
+                      source={{ uri: imageUrl }}
                       style={{ width: 96, height: "auto" }}
                       className="self-stretch"
                       resizeMode="cover"
@@ -74,7 +124,9 @@ export default function BookingsScreen() {
                       className="bg-muted items-center justify-center"
                       style={{ width: 96 }}
                     >
-                      <Text style={{ fontSize: 32 }}>🎬</Text>
+                      <Text style={{ fontSize: 32 }}>
+                        {isEvent ? "🎟️" : "🎬"}
+                      </Text>
                     </View>
                   )}
 
@@ -84,12 +136,14 @@ export default function BookingsScreen() {
                         className="text-foreground flex-1 text-base font-bold"
                         numberOfLines={2}
                       >
-                        {screening?.movie?.title ?? "Movie"}
+                        {title}
                       </Text>
                       <View
                         style={{
                           backgroundColor: isConfirmed ? "#dcfce7" : "#fee2e2",
                           borderRadius: 999,
+                          borderWidth: 1,
+                          borderColor: isConfirmed ? "#86efac" : "#fca5a5",
                           paddingHorizontal: 8,
                           paddingVertical: 2,
                         }}
@@ -106,27 +160,29 @@ export default function BookingsScreen() {
                       </View>
                     </View>
 
-                    {screening?.starts_at && (
+                    {startsAt && (
                       <Text className="text-muted-foreground text-sm">
-                        {formatDateTime(screening.starts_at)}
+                        {formatDateTime(startsAt)}
                       </Text>
                     )}
-                    {screening?.screen?.cinema?.name && (
+                    {subtitle && (
                       <Text
                         className="text-muted-foreground text-sm"
                         numberOfLines={1}
                       >
-                        {screening.screen.cinema.name}
+                        {subtitle}
                       </Text>
                     )}
 
-                    <View className="flex-row items-center justify-between pt-1">
+                    <View className="flex-row items-center justify-between border-t border-gray-100 pt-2 dark:border-gray-800">
                       <Text className="text-muted-foreground text-sm">
-                        {item.seats_count} seat
+                        {item.seats_count} {unitLabel}
                         {item.seats_count !== 1 ? "s" : ""}
                       </Text>
                       <Text className="text-primary font-semibold">
-                        €{Number(item.total_price).toFixed(2)}
+                        {Number(item.total_price) > 0
+                          ? `€${Number(item.total_price).toFixed(2)}`
+                          : "Free"}
                       </Text>
                     </View>
                   </View>

@@ -260,6 +260,12 @@ export default function Profile() {
           subtitle="Movies you want to watch"
           onPress={() => router.push("/wishlist")}
         />
+        <Divider />
+        <MenuRow
+          label="Add Live Event"
+          subtitle="Create and publish your own event"
+          onPress={() => router.push("/events/create")}
+        />
       </Section>
 
       {/* Payments */}

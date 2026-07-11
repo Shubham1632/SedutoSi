@@ -5,13 +5,23 @@ import { Button } from "@acme/ui-native/button";
 
 export default function PaymentFailedScreen() {
   const router = useRouter();
-  const { message, screeningId, seats } = useLocalSearchParams<{
-    message?: string;
-    screeningId?: string;
-    seats?: string;
-  }>();
+  const { message, screeningId, seats, eventId, quantity } =
+    useLocalSearchParams<{
+      message?: string;
+      screeningId?: string;
+      seats?: string;
+      eventId?: string;
+      quantity?: string;
+    }>();
 
   function onRetry() {
+    if (eventId) {
+      router.replace({
+        pathname: "/event-booking/payment",
+        params: { eventId, quantity: quantity ?? "1" },
+      });
+      return;
+    }
     if (!screeningId) {
       router.dismissAll();
       return;
