@@ -126,7 +126,7 @@ export default function EventsScreen() {
         </View>
       )}
 
-      <View className="px-4 pt-3">
+      <View className="px-4 pt-3 pb-3">
         <FlatList
           data={filters}
           horizontal
@@ -176,7 +176,12 @@ export default function EventsScreen() {
         <LegendList
           data={filteredEvents}
           keyExtractor={(item) => item.id}
-          contentContainerStyle={{ padding: 16, gap: 16 }}
+          contentContainerStyle={{
+            paddingHorizontal: 16,
+            paddingTop: 16,
+            paddingBottom: insets.bottom + 90,
+            gap: 16,
+          }}
           renderItem={({ item }: { item: LiveEvent }) => (
             <Pressable
               onPress={() =>
