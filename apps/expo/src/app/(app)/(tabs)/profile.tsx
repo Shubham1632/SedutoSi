@@ -28,6 +28,7 @@ import { Button } from "@acme/ui-native/button";
 import { Input } from "@acme/ui-native/input";
 import { Text } from "@acme/ui-native/text";
 
+import { ResponsiveContainer } from "~/components/responsive-container";
 import { supabase } from "~/lib/supabase";
 
 const msg = (e: unknown) =>
@@ -230,171 +231,174 @@ export default function Profile() {
         paddingTop: insets.top + 20,
         paddingHorizontal: 20,
         paddingBottom: 56,
-        rowGap: 28,
       }}
     >
-      <Text className="text-foreground text-2xl font-bold">Profile</Text>
+      <ResponsiveContainer style={{ rowGap: 28 }}>
+        <Text className="text-foreground text-2xl font-bold">Profile</Text>
 
-      {/* Header card */}
-      <View className="bg-background border-border gap-5 rounded-2xl border p-6">
-        <View className="flex-row items-center gap-4">
-          <Pressable
-            onPress={() => void onPickAvatar()}
-            disabled={isUploadingAvatar}
-            className="h-16 w-16 active:opacity-70"
-          >
-            {profile.data?.avatar_url ? (
-              <Image
-                source={{ uri: profile.data.avatar_url }}
-                style={{ width: 64, height: 64, borderRadius: 32 }}
-              />
-            ) : (
-              <View className="bg-primary h-16 w-16 items-center justify-center rounded-full">
-                <Text className="text-primary-foreground text-xl font-bold">
-                  {initials(displayName, user?.email)}
-                </Text>
-              </View>
-            )}
-            <View
-              className="bg-primary border-background absolute right-0 bottom-0 h-6 w-6 items-center justify-center rounded-full border-2"
-              pointerEvents="none"
+        {/* Header card */}
+        <View className="bg-background border-border gap-5 rounded-2xl border p-6">
+          <View className="flex-row items-center gap-4">
+            <Pressable
+              onPress={() => void onPickAvatar()}
+              disabled={isUploadingAvatar}
+              className="h-16 w-16 active:opacity-70"
             >
-              {isUploadingAvatar ? (
-                <ActivityIndicator
-                  size="small"
-                  color="white"
-                  style={{ transform: [{ scale: 0.6 }] }}
+              {profile.data?.avatar_url ? (
+                <Image
+                  source={{ uri: profile.data.avatar_url }}
+                  style={{ width: 64, height: 64, borderRadius: 32 }}
                 />
               ) : (
-                <Text className="text-primary-foreground text-[10px] font-bold">
-                  ✎
-                </Text>
+                <View className="bg-primary h-16 w-16 items-center justify-center rounded-full">
+                  <Text className="text-primary-foreground text-xl font-bold">
+                    {initials(displayName, user?.email)}
+                  </Text>
+                </View>
               )}
+              <View
+                className="bg-primary border-background absolute right-0 bottom-0 h-6 w-6 items-center justify-center rounded-full border-2"
+                pointerEvents="none"
+              >
+                {isUploadingAvatar ? (
+                  <ActivityIndicator
+                    size="small"
+                    color="white"
+                    style={{ transform: [{ scale: 0.6 }] }}
+                  />
+                ) : (
+                  <Text className="text-primary-foreground text-[10px] font-bold">
+                    ✎
+                  </Text>
+                )}
+              </View>
+            </Pressable>
+            <View className="flex-1 gap-1">
+              <Text className="text-foreground text-lg font-bold">
+                {displayName ?? "Add your name"}
+              </Text>
+              <Text className="text-muted-foreground text-sm">
+                {user?.email}
+              </Text>
             </View>
-          </Pressable>
-          <View className="flex-1 gap-1">
-            <Text className="text-foreground text-lg font-bold">
-              {displayName ?? "Add your name"}
-            </Text>
-            <Text className="text-muted-foreground text-sm">{user?.email}</Text>
+            <Pressable
+              onPress={() => setIsEditing((v) => !v)}
+              className="border-border h-9 w-9 items-center justify-center rounded-full border active:opacity-70"
+            >
+              <Text className="text-muted-foreground text-sm">
+                {isEditing ? "✕" : "✎"}
+              </Text>
+            </Pressable>
           </View>
-          <Pressable
-            onPress={() => setIsEditing((v) => !v)}
-            className="border-border h-9 w-9 items-center justify-center rounded-full border active:opacity-70"
-          >
-            <Text className="text-muted-foreground text-sm">
-              {isEditing ? "✕" : "✎"}
-            </Text>
-          </Pressable>
+
+          {isEditing ? (
+            <View className="border-border gap-3 border-t pt-5">
+              <View className="gap-1.5">
+                <Text className="text-sm font-medium">Display name</Text>
+                <Controller
+                  control={control}
+                  name="displayName"
+                  render={({ field: { onChange, onBlur, value } }) => (
+                    <Input
+                      value={value}
+                      onChangeText={onChange}
+                      onBlur={onBlur}
+                      placeholder="Your name"
+                    />
+                  )}
+                />
+                {errors.displayName && (
+                  <Text className="text-destructive text-sm">
+                    {errors.displayName.message}
+                  </Text>
+                )}
+              </View>
+              <Button
+                title="Save"
+                loading={updateProfile.isPending}
+                onPress={() => void handleSubmit(onSave)()}
+              />
+            </View>
+          ) : null}
         </View>
 
-        {isEditing ? (
-          <View className="border-border gap-3 border-t pt-5">
-            <View className="gap-1.5">
-              <Text className="text-sm font-medium">Display name</Text>
-              <Controller
-                control={control}
-                name="displayName"
-                render={({ field: { onChange, onBlur, value } }) => (
-                  <Input
-                    value={value}
-                    onChangeText={onChange}
-                    onBlur={onBlur}
-                    placeholder="Your name"
-                  />
-                )}
-              />
-              {errors.displayName && (
-                <Text className="text-destructive text-sm">
-                  {errors.displayName.message}
-                </Text>
-              )}
-            </View>
-            <Button
-              title="Save"
-              loading={updateProfile.isPending}
-              onPress={() => void handleSubmit(onSave)()}
-            />
-          </View>
-        ) : null}
-      </View>
+        {/* Activity */}
+        <Section title="Activity">
+          <MenuRow
+            label="My Bookings"
+            subtitle="View your ticket history"
+            onPress={() => router.push("/bookings")}
+          />
+          <Divider />
+          <MenuRow
+            label="Wishlist"
+            subtitle="Movies you want to watch"
+            onPress={() => router.push("/wishlist")}
+          />
+          <Divider />
+          <MenuRow
+            label="Add Live Event"
+            subtitle="Create and publish your own event"
+            onPress={() => router.push("/events/create")}
+          />
+        </Section>
 
-      {/* Activity */}
-      <Section title="Activity">
-        <MenuRow
-          label="My Bookings"
-          subtitle="View your ticket history"
-          onPress={() => router.push("/bookings")}
-        />
-        <Divider />
-        <MenuRow
-          label="Wishlist"
-          subtitle="Movies you want to watch"
-          onPress={() => router.push("/wishlist")}
-        />
-        <Divider />
-        <MenuRow
-          label="Add Live Event"
-          subtitle="Create and publish your own event"
-          onPress={() => router.push("/events/create")}
-        />
-      </Section>
+        {/* Payments */}
+        <Section title="Payments">
+          <MenuRow
+            label="Payment Methods"
+            subtitle="Manage saved cards"
+            onPress={() => router.push("/payment-methods")}
+          />
+        </Section>
 
-      {/* Payments */}
-      <Section title="Payments">
-        <MenuRow
-          label="Payment Methods"
-          subtitle="Manage saved cards"
-          onPress={() => router.push("/payment-methods")}
-        />
-      </Section>
+        {/* Support */}
+        <Section title="Support">
+          <MenuRow
+            label="Help & Support"
+            onPress={() =>
+              appAlert("Help & Support", "Contact us at support@sedutosi.com")
+            }
+          />
+          <Divider />
+          <MenuRow
+            label="Rate the App"
+            onPress={() => appAlert("Thanks!", "Coming soon.")}
+          />
+          <Divider />
+          <MenuRow
+            label="Share the App"
+            onPress={() => appAlert("Share", "Coming soon.")}
+          />
+        </Section>
 
-      {/* Support */}
-      <Section title="Support">
-        <MenuRow
-          label="Help & Support"
-          onPress={() =>
-            appAlert("Help & Support", "Contact us at support@sedutosi.com")
-          }
-        />
-        <Divider />
-        <MenuRow
-          label="Rate the App"
-          onPress={() => appAlert("Thanks!", "Coming soon.")}
-        />
-        <Divider />
-        <MenuRow
-          label="Share the App"
-          onPress={() => appAlert("Share", "Coming soon.")}
-        />
-      </Section>
+        {/* Legal */}
+        <Section title="Legal">
+          <MenuRow
+            label="Terms & Conditions"
+            onPress={() => appAlert("Terms & Conditions", "Coming soon.")}
+          />
+          <Divider />
+          <MenuRow
+            label="Privacy Policy"
+            onPress={() => appAlert("Privacy Policy", "Coming soon.")}
+          />
+        </Section>
 
-      {/* Legal */}
-      <Section title="Legal">
-        <MenuRow
-          label="Terms & Conditions"
-          onPress={() => appAlert("Terms & Conditions", "Coming soon.")}
-        />
-        <Divider />
-        <MenuRow
-          label="Privacy Policy"
-          onPress={() => appAlert("Privacy Policy", "Coming soon.")}
-        />
-      </Section>
+        {/* Account actions */}
+        <Section title="Account">
+          <MenuRow
+            label={isSigningOut ? "Signing out…" : "Sign Out"}
+            onPress={onSignOutPress}
+          />
+          <Divider />
+          <MenuRow label="Delete Account" destructive onPress={onDelete} />
+        </Section>
 
-      {/* Account actions */}
-      <Section title="Account">
-        <MenuRow
-          label={isSigningOut ? "Signing out…" : "Sign Out"}
-          onPress={onSignOutPress}
-        />
-        <Divider />
-        <MenuRow label="Delete Account" destructive onPress={onDelete} />
-      </Section>
-
-      <Text className="text-muted-foreground mt-1 text-center text-xs">
-        SedutoSi v1.0.0
-      </Text>
+        <Text className="text-muted-foreground mt-1 text-center text-xs">
+          SedutoSi v1.0.0
+        </Text>
+      </ResponsiveContainer>
     </ScrollView>
   );
 }

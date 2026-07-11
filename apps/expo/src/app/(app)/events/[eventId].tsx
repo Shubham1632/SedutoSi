@@ -5,6 +5,8 @@ import { Stack, useLocalSearchParams, useRouter } from "expo-router";
 import { useEvent, useEventTicketsSold } from "@acme/app";
 import { Button } from "@acme/ui-native/button";
 
+import { ResponsiveContainer } from "~/components/responsive-container";
+
 function formatEventDateTime(startsAt: string, endsAt?: string | null) {
   const start = new Date(startsAt);
   const dateLabel = start.toLocaleDateString("en-US", {
@@ -66,60 +68,64 @@ export default function EventDetailScreen() {
           </View>
         )}
 
-        <View className="gap-4 px-4">
-          <View className="gap-1">
-            <Text className="text-primary text-xs font-medium uppercase">
-              {event.category}
-            </Text>
-            <Text className="text-foreground text-2xl font-bold">
-              {event.title}
-            </Text>
-          </View>
-
-          <Text className="text-muted-foreground text-sm">
-            {formatEventDateTime(event.starts_at, event.ends_at)}
-          </Text>
-
-          {event.location ? (
-            <Text className="text-foreground text-sm font-medium">
-              📍 {event.location}
-            </Text>
-          ) : null}
-
-          {event.description ? (
-            <Text className="text-foreground text-sm leading-5">
-              {event.description}
-            </Text>
-          ) : null}
-
-          <View className="flex-row items-center justify-between">
-            <Text className="text-foreground text-lg font-semibold">
-              {event.price != null && event.price > 0
-                ? `€${event.price.toFixed(2)}`
-                : "Free"}
-            </Text>
-            {remaining !== null && (
-              <Text className="text-muted-foreground text-xs">
-                {soldOut
-                  ? "Sold out"
-                  : `${remaining} ticket${remaining === 1 ? "" : "s"} left`}
+        <ResponsiveContainer maxWidth={800}>
+          <View className="gap-4 px-4">
+            <View className="gap-1">
+              <Text className="text-primary text-xs font-medium uppercase">
+                {event.category}
               </Text>
-            )}
+              <Text className="text-foreground text-2xl font-bold">
+                {event.title}
+              </Text>
+            </View>
+
+            <Text className="text-muted-foreground text-sm">
+              {formatEventDateTime(event.starts_at, event.ends_at)}
+            </Text>
+
+            {event.location ? (
+              <Text className="text-foreground text-sm font-medium">
+                📍 {event.location}
+              </Text>
+            ) : null}
+
+            {event.description ? (
+              <Text className="text-foreground text-sm leading-5">
+                {event.description}
+              </Text>
+            ) : null}
+
+            <View className="flex-row items-center justify-between">
+              <Text className="text-foreground text-lg font-semibold">
+                {event.price != null && event.price > 0
+                  ? `€${event.price.toFixed(2)}`
+                  : "Free"}
+              </Text>
+              {remaining !== null && (
+                <Text className="text-muted-foreground text-xs">
+                  {soldOut
+                    ? "Sold out"
+                    : `${remaining} ticket${remaining === 1 ? "" : "s"} left`}
+                </Text>
+              )}
+            </View>
           </View>
-        </View>
+        </ResponsiveContainer>
       </ScrollView>
 
       <View className="border-border bg-card border-t px-5 pt-3 pb-6">
-        <Button
-          title={soldOut ? "Sold Out" : "Book Tickets"}
-          disabled={soldOut}
-          onPress={() =>
-            router.push({
-              pathname: "/event-booking/[eventId]",
-              params: { eventId },
-            })
-          }
-        />
+        <ResponsiveContainer maxWidth={800}>
+          <Button
+            title={soldOut ? "Sold Out" : "Book Tickets"}
+            disabled={soldOut}
+            onPress={() =>
+              router.push({
+                pathname: "/event-booking/[eventId]",
+                params: { eventId },
+              })
+            }
+          />
+        </ResponsiveContainer>
       </View>
     </View>
   );

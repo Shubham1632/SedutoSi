@@ -5,6 +5,7 @@ import { Stack, useLocalSearchParams, useRouter } from "expo-router";
 import { useEvent, useEventTicketsSold } from "@acme/app";
 import { Button } from "@acme/ui-native/button";
 
+import { ResponsiveContainer } from "~/components/responsive-container";
 import { eventDisplay } from "~/lib/booking";
 
 const MAX_TICKETS_PER_BOOKING = 10;
@@ -52,75 +53,83 @@ export default function EventTicketQuantityScreen() {
       <Stack.Screen options={{ title: "Book Tickets" }} />
 
       <ScrollView contentContainerClassName="gap-6 p-5">
-        <View className="bg-card border-border gap-1 rounded-2xl border p-5">
-          <Text className="text-foreground text-xl font-bold">
-            {info.title}
-          </Text>
-          <Text className="text-muted-foreground text-sm">{info.when}</Text>
-          {info.where && (
-            <Text className="text-muted-foreground text-sm">{info.where}</Text>
-          )}
-          {remaining !== null && (
-            <Text className="text-muted-foreground mt-1 text-xs">
-              {soldOut
-                ? "Sold out"
-                : `${remaining} ticket${remaining === 1 ? "" : "s"} left`}
+        <ResponsiveContainer style={{ gap: 24 }}>
+          <View className="bg-card border-border gap-1 rounded-2xl border p-5">
+            <Text className="text-foreground text-xl font-bold">
+              {info.title}
             </Text>
-          )}
-        </View>
-
-        {!soldOut && (
-          <View className="bg-card border-border items-center gap-4 rounded-2xl border p-6">
-            <Text className="text-muted-foreground text-xs font-medium uppercase">
-              Tickets
-            </Text>
-            <View className="flex-row items-center gap-6">
-              <Pressable
-                onPress={() => setQuantity((q) => Math.max(1, q - 1))}
-                disabled={quantity <= 1}
-                className="border-border h-11 w-11 items-center justify-center rounded-full border active:opacity-70"
-                style={{ opacity: quantity <= 1 ? 0.4 : 1 }}
-              >
-                <Text className="text-foreground text-xl font-bold">−</Text>
-              </Pressable>
-              <Text className="text-foreground w-10 text-center text-3xl font-extrabold">
-                {quantity}
+            <Text className="text-muted-foreground text-sm">{info.when}</Text>
+            {info.where && (
+              <Text className="text-muted-foreground text-sm">
+                {info.where}
               </Text>
-              <Pressable
-                onPress={() => setQuantity((q) => Math.min(maxQuantity, q + 1))}
-                disabled={quantity >= maxQuantity}
-                className="border-border h-11 w-11 items-center justify-center rounded-full border active:opacity-70"
-                style={{ opacity: quantity >= maxQuantity ? 0.4 : 1 }}
-              >
-                <Text className="text-foreground text-xl font-bold">+</Text>
-              </Pressable>
-            </View>
+            )}
+            {remaining !== null && (
+              <Text className="text-muted-foreground mt-1 text-xs">
+                {soldOut
+                  ? "Sold out"
+                  : `${remaining} ticket${remaining === 1 ? "" : "s"} left`}
+              </Text>
+            )}
           </View>
-        )}
+
+          {!soldOut && (
+            <View className="bg-card border-border items-center gap-4 rounded-2xl border p-6">
+              <Text className="text-muted-foreground text-xs font-medium uppercase">
+                Tickets
+              </Text>
+              <View className="flex-row items-center gap-6">
+                <Pressable
+                  onPress={() => setQuantity((q) => Math.max(1, q - 1))}
+                  disabled={quantity <= 1}
+                  className="border-border h-11 w-11 items-center justify-center rounded-full border active:opacity-70"
+                  style={{ opacity: quantity <= 1 ? 0.4 : 1 }}
+                >
+                  <Text className="text-foreground text-xl font-bold">−</Text>
+                </Pressable>
+                <Text className="text-foreground w-10 text-center text-3xl font-extrabold">
+                  {quantity}
+                </Text>
+                <Pressable
+                  onPress={() =>
+                    setQuantity((q) => Math.min(maxQuantity, q + 1))
+                  }
+                  disabled={quantity >= maxQuantity}
+                  className="border-border h-11 w-11 items-center justify-center rounded-full border active:opacity-70"
+                  style={{ opacity: quantity >= maxQuantity ? 0.4 : 1 }}
+                >
+                  <Text className="text-foreground text-xl font-bold">+</Text>
+                </Pressable>
+              </View>
+            </View>
+          )}
+        </ResponsiveContainer>
       </ScrollView>
 
       <View className="border-border bg-card border-t px-5 pt-3 pb-6">
-        <View className="mb-3 flex-row items-end justify-between">
-          <Text className="text-muted-foreground text-xs">
-            {pricePerTicket > 0
-              ? `${quantity} × €${pricePerTicket.toFixed(2)}`
-              : "Free"}
-          </Text>
-          <Text className="text-foreground text-2xl font-extrabold">
-            {pricePerTicket > 0 ? `€${total.toFixed(2)}` : "Free"}
-          </Text>
-        </View>
-        <Button
-          title={
-            soldOut
-              ? "Sold Out"
-              : pricePerTicket > 0
-                ? `Continue · €${total.toFixed(2)}`
-                : "Continue"
-          }
-          disabled={soldOut}
-          onPress={onContinue}
-        />
+        <ResponsiveContainer>
+          <View className="mb-3 flex-row items-end justify-between">
+            <Text className="text-muted-foreground text-xs">
+              {pricePerTicket > 0
+                ? `${quantity} × €${pricePerTicket.toFixed(2)}`
+                : "Free"}
+            </Text>
+            <Text className="text-foreground text-2xl font-extrabold">
+              {pricePerTicket > 0 ? `€${total.toFixed(2)}` : "Free"}
+            </Text>
+          </View>
+          <Button
+            title={
+              soldOut
+                ? "Sold Out"
+                : pricePerTicket > 0
+                  ? `Continue · €${total.toFixed(2)}`
+                  : "Continue"
+            }
+            disabled={soldOut}
+            onPress={onContinue}
+          />
+        </ResponsiveContainer>
       </View>
     </View>
   );

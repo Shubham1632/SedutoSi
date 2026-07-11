@@ -7,6 +7,8 @@ import { LegendList } from "@legendapp/list";
 import type { Cinema } from "@acme/app";
 import { useCinemas } from "@acme/app";
 
+import { useResponsive } from "~/lib/use-responsive";
+
 function SearchButton({
   active,
   onPress,
@@ -24,6 +26,8 @@ function SearchButton({
 }
 
 export default function CinemasScreen() {
+  const { width } = useResponsive();
+  const numColumns = width >= 1200 ? 3 : width >= 700 ? 2 : 1;
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const { data: cinemas, isLoading } = useCinemas();
@@ -140,52 +144,57 @@ export default function CinemasScreen() {
         <LegendList
           data={filteredCinemas}
           keyExtractor={(item) => item.id}
+          numColumns={numColumns}
+          key={numColumns}
           contentContainerStyle={{ padding: 16, gap: 16 }}
+          columnWrapperStyle={numColumns > 1 ? { gap: 16 } : undefined}
           renderItem={({ item }: { item: Cinema }) => (
-            <Pressable
-              onPress={() =>
-                router.push({
-                  pathname: "/cinemas/[cinemaId]",
-                  params: { cinemaId: item.id },
-                })
-              }
-              className="bg-card overflow-hidden rounded-2xl border border-gray-300 shadow-sm active:opacity-80 dark:border-gray-700"
-            >
-              <View className="flex-row items-center gap-3 p-4">
-                <View className="bg-primary/15 h-12 w-12 items-center justify-center rounded-full">
-                  <Text style={{ fontSize: 22 }}>🏛️</Text>
-                </View>
-                <View className="flex-1 gap-1">
-                  <Text
-                    className="text-foreground text-base font-bold"
-                    numberOfLines={1}
-                  >
-                    {item.name}
-                  </Text>
-                  <Text
-                    className="text-muted-foreground text-xs"
-                    numberOfLines={1}
-                  >
-                    📍 {item.address}
-                  </Text>
-                </View>
-                <Text className="text-muted-foreground text-lg">›</Text>
-              </View>
-              <View className="flex-row items-center justify-between border-t border-gray-300 px-4 py-2.5 dark:border-gray-700">
-                {item.neighborhood ? (
-                  <View className="bg-primary/10 rounded-full px-2.5 py-1">
-                    <Text className="text-primary text-xs font-semibold">
-                      {item.neighborhood}
+            <View style={numColumns > 1 ? { flex: 1 } : undefined}>
+              <Pressable
+                onPress={() =>
+                  router.push({
+                    pathname: "/cinemas/[cinemaId]",
+                    params: { cinemaId: item.id },
+                  })
+                }
+                className="bg-card overflow-hidden rounded-2xl border border-gray-300 shadow-sm active:opacity-80 dark:border-gray-700"
+              >
+                <View className="flex-row items-center gap-3 p-4">
+                  <View className="bg-primary/15 h-12 w-12 items-center justify-center rounded-full">
+                    <Text style={{ fontSize: 22 }}>🏛️</Text>
+                  </View>
+                  <View className="flex-1 gap-1">
+                    <Text
+                      className="text-foreground text-base font-bold"
+                      numberOfLines={1}
+                    >
+                      {item.name}
+                    </Text>
+                    <Text
+                      className="text-muted-foreground text-xs"
+                      numberOfLines={1}
+                    >
+                      📍 {item.address}
                     </Text>
                   </View>
-                ) : (
-                  <View />
-                )}
-                <Text className="text-primary text-xs font-semibold">
-                  View showtimes →
-                </Text>
-              </View>
-            </Pressable>
+                  <Text className="text-muted-foreground text-lg">›</Text>
+                </View>
+                <View className="flex-row items-center justify-between border-t border-gray-300 px-4 py-2.5 dark:border-gray-700">
+                  {item.neighborhood ? (
+                    <View className="bg-primary/10 rounded-full px-2.5 py-1">
+                      <Text className="text-primary text-xs font-semibold">
+                        {item.neighborhood}
+                      </Text>
+                    </View>
+                  ) : (
+                    <View />
+                  )}
+                  <Text className="text-primary text-xs font-semibold">
+                    View showtimes →
+                  </Text>
+                </View>
+              </Pressable>
+            </View>
           )}
         />
       )}

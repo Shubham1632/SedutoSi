@@ -5,6 +5,9 @@ import { Stack, useLocalSearchParams, useRouter } from "expo-router";
 import type { Screening } from "@acme/app";
 import { useMovie, useScreenings } from "@acme/app";
 
+import { ResponsiveContainer } from "~/components/responsive-container";
+import { useResponsive } from "~/lib/use-responsive";
+
 function formatScreeningParts(iso: string) {
   const date = new Date(iso);
   const dateLabel = date.toLocaleDateString("en-GB", {
@@ -49,6 +52,8 @@ function sortScreenings(screenings: Screening[], sortBy: SortKey) {
 
 export default function ScreeningsScreen() {
   const { movieId } = useLocalSearchParams<{ movieId: string }>();
+  const { width } = useResponsive();
+  const numColumns = width >= 1200 ? 3 : width >= 800 ? 2 : 1;
   const router = useRouter();
   const { data: movie } = useMovie(movieId);
   const {
@@ -68,35 +73,37 @@ export default function ScreeningsScreen() {
     <View className="bg-background flex-1">
       <Stack.Screen options={{ title: movie?.title ?? "Select Showtime" }} />
       {!isLoading && screenings?.length ? (
-        <View className="flex-row gap-2 px-4 pt-4 pb-1">
-          <Text className="text-muted-foreground self-center text-sm">
-            Sort by
-          </Text>
-          {SORT_OPTIONS.map((option) => {
-            const selected = option.key === sortBy;
-            return (
-              <Pressable
-                key={option.key}
-                onPress={() => setSortBy(option.key)}
-                className={
-                  selected
-                    ? "bg-primary rounded-full px-3 py-1.5"
-                    : "border-border rounded-full border px-3 py-1.5"
-                }
-              >
-                <Text
+        <ResponsiveContainer maxWidth={960}>
+          <View className="flex-row gap-2 px-4 pt-4 pb-1">
+            <Text className="text-muted-foreground self-center text-sm">
+              Sort by
+            </Text>
+            {SORT_OPTIONS.map((option) => {
+              const selected = option.key === sortBy;
+              return (
+                <Pressable
+                  key={option.key}
+                  onPress={() => setSortBy(option.key)}
                   className={
                     selected
-                      ? "text-primary-foreground text-xs font-medium"
-                      : "text-foreground text-xs font-medium"
+                      ? "bg-primary rounded-full px-3 py-1.5"
+                      : "border-border rounded-full border px-3 py-1.5"
                   }
                 >
-                  {option.label}
-                </Text>
-              </Pressable>
-            );
-          })}
-        </View>
+                  <Text
+                    className={
+                      selected
+                        ? "text-primary-foreground text-xs font-medium"
+                        : "text-foreground text-xs font-medium"
+                    }
+                  >
+                    {option.label}
+                  </Text>
+                </Pressable>
+              );
+            })}
+          </View>
+        </ResponsiveContainer>
       ) : null}
       {isLoading ? (
         <View className="flex-1 items-center justify-center">
@@ -130,7 +137,16 @@ export default function ScreeningsScreen() {
         <FlatList
           data={sortedScreenings}
           keyExtractor={(item) => item.id}
-          contentContainerClassName="p-4 gap-3"
+          numColumns={numColumns}
+          key={numColumns}
+          contentContainerStyle={{
+            padding: 16,
+            gap: 12,
+            width: "100%",
+            maxWidth: 960,
+            alignSelf: "center",
+          }}
+          columnWrapperStyle={numColumns > 1 ? { gap: 12 } : undefined}
           renderItem={({ item }: { item: Screening }) => {
             const screen = item.screen as
               | {
@@ -143,65 +159,67 @@ export default function ScreeningsScreen() {
             );
             const lowSeats = item.available_seats <= 10;
             return (
-              <Pressable
-                onPress={() => router.push(`/booking/${item.id}`)}
-                className="bg-card gap-3 rounded-2xl border border-gray-300 p-4 shadow-sm active:opacity-80 dark:border-gray-700"
-              >
-                <View className="flex-row items-center gap-3">
-                  <View
-                    className="bg-primary/15 items-center justify-center rounded-xl px-3 py-2"
-                    style={{ minWidth: 72 }}
-                  >
-                    <Text className="text-primary text-base font-extrabold">
-                      {timeLabel}
-                    </Text>
-                    <Text className="text-primary/80 text-[10px] font-medium uppercase">
-                      {dateLabel}
-                    </Text>
-                  </View>
-                  <View className="flex-1 gap-1">
-                    {screen?.cinema && (
-                      <Text
-                        className="text-foreground text-sm font-semibold"
-                        numberOfLines={1}
-                      >
-                        🏛️ {screen.cinema.name}
-                      </Text>
-                    )}
-                    {screen?.cinema?.neighborhood ? (
-                      <Text
-                        className="text-muted-foreground text-xs"
-                        numberOfLines={1}
-                      >
-                        {screen.cinema.neighborhood}
-                      </Text>
-                    ) : null}
-                  </View>
-                </View>
-                <View className="flex-row items-center justify-between border-t border-gray-300 pt-3 dark:border-gray-700">
-                  <Text className="text-foreground text-lg font-extrabold">
-                    €{Number(item.price).toFixed(2)}
-                  </Text>
-                  <View className="flex-row items-center gap-1.5">
+              <View style={numColumns > 1 ? { flex: 1 } : undefined}>
+                <Pressable
+                  onPress={() => router.push(`/booking/${item.id}`)}
+                  className="bg-card gap-3 rounded-2xl border border-gray-300 p-4 shadow-sm active:opacity-80 dark:border-gray-700"
+                >
+                  <View className="flex-row items-center gap-3">
                     <View
-                      className={
-                        lowSeats
-                          ? "bg-destructive h-2 w-2 rounded-full"
-                          : "bg-primary h-2 w-2 rounded-full"
-                      }
-                    />
-                    <Text
-                      className={
-                        lowSeats
-                          ? "text-destructive text-xs font-semibold"
-                          : "text-muted-foreground text-xs font-medium"
-                      }
+                      className="bg-primary/15 items-center justify-center rounded-xl px-3 py-2"
+                      style={{ minWidth: 72 }}
                     >
-                      {item.available_seats} left
-                    </Text>
+                      <Text className="text-primary text-base font-extrabold">
+                        {timeLabel}
+                      </Text>
+                      <Text className="text-primary/80 text-[10px] font-medium uppercase">
+                        {dateLabel}
+                      </Text>
+                    </View>
+                    <View className="flex-1 gap-1">
+                      {screen?.cinema && (
+                        <Text
+                          className="text-foreground text-sm font-semibold"
+                          numberOfLines={1}
+                        >
+                          🏛️ {screen.cinema.name}
+                        </Text>
+                      )}
+                      {screen?.cinema?.neighborhood ? (
+                        <Text
+                          className="text-muted-foreground text-xs"
+                          numberOfLines={1}
+                        >
+                          {screen.cinema.neighborhood}
+                        </Text>
+                      ) : null}
+                    </View>
                   </View>
-                </View>
-              </Pressable>
+                  <View className="flex-row items-center justify-between border-t border-gray-300 pt-3 dark:border-gray-700">
+                    <Text className="text-foreground text-lg font-extrabold">
+                      €{Number(item.price).toFixed(2)}
+                    </Text>
+                    <View className="flex-row items-center gap-1.5">
+                      <View
+                        className={
+                          lowSeats
+                            ? "bg-destructive h-2 w-2 rounded-full"
+                            : "bg-primary h-2 w-2 rounded-full"
+                        }
+                      />
+                      <Text
+                        className={
+                          lowSeats
+                            ? "text-destructive text-xs font-semibold"
+                            : "text-muted-foreground text-xs font-medium"
+                        }
+                      >
+                        {item.available_seats} left
+                      </Text>
+                    </View>
+                  </View>
+                </Pressable>
+              </View>
             );
           }}
         />

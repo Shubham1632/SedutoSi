@@ -27,6 +27,8 @@ import { Button } from "@acme/ui-native/button";
 import { Input } from "@acme/ui-native/input";
 import { Text } from "@acme/ui-native/text";
 
+import { ResponsiveContainer } from "~/components/responsive-container";
+
 const msg = (e: unknown) =>
   e instanceof Error ? e.message : "Something went wrong";
 
@@ -219,196 +221,202 @@ export default function CreateEventScreen() {
   return (
     <View className="bg-background flex-1">
       <Stack.Screen options={{ title: "Add Live Event" }} />
-      <ScrollView contentContainerClassName="gap-5 p-5 pb-10">
-        {/* Cover image */}
-        <View className="gap-1.5">
-          <FieldLabel>Cover image</FieldLabel>
-          <Pressable
-            onPress={() => void onPickImage()}
-            className="bg-muted overflow-hidden rounded-2xl"
-            style={{ height: 160 }}
-          >
-            {imageUri ? (
-              <Image
-                source={{ uri: imageUri }}
-                style={{ width: "100%", height: "100%" }}
-                resizeMode="cover"
-              />
-            ) : (
-              <View className="flex-1 items-center justify-center gap-2">
-                <RNText style={{ fontSize: 32, opacity: 0.5 }}>🖼️</RNText>
-                <Text className="text-muted-foreground text-sm">
-                  Tap to choose a photo
-                </Text>
-              </View>
-            )}
-          </Pressable>
-          <FieldError message={errors.imageUri?.message} />
-        </View>
+      <ScrollView contentContainerClassName="p-5 pb-10">
+        <ResponsiveContainer style={{ gap: 20 }}>
+          {/* Cover image */}
+          <View className="gap-1.5">
+            <FieldLabel>Cover image</FieldLabel>
+            <Pressable
+              onPress={() => void onPickImage()}
+              className="bg-muted overflow-hidden rounded-2xl"
+              style={{ height: 160 }}
+            >
+              {imageUri ? (
+                <Image
+                  source={{ uri: imageUri }}
+                  style={{ width: "100%", height: "100%" }}
+                  resizeMode="cover"
+                />
+              ) : (
+                <View className="flex-1 items-center justify-center gap-2">
+                  <RNText style={{ fontSize: 32, opacity: 0.5 }}>🖼️</RNText>
+                  <Text className="text-muted-foreground text-sm">
+                    Tap to choose a photo
+                  </Text>
+                </View>
+              )}
+            </Pressable>
+            <FieldError message={errors.imageUri?.message} />
+          </View>
 
-        {/* Title */}
-        <View className="gap-1.5">
-          <FieldLabel>Title</FieldLabel>
-          <Controller
-            control={control}
-            name="title"
-            render={({ field: { onChange, onBlur, value } }) => (
-              <Input
-                value={value}
-                onChangeText={onChange}
-                onBlur={onBlur}
-                placeholder="e.g. Jazz Night at Navigli"
-              />
-            )}
-          />
-          <FieldError message={errors.title?.message} />
-        </View>
+          {/* Title */}
+          <View className="gap-1.5">
+            <FieldLabel>Title</FieldLabel>
+            <Controller
+              control={control}
+              name="title"
+              render={({ field: { onChange, onBlur, value } }) => (
+                <Input
+                  value={value}
+                  onChangeText={onChange}
+                  onBlur={onBlur}
+                  placeholder="e.g. Jazz Night at Navigli"
+                />
+              )}
+            />
+            <FieldError message={errors.title?.message} />
+          </View>
 
-        {/* Description */}
-        <View className="gap-1.5">
-          <FieldLabel>Description</FieldLabel>
-          <Controller
-            control={control}
-            name="description"
-            render={({ field: { onChange, onBlur, value } }) => (
-              <Input
-                value={value}
-                onChangeText={onChange}
-                onBlur={onBlur}
-                placeholder="What should people know?"
-                multiline
-                numberOfLines={4}
-                style={{ height: 96, paddingTop: 10, textAlignVertical: "top" }}
-              />
-            )}
-          />
-          <FieldError message={errors.description?.message} />
-        </View>
+          {/* Description */}
+          <View className="gap-1.5">
+            <FieldLabel>Description</FieldLabel>
+            <Controller
+              control={control}
+              name="description"
+              render={({ field: { onChange, onBlur, value } }) => (
+                <Input
+                  value={value}
+                  onChangeText={onChange}
+                  onBlur={onBlur}
+                  placeholder="What should people know?"
+                  multiline
+                  numberOfLines={4}
+                  style={{
+                    height: 96,
+                    paddingTop: 10,
+                    textAlignVertical: "top",
+                  }}
+                />
+              )}
+            />
+            <FieldError message={errors.description?.message} />
+          </View>
 
-        {/* Category */}
-        <View className="gap-1.5">
-          <FieldLabel>Category</FieldLabel>
-          <View className="flex-row flex-wrap gap-2">
-            {EVENT_CATEGORIES.map((c) => {
-              const selected = c === category;
-              return (
-                <Pressable
-                  key={c}
-                  onPress={() =>
-                    setValue("category", c, { shouldValidate: true })
-                  }
-                  className={
-                    selected
-                      ? "bg-primary rounded-full px-3 py-1.5"
-                      : "border-border rounded-full border px-3 py-1.5"
-                  }
-                >
-                  <Text
+          {/* Category */}
+          <View className="gap-1.5">
+            <FieldLabel>Category</FieldLabel>
+            <View className="flex-row flex-wrap gap-2">
+              {EVENT_CATEGORIES.map((c) => {
+                const selected = c === category;
+                return (
+                  <Pressable
+                    key={c}
+                    onPress={() =>
+                      setValue("category", c, { shouldValidate: true })
+                    }
                     className={
                       selected
-                        ? "text-primary-foreground text-xs font-medium capitalize"
-                        : "text-foreground text-xs font-medium capitalize"
+                        ? "bg-primary rounded-full px-3 py-1.5"
+                        : "border-border rounded-full border px-3 py-1.5"
                     }
                   >
-                    {c}
-                  </Text>
-                </Pressable>
-              );
-            })}
+                    <Text
+                      className={
+                        selected
+                          ? "text-primary-foreground text-xs font-medium capitalize"
+                          : "text-foreground text-xs font-medium capitalize"
+                      }
+                    >
+                      {c}
+                    </Text>
+                  </Pressable>
+                );
+              })}
+            </View>
+            <FieldError message={errors.category?.message} />
           </View>
-          <FieldError message={errors.category?.message} />
-        </View>
 
-        {/* Location */}
-        <View className="gap-1.5">
-          <FieldLabel>Location</FieldLabel>
+          {/* Location */}
+          <View className="gap-1.5">
+            <FieldLabel>Location</FieldLabel>
+            <Controller
+              control={control}
+              name="location"
+              render={({ field: { onChange, onBlur, value } }) => (
+                <Input
+                  value={value}
+                  onChangeText={onChange}
+                  onBlur={onBlur}
+                  placeholder="e.g. Navigli, Milano"
+                />
+              )}
+            />
+            <FieldError message={errors.location?.message} />
+          </View>
+
+          {/* Starts / ends at */}
           <Controller
             control={control}
-            name="location"
-            render={({ field: { onChange, onBlur, value } }) => (
-              <Input
+            name="startsAt"
+            render={({ field: { onChange, value } }) => (
+              <DateTimeField
+                label="Starts at (at least 24h from now)"
                 value={value}
-                onChangeText={onChange}
-                onBlur={onBlur}
-                placeholder="e.g. Navigli, Milano"
+                onChange={onChange}
+                minimumDate={minStartsAt}
               />
             )}
           />
-          <FieldError message={errors.location?.message} />
-        </View>
+          <FieldError message={errors.startsAt?.message} />
 
-        {/* Starts / ends at */}
-        <Controller
-          control={control}
-          name="startsAt"
-          render={({ field: { onChange, value } }) => (
-            <DateTimeField
-              label="Starts at (at least 24h from now)"
-              value={value}
-              onChange={onChange}
-              minimumDate={minStartsAt}
-            />
-          )}
-        />
-        <FieldError message={errors.startsAt?.message} />
+          <Controller
+            control={control}
+            name="endsAt"
+            render={({ field: { onChange, value } }) => (
+              <DateTimeField
+                label="Ends at (optional, at least 15 min after start)"
+                value={value}
+                onChange={onChange}
+                minimumDate={minEndsAt}
+              />
+            )}
+          />
+          <FieldError message={errors.endsAt?.message} />
 
-        <Controller
-          control={control}
-          name="endsAt"
-          render={({ field: { onChange, value } }) => (
-            <DateTimeField
-              label="Ends at (optional, at least 15 min after start)"
-              value={value}
-              onChange={onChange}
-              minimumDate={minEndsAt}
-            />
-          )}
-        />
-        <FieldError message={errors.endsAt?.message} />
-
-        {/* Price + capacity */}
-        <View className="flex-row gap-4">
-          <View className="flex-1 gap-1.5">
-            <FieldLabel>Price € (blank = free)</FieldLabel>
-            <Controller
-              control={control}
-              name="price"
-              render={({ field: { onChange, onBlur, value } }) => (
-                <Input
-                  value={value}
-                  onChangeText={onChange}
-                  onBlur={onBlur}
-                  placeholder="0.00"
-                  keyboardType="decimal-pad"
-                />
-              )}
-            />
-            <FieldError message={errors.price?.message} />
+          {/* Price + capacity */}
+          <View className="flex-row gap-4">
+            <View className="flex-1 gap-1.5">
+              <FieldLabel>Price € (blank = free)</FieldLabel>
+              <Controller
+                control={control}
+                name="price"
+                render={({ field: { onChange, onBlur, value } }) => (
+                  <Input
+                    value={value}
+                    onChangeText={onChange}
+                    onBlur={onBlur}
+                    placeholder="0.00"
+                    keyboardType="decimal-pad"
+                  />
+                )}
+              />
+              <FieldError message={errors.price?.message} />
+            </View>
+            <View className="flex-1 gap-1.5">
+              <FieldLabel>Capacity (blank = unlimited)</FieldLabel>
+              <Controller
+                control={control}
+                name="capacity"
+                render={({ field: { onChange, onBlur, value } }) => (
+                  <Input
+                    value={value}
+                    onChangeText={onChange}
+                    onBlur={onBlur}
+                    placeholder="e.g. 100"
+                    keyboardType="number-pad"
+                  />
+                )}
+              />
+              <FieldError message={errors.capacity?.message} />
+            </View>
           </View>
-          <View className="flex-1 gap-1.5">
-            <FieldLabel>Capacity (blank = unlimited)</FieldLabel>
-            <Controller
-              control={control}
-              name="capacity"
-              render={({ field: { onChange, onBlur, value } }) => (
-                <Input
-                  value={value}
-                  onChangeText={onChange}
-                  onBlur={onBlur}
-                  placeholder="e.g. 100"
-                  keyboardType="number-pad"
-                />
-              )}
-            />
-            <FieldError message={errors.capacity?.message} />
-          </View>
-        </View>
 
-        <Button
-          title="Publish Event"
-          loading={isSubmitting}
-          onPress={() => void handleSubmit(onSubmit)()}
-        />
+          <Button
+            title="Publish Event"
+            loading={isSubmitting}
+            onPress={() => void handleSubmit(onSubmit)()}
+          />
+        </ResponsiveContainer>
       </ScrollView>
     </View>
   );

@@ -16,6 +16,7 @@ import { Input } from "@acme/ui-native/input";
 import { Text } from "@acme/ui-native/text";
 
 import { GoogleSignInButton } from "~/components/google-sign-in-button";
+import { ResponsiveContainer } from "~/components/responsive-container";
 import { signInWithGoogle } from "~/lib/google-auth";
 import { supabase } from "~/lib/supabase";
 
@@ -66,94 +67,98 @@ export default function SignUp() {
   }
 
   return (
-    <View className="bg-background flex-1 justify-center gap-4 p-6">
-      <Text className="text-3xl font-bold">Create account</Text>
+    <View className="bg-background flex-1 justify-center p-6">
+      <ResponsiveContainer maxWidth={420} style={{ gap: 16 }}>
+        <Text className="text-3xl font-bold">Create account</Text>
 
-      <View className="gap-1">
-        <Controller
-          control={control}
-          name="displayName"
-          render={({ field: { onChange, onBlur, value } }) => (
-            <Input
-              placeholder="Name"
-              value={value}
-              onChangeText={onChange}
-              onBlur={onBlur}
-            />
+        <View className="gap-1">
+          <Controller
+            control={control}
+            name="displayName"
+            render={({ field: { onChange, onBlur, value } }) => (
+              <Input
+                placeholder="Name"
+                value={value}
+                onChangeText={onChange}
+                onBlur={onBlur}
+              />
+            )}
+          />
+          {errors.displayName && (
+            <Text className="text-destructive text-sm">
+              {errors.displayName.message}
+            </Text>
           )}
-        />
-        {errors.displayName && (
-          <Text className="text-destructive text-sm">
-            {errors.displayName.message}
-          </Text>
-        )}
-      </View>
+        </View>
 
-      <View className="gap-1">
-        <Controller
-          control={control}
-          name="email"
-          render={({ field: { onChange, onBlur, value } }) => (
-            <Input
-              placeholder="Email"
-              autoCapitalize="none"
-              keyboardType="email-address"
-              value={value}
-              onChangeText={onChange}
-              onBlur={onBlur}
-            />
+        <View className="gap-1">
+          <Controller
+            control={control}
+            name="email"
+            render={({ field: { onChange, onBlur, value } }) => (
+              <Input
+                placeholder="Email"
+                autoCapitalize="none"
+                keyboardType="email-address"
+                value={value}
+                onChangeText={onChange}
+                onBlur={onBlur}
+              />
+            )}
+          />
+          {errors.email && (
+            <Text className="text-destructive text-sm">
+              {errors.email.message}
+            </Text>
           )}
-        />
-        {errors.email && (
-          <Text className="text-destructive text-sm">
-            {errors.email.message}
-          </Text>
-        )}
-      </View>
+        </View>
 
-      <View className="gap-1">
-        <Controller
-          control={control}
-          name="password"
-          render={({ field: { onChange, onBlur, value } }) => (
-            <Input
-              placeholder="Password"
-              secureTextEntry
-              value={value}
-              onChangeText={onChange}
-              onBlur={onBlur}
-            />
+        <View className="gap-1">
+          <Controller
+            control={control}
+            name="password"
+            render={({ field: { onChange, onBlur, value } }) => (
+              <Input
+                placeholder="Password"
+                secureTextEntry
+                value={value}
+                onChangeText={onChange}
+                onBlur={onBlur}
+              />
+            )}
+          />
+          {errors.password && (
+            <Text className="text-destructive text-sm">
+              {errors.password.message}
+            </Text>
           )}
+        </View>
+
+        <Button
+          title="Create account"
+          loading={isSubmitting}
+          onPress={() => void handleSubmit(onSubmit)()}
         />
-        {errors.password && (
-          <Text className="text-destructive text-sm">
-            {errors.password.message}
-          </Text>
-        )}
-      </View>
 
-      <Button
-        title="Create account"
-        loading={isSubmitting}
-        onPress={() => void handleSubmit(onSubmit)()}
-      />
+        <View className="flex-row items-center gap-3">
+          <View className="bg-border h-px flex-1" />
+          <Text className="text-muted-foreground text-xs uppercase">or</Text>
+          <View className="bg-border h-px flex-1" />
+        </View>
 
-      <View className="flex-row items-center gap-3">
-        <View className="bg-border h-px flex-1" />
-        <Text className="text-muted-foreground text-xs uppercase">or</Text>
-        <View className="bg-border h-px flex-1" />
-      </View>
+        <GoogleSignInButton
+          loading={googleLoading}
+          onPress={() => void onGoogleSignIn()}
+        />
 
-      <GoogleSignInButton
-        loading={googleLoading}
-        onPress={() => void onGoogleSignIn()}
-      />
-
-      <View className="flex-row justify-center">
-        <Link href="/sign-in">
-          <Text className="text-primary">Already have an account? Sign in</Text>
-        </Link>
-      </View>
+        <View className="flex-row justify-center">
+          <Link href="/sign-in">
+            <Text className="text-primary">
+              Already have an account? Sign in
+            </Text>
+          </Link>
+        </View>
+      </ResponsiveContainer>
     </View>
   );
 }
@@ -175,33 +180,35 @@ function CheckEmail({ email, onBack }: { email: string; onBack: () => void }) {
   }
 
   return (
-    <View className="bg-background flex-1 justify-center gap-4 p-6">
-      <Text className="text-center text-3xl font-bold">Check your email</Text>
-      <Text className="text-muted-foreground text-center">
-        Enter the 6-digit code we sent to{" "}
-        <Text className="text-foreground font-medium">{email}</Text>.
-      </Text>
-
-      <Input
-        placeholder="Enter code"
-        keyboardType="number-pad"
-        autoComplete="one-time-code"
-        className="text-center"
-        value={code}
-        onChangeText={setCode}
-      />
-      <Button
-        title="Confirm"
-        loading={verifying}
-        disabled={verifying || !code.trim()}
-        onPress={() => void onVerify()}
-      />
-
-      <View className="flex-row justify-center">
-        <Text className="text-primary" onPress={onBack}>
-          Back to signup
+    <View className="bg-background flex-1 justify-center p-6">
+      <ResponsiveContainer maxWidth={420} style={{ gap: 16 }}>
+        <Text className="text-center text-3xl font-bold">Check your email</Text>
+        <Text className="text-muted-foreground text-center">
+          Enter the 6-digit code we sent to{" "}
+          <Text className="text-foreground font-medium">{email}</Text>.
         </Text>
-      </View>
+
+        <Input
+          placeholder="Enter code"
+          keyboardType="number-pad"
+          autoComplete="one-time-code"
+          className="text-center"
+          value={code}
+          onChangeText={setCode}
+        />
+        <Button
+          title="Confirm"
+          loading={verifying}
+          disabled={verifying || !code.trim()}
+          onPress={() => void onVerify()}
+        />
+
+        <View className="flex-row justify-center">
+          <Text className="text-primary" onPress={onBack}>
+            Back to signup
+          </Text>
+        </View>
+      </ResponsiveContainer>
     </View>
   );
 }

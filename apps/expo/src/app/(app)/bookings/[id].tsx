@@ -59,6 +59,9 @@ export default function BookingDetailScreen() {
           paddingBottom: 20,
           paddingHorizontal: 20,
           gap: 20,
+          width: "100%",
+          maxWidth: 640,
+          alignSelf: "center",
         }}
       >
         {/* Ticket / QR card — floats slightly over the banner above */}

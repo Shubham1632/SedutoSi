@@ -8,6 +8,8 @@ import { appAlert } from "@acme/ui-native/alert";
 import { Button } from "@acme/ui-native/button";
 import { Text } from "@acme/ui-native/text";
 
+import { ResponsiveContainer } from "~/components/responsive-container";
+
 const BRAND_LABEL: Record<string, string> = {
   visa: "Visa",
   mastercard: "Mastercard",
@@ -56,40 +58,44 @@ export default function PaymentMethodsScreen() {
             </Text>
           </View>
         ) : (
-          <LegendList
-            data={methods}
-            keyExtractor={(item) => item.id}
-            contentContainerStyle={{ gap: 12, paddingBottom: 24 }}
-            renderItem={({ item }: { item: PaymentMethod }) => (
-              <View className="bg-card border-border flex-row items-center gap-3 rounded-xl border p-4">
-                <View className="bg-muted h-10 w-14 items-center justify-center rounded-md">
-                  <Text className="text-foreground text-xs font-bold">
-                    {BRAND_LABEL[item.brand] ?? item.brand}
-                  </Text>
+          <ResponsiveContainer style={{ flex: 1 }}>
+            <LegendList
+              data={methods}
+              keyExtractor={(item) => item.id}
+              contentContainerStyle={{ gap: 12, paddingBottom: 24 }}
+              renderItem={({ item }: { item: PaymentMethod }) => (
+                <View className="bg-card border-border flex-row items-center gap-3 rounded-xl border p-4">
+                  <View className="bg-muted h-10 w-14 items-center justify-center rounded-md">
+                    <Text className="text-foreground text-xs font-bold">
+                      {BRAND_LABEL[item.brand] ?? item.brand}
+                    </Text>
+                  </View>
+                  <View className="flex-1 gap-0.5">
+                    <Text className="text-foreground text-base font-medium">
+                      •••• •••• •••• {item.last4}
+                    </Text>
+                    <Text className="text-muted-foreground text-xs">
+                      Expires {String(item.exp_month).padStart(2, "0")}/
+                      {item.exp_year}
+                      {item.is_default ? "  ·  Default" : ""}
+                    </Text>
+                  </View>
+                  <Pressable onPress={() => onRemove(item.id)} hitSlop={12}>
+                    <Text className="text-destructive text-sm font-medium">
+                      Remove
+                    </Text>
+                  </Pressable>
                 </View>
-                <View className="flex-1 gap-0.5">
-                  <Text className="text-foreground text-base font-medium">
-                    •••• •••• •••• {item.last4}
-                  </Text>
-                  <Text className="text-muted-foreground text-xs">
-                    Expires {String(item.exp_month).padStart(2, "0")}/
-                    {item.exp_year}
-                    {item.is_default ? "  ·  Default" : ""}
-                  </Text>
-                </View>
-                <Pressable onPress={() => onRemove(item.id)} hitSlop={12}>
-                  <Text className="text-destructive text-sm font-medium">
-                    Remove
-                  </Text>
-                </Pressable>
-              </View>
-            )}
-          />
+              )}
+            />
+          </ResponsiveContainer>
         )}
       </View>
 
       <View className="border-border border-t p-4">
-        <Button title="Add Card" onPress={onAddCard} />
+        <ResponsiveContainer>
+          <Button title="Add Card" onPress={onAddCard} />
+        </ResponsiveContainer>
       </View>
     </View>
   );

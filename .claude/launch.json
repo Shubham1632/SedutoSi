@@ -4,8 +4,8 @@
     {
       "name": "web",
       "runtimeExecutable": "pnpm",
-      "runtimeArgs": ["-F", "@acme/nextjs", "dev"],
-      "port": 3000,
+      "runtimeArgs": ["-F", "@acme/expo", "dev", "--web"],
+      "port": 8081,
       "autoPort": false
     },
     {
