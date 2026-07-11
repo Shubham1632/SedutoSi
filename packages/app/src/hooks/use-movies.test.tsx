@@ -8,8 +8,15 @@ import {
   withSupabaseProvider,
 } from "../test-utils/render";
 import {
+  useBookedSeats,
+  useBooking,
+  useCinema,
   useCinemaMovies,
+  useCinemas,
   useMovie,
+  useMyBookings,
+  useScreening,
+  useScreenings,
   useScreeningsByCinemaAndMovie,
 } from "./use-movies";
 
@@ -181,5 +188,234 @@ describe("useMovie", () => {
 
     expect(result.current.data).toBeUndefined();
     await waitFor(() => expect(result.current.data).toEqual(movieB));
+  });
+});
+
+const cinemaA = { id: "cinema-a", name: "Odeon", address: "Via Roma 1" };
+
+describe("useCinemas", () => {
+  it("fetches all cinemas ordered by name", async () => {
+    const { client } = createFakeSupabase({
+      tables: {
+        cinemas: (query) => {
+          expect(query.filters.find((f) => f.method === "order")?.args).toEqual(
+            ["name"],
+          );
+          return { data: [cinemaA], error: null };
+        },
+      },
+    });
+
+    const { result } = renderHook(() => useCinemas(), {
+      wrapper: withSupabaseProvider(client),
+    });
+
+    await waitFor(() => expect(result.current.isSuccess).toBe(true));
+    expect(result.current.data).toEqual([cinemaA]);
+  });
+});
+
+describe("useCinema", () => {
+  it("fetches a single cinema by id", async () => {
+    const { client } = createFakeSupabase({
+      tables: {
+        cinemas: (query) => {
+          expect(query.single).toBe("single");
+          expect(query.filters.find((f) => f.method === "eq")?.args).toEqual([
+            "id",
+            cinemaA.id,
+          ]);
+          return { data: cinemaA, error: null };
+        },
+      },
+    });
+
+    const { result } = renderHook(() => useCinema(cinemaA.id), {
+      wrapper: withSupabaseProvider(client),
+    });
+
+    await waitFor(() => expect(result.current.data).toEqual(cinemaA));
+  });
+
+  it("does not query when id is empty", () => {
+    const { client, calls } = createFakeSupabase({
+      tables: { cinemas: () => ({ data: null, error: null }) },
+    });
+    const { result } = renderHook(() => useCinema(""), {
+      wrapper: withSupabaseProvider(client),
+    });
+    expect(result.current.fetchStatus).toBe("idle");
+    expect(calls).toHaveLength(0);
+  });
+});
+
+describe("useScreenings", () => {
+  it("fetches upcoming screenings for a movie", async () => {
+    const { client } = createFakeSupabase({
+      tables: {
+        screenings: (query) => {
+          expect(query.filters.find((f) => f.method === "eq")?.args).toEqual([
+            "movie_id",
+            movieA.id,
+          ]);
+          expect(query.filters.some((f) => f.method === "gte")).toBe(true);
+          return {
+            data: [screening("s1", movieA.id, "2026-06-01T20:00:00.000Z")],
+            error: null,
+          };
+        },
+      },
+    });
+
+    const { result } = renderHook(() => useScreenings(movieA.id), {
+      wrapper: withSupabaseProvider(client),
+    });
+
+    await waitFor(() => expect(result.current.isSuccess).toBe(true));
+    expect(result.current.data).toHaveLength(1);
+  });
+
+  it("does not query when movieId is empty", () => {
+    const { client, calls } = createFakeSupabase({
+      tables: { screenings: () => ({ data: [], error: null }) },
+    });
+    const { result } = renderHook(() => useScreenings(""), {
+      wrapper: withSupabaseProvider(client),
+    });
+    expect(result.current.fetchStatus).toBe("idle");
+    expect(calls).toHaveLength(0);
+  });
+});
+
+describe("useScreening", () => {
+  it("fetches a single screening by id", async () => {
+    const s = screening("s1", movieA.id, "2026-06-01T20:00:00.000Z");
+    const { client } = createFakeSupabase({
+      tables: {
+        screenings: (query) => {
+          expect(query.single).toBe("single");
+          expect(query.filters.find((f) => f.method === "eq")?.args).toEqual([
+            "id",
+            "s1",
+          ]);
+          return { data: s, error: null };
+        },
+      },
+    });
+
+    const { result } = renderHook(() => useScreening("s1"), {
+      wrapper: withSupabaseProvider(client),
+    });
+
+    await waitFor(() => expect(result.current.data).toEqual(s));
+  });
+});
+
+describe("useBookedSeats", () => {
+  it("reads booked seats via the security-definer rpc as a Set", async () => {
+    const { client } = createFakeSupabase({
+      rpc: {
+        get_booked_seats: (name, args) => {
+          expect(args).toEqual({ p_screening_id: "s1" });
+          return { data: ["A1", "A2"], error: null };
+        },
+      },
+    });
+
+    const { result } = renderHook(() => useBookedSeats("s1"), {
+      wrapper: withSupabaseProvider(client),
+    });
+
+    await waitFor(() => expect(result.current.isSuccess).toBe(true));
+    expect(result.current.data).toEqual(new Set(["A1", "A2"]));
+  });
+
+  it("does not query when screeningId is empty", () => {
+    const { client } = createFakeSupabase({ rpc: {} });
+    const { result } = renderHook(() => useBookedSeats(""), {
+      wrapper: withSupabaseProvider(client),
+    });
+    expect(result.current.fetchStatus).toBe("idle");
+  });
+});
+
+const USER_ID = "user-1";
+const session = { user: { id: USER_ID } };
+
+describe("useMyBookings", () => {
+  it("fetches the signed-in user's bookings, newest first", async () => {
+    const booking = {
+      id: "b1",
+      user_id: USER_ID,
+      screening_id: "s1",
+      event_id: null,
+      seats: ["A1"],
+      seats_count: 1,
+      total_price: 12,
+      status: "confirmed",
+      created_at: "2026-01-01T00:00:00.000Z",
+    };
+    const { client } = createFakeSupabase({
+      session,
+      tables: {
+        bookings: (query) => {
+          expect(query.filters.find((f) => f.method === "eq")?.args).toEqual([
+            "user_id",
+            USER_ID,
+          ]);
+          return { data: [booking], error: null };
+        },
+      },
+    });
+
+    const { result } = renderHook(() => useMyBookings(), {
+      wrapper: withSupabaseProvider(client),
+    });
+
+    await waitFor(() => expect(result.current.isSuccess).toBe(true));
+    expect(result.current.data).toEqual([booking]);
+  });
+
+  it("does not query when signed out", () => {
+    const { client, calls } = createFakeSupabase({ session: null, tables: {} });
+    const { result } = renderHook(() => useMyBookings(), {
+      wrapper: withSupabaseProvider(client),
+    });
+    expect(result.current.fetchStatus).toBe("idle");
+    expect(calls).toHaveLength(0);
+  });
+});
+
+describe("useBooking", () => {
+  it("fetches a single booking (with screening/event joined) by id", async () => {
+    const booking = {
+      id: "b1",
+      user_id: USER_ID,
+      screening_id: "s1",
+      event_id: null,
+      seats: ["A1"],
+      seats_count: 1,
+      total_price: 12,
+      status: "confirmed",
+      created_at: "2026-01-01T00:00:00.000Z",
+    };
+    const { client } = createFakeSupabase({
+      tables: {
+        bookings: (query) => {
+          expect(query.single).toBe("single");
+          expect(query.filters.find((f) => f.method === "eq")?.args).toEqual([
+            "id",
+            "b1",
+          ]);
+          return { data: booking, error: null };
+        },
+      },
+    });
+
+    const { result } = renderHook(() => useBooking("b1"), {
+      wrapper: withSupabaseProvider(client),
+    });
+
+    await waitFor(() => expect(result.current.data).toEqual(booking));
   });
 });
