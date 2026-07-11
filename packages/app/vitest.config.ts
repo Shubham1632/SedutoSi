@@ -11,7 +11,17 @@ export default defineConfig({
       provider: "v8",
       reporter: ["text", "html", "lcov"],
       include: ["src/**/*.ts", "src/**/*.tsx"],
-      exclude: ["src/**/*.test.ts", "src/**/*.test.tsx", "src/test-utils/**"],
+      exclude: [
+        "src/**/*.test.ts",
+        "src/**/*.test.tsx",
+        // Test-only helpers, not product code.
+        "src/test-utils/**",
+        // Pure re-export barrel.
+        "src/index.ts",
+        // Intentional stub (CMS content hooks were removed for this app) —
+        // nothing to cover.
+        "src/hooks/use-content.ts",
+      ],
     },
   },
 });

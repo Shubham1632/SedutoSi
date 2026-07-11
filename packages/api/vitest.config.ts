@@ -9,7 +9,14 @@ export default defineConfig({
       provider: "v8",
       reporter: ["text", "html", "lcov"],
       include: ["src/**/*.ts", "src/**/*.tsx"],
-      exclude: ["src/**/*.test.ts", "src/**/*.test.tsx"],
+      // index.ts is a pure re-export barrel; types.ts is generated Supabase
+      // type declarations with no runtime code — neither is unit-testable.
+      exclude: [
+        "src/**/*.test.ts",
+        "src/**/*.test.tsx",
+        "src/index.ts",
+        "src/types.ts",
+      ],
     },
   },
 });

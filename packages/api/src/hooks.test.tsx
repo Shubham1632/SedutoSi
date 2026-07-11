@@ -2,7 +2,7 @@
 import type { ReactNode } from "react";
 import { createElement } from "react";
 import { act, renderHook, waitFor } from "@testing-library/react";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 
 import type { AppSupabaseClient } from "./provider";
 import { useSession } from "./hooks";
@@ -12,18 +12,20 @@ type AuthChangeCallback = (event: string, session: unknown) => void;
 
 function fakeClient(initialSession: unknown) {
   let onChange: AuthChangeCallback | null = null;
+  const unsubscribe = vi.fn();
   const client = {
     auth: {
       getSession: () => Promise.resolve({ data: { session: initialSession } }),
       onAuthStateChange: (cb: AuthChangeCallback) => {
         onChange = cb;
-        return { data: { subscription: { unsubscribe: () => undefined } } };
+        return { data: { subscription: { unsubscribe } } };
       },
     },
   } as unknown as AppSupabaseClient;
 
   return {
     client,
+    unsubscribe,
     emit: (session: unknown) => onChange?.("SIGNED_IN", session),
   };
 }
@@ -73,5 +75,18 @@ describe("useSession", () => {
     });
 
     expect(result.current.user?.id).toBe("u2");
+  });
+
+  it("unsubscribes from auth state changes on unmount", async () => {
+    const { client, unsubscribe } = fakeClient(null);
+    const { result, unmount } = renderHook(() => useSession(), {
+      wrapper: wrapperFor(client),
+    });
+
+    await waitFor(() => expect(result.current.isLoading).toBe(false));
+    expect(unsubscribe).not.toHaveBeenCalled();
+
+    unmount();
+    expect(unsubscribe).toHaveBeenCalledTimes(1);
   });
 });

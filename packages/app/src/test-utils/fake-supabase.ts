@@ -132,10 +132,25 @@ class FakeQueryBuilder implements PromiseLike<unknown> {
   }
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type AnyFn = (...args: any[]) => any;
+
+export interface StorageBucketHandlers {
+  upload?: AnyFn;
+  getPublicUrl?: AnyFn;
+}
+
 export interface FakeSupabaseOptions {
   tables?: Record<string, TableHandler>;
   rpc?: Record<string, RpcHandler>;
   session?: { user: { id: string } } | null;
+  /** Overrides/extends the default auth.getSession/onAuthStateChange stubs —
+   * e.g. `{ signInWithPassword: () => ({ error: null }) }`. */
+  auth?: Record<string, AnyFn>;
+  /** Keyed by storage bucket name (the argument to `storage.from(bucket)`). */
+  storage?: Record<string, StorageBucketHandlers>;
+  /** Keyed by edge function name (the argument to `functions.invoke(name)`). */
+  functions?: Record<string, AnyFn>;
 }
 
 /**
@@ -169,6 +184,39 @@ export function createFakeSupabase(options: FakeSupabaseOptions = {}) {
       onAuthStateChange: () => ({
         data: { subscription: { unsubscribe: () => undefined } },
       }),
+      ...options.auth,
+    },
+    storage: {
+      from(bucket: string) {
+        const handlers = options.storage?.[bucket];
+        return {
+          upload: (...args: unknown[]) =>
+            Promise.resolve(
+              (handlers?.upload ?? (() => ({ data: null, error: null })))(
+                ...args,
+              ),
+            ),
+          getPublicUrl: (
+            ...args: unknown[]
+          ): { data: { publicUrl: string } } =>
+            handlers?.getPublicUrl
+              ? (handlers.getPublicUrl(...args) as {
+                  data: { publicUrl: string };
+                })
+              : { data: { publicUrl: "" } },
+        };
+      },
+    },
+    functions: {
+      invoke: (name: string, ...args: unknown[]) => {
+        const handler = options.functions?.[name];
+        if (!handler) {
+          throw new Error(
+            `fake-supabase: no functions handler registered for "${name}"`,
+          );
+        }
+        return Promise.resolve(handler(...args));
+      },
     },
   };
 
