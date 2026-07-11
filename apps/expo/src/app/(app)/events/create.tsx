@@ -16,6 +16,8 @@ import type { CreateEventFormInput } from "@acme/app";
 import {
   createEventSchema,
   EVENT_CATEGORIES,
+  EVENT_MIN_DURATION_MS,
+  EVENT_MIN_LEAD_TIME_MS,
   useCreateEvent,
   useUploadEventImage,
   zodFormResolver,
@@ -31,6 +33,11 @@ const msg = (e: unknown) =>
 function blankToNull(value: string | undefined) {
   if (!value) return null;
   return value;
+}
+
+function addMs(date: Date | undefined, fallback: Date, ms: number) {
+  const base = date ?? fallback;
+  return new Date(base.getTime() + ms);
 }
 
 function formatDateTime(date: Date) {
@@ -77,13 +84,14 @@ function DateTimeField({
     setStep("date");
   }
 
-  function onPickDate(_event: unknown, selected?: Date) {
+  function onPickDateOrDateTime(_event: unknown, selected?: Date) {
     if (Platform.OS === "android") setStep("closed");
     if (!selected) return;
     if (Platform.OS === "android") {
       setPendingDate(selected);
       setStep("time");
     } else {
+      // iOS's "datetime" mode already returns the full combined value.
       onChange(selected);
     }
   }
@@ -111,10 +119,10 @@ function DateTimeField({
 
       {step === "date" && (
         <DateTimePicker
-          value={value ?? pendingDate ?? new Date()}
+          value={value ?? pendingDate ?? minimumDate ?? new Date()}
           mode={Platform.OS === "ios" ? "datetime" : "date"}
           minimumDate={minimumDate}
-          onChange={Platform.OS === "ios" ? onPickTime : onPickDate}
+          onChange={onPickDateOrDateTime}
         />
       )}
       {step === "time" && Platform.OS === "android" && (
@@ -155,6 +163,13 @@ export default function CreateEventScreen() {
 
   const imageUri = watch("imageUri");
   const category = watch("category");
+  // react-hook-form types this as always-defined `Date` because the schema
+  // requires it, but there's no defaultValues entry for it — it genuinely is
+  // undefined until the user picks a date.
+  const startsAt = watch("startsAt") as Date | undefined;
+
+  const minStartsAt = new Date(Date.now() + EVENT_MIN_LEAD_TIME_MS);
+  const minEndsAt = addMs(startsAt, minStartsAt, EVENT_MIN_DURATION_MS);
 
   async function onPickImage() {
     const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
@@ -328,10 +343,10 @@ export default function CreateEventScreen() {
           name="startsAt"
           render={({ field: { onChange, value } }) => (
             <DateTimeField
-              label="Starts at"
+              label="Starts at (at least 24h from now)"
               value={value}
               onChange={onChange}
-              minimumDate={new Date()}
+              minimumDate={minStartsAt}
             />
           )}
         />
@@ -342,10 +357,10 @@ export default function CreateEventScreen() {
           name="endsAt"
           render={({ field: { onChange, value } }) => (
             <DateTimeField
-              label="Ends at (optional)"
+              label="Ends at (optional, at least 15 min after start)"
               value={value}
               onChange={onChange}
-              minimumDate={new Date()}
+              minimumDate={minEndsAt}
             />
           )}
         />
