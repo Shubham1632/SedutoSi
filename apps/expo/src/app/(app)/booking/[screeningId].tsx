@@ -6,6 +6,7 @@ import { useBookedSeats, useScreening } from "@acme/app";
 import { appAlert } from "@acme/ui-native/alert";
 import { Button } from "@acme/ui-native/button";
 
+import { ResponsiveContainer } from "~/components/responsive-container";
 import { SeatMap } from "~/components/seat-map";
 import {
   cosmeticOccupiedSeats,
@@ -105,32 +106,37 @@ export default function SeatSelectionScreen() {
 
       {/* Screening summary + live seat count */}
       <View className="border-border bg-card border-b px-5 py-4">
-        <View className="flex-row items-start justify-between gap-3">
-          <View className="flex-1">
-            <Text
-              className="text-foreground text-lg font-bold"
-              numberOfLines={1}
-            >
-              {info.title}
-            </Text>
-            <Text className="text-muted-foreground mt-0.5 text-xs">
-              {info.when}
-            </Text>
-            {info.where && (
-              <Text className="text-muted-foreground text-xs" numberOfLines={1}>
-                {info.where}
+        <ResponsiveContainer maxWidth={800}>
+          <View className="flex-row items-start justify-between gap-3">
+            <View className="flex-1">
+              <Text
+                className="text-foreground text-lg font-bold"
+                numberOfLines={1}
+              >
+                {info.title}
               </Text>
-            )}
+              <Text className="text-muted-foreground mt-0.5 text-xs">
+                {info.when}
+              </Text>
+              {info.where && (
+                <Text
+                  className="text-muted-foreground text-xs"
+                  numberOfLines={1}
+                >
+                  {info.where}
+                </Text>
+              )}
+            </View>
+            <View className="bg-primary/10 items-center rounded-xl px-3 py-2">
+              <Text className="text-primary text-xl font-extrabold">
+                {selected.length}
+              </Text>
+              <Text className="text-primary text-[10px] font-medium uppercase">
+                Selected
+              </Text>
+            </View>
           </View>
-          <View className="bg-primary/10 items-center rounded-xl px-3 py-2">
-            <Text className="text-primary text-xl font-extrabold">
-              {selected.length}
-            </Text>
-            <Text className="text-primary text-[10px] font-medium uppercase">
-              Selected
-            </Text>
-          </View>
-        </View>
+        </ResponsiveContainer>
       </View>
 
       <SeatMap
@@ -141,32 +147,34 @@ export default function SeatSelectionScreen() {
 
       {/* Footer: live price + continue CTA */}
       <View className="border-border bg-card border-t px-5 pt-3 pb-6">
-        <View className="mb-3 flex-row items-end justify-between">
-          <View>
-            <Text className="text-muted-foreground text-xs">
-              {selected.length > 0
-                ? `${selected.length} × €${pricePerSeat.toFixed(2)}`
-                : "No seats selected"}
-            </Text>
-            <Text className="text-foreground text-2xl font-extrabold">
-              €{total.toFixed(2)}
-            </Text>
+        <ResponsiveContainer maxWidth={800}>
+          <View className="mb-3 flex-row items-end justify-between">
+            <View>
+              <Text className="text-muted-foreground text-xs">
+                {selected.length > 0
+                  ? `${selected.length} × €${pricePerSeat.toFixed(2)}`
+                  : "No seats selected"}
+              </Text>
+              <Text className="text-foreground text-2xl font-extrabold">
+                €{total.toFixed(2)}
+              </Text>
+            </View>
+            {selected.length > 0 && (
+              <Text className="text-muted-foreground max-w-[55%] text-right text-xs">
+                {sortSeats(selected).join(", ")}
+              </Text>
+            )}
           </View>
-          {selected.length > 0 && (
-            <Text className="text-muted-foreground max-w-[55%] text-right text-xs">
-              {sortSeats(selected).join(", ")}
-            </Text>
-          )}
-        </View>
-        <Button
-          title={
-            selected.length > 0
-              ? `Continue · €${total.toFixed(2)}`
-              : "Select a seat to continue"
-          }
-          disabled={selected.length === 0}
-          onPress={onContinue}
-        />
+          <Button
+            title={
+              selected.length > 0
+                ? `Continue · €${total.toFixed(2)}`
+                : "Select a seat to continue"
+            }
+            disabled={selected.length === 0}
+            onPress={onContinue}
+          />
+        </ResponsiveContainer>
       </View>
     </View>
   );

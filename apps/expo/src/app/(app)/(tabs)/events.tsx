@@ -191,6 +191,7 @@ export default function EventsScreen() {
           }}
           columnWrapperStyle={numColumns > 1 ? { gap: 16 } : undefined}
           renderItem={({ item }: { item: LiveEvent }) => (
+            <View style={numColumns > 1 ? { flex: 1 } : undefined}>
             <Pressable
               onPress={() =>
                 router.push({
@@ -198,7 +199,6 @@ export default function EventsScreen() {
                   params: { eventId: item.id },
                 })
               }
-              style={numColumns > 1 ? { flex: 1 } : undefined}
               className="bg-card overflow-hidden rounded-2xl border border-gray-300 shadow-sm active:opacity-80 dark:border-gray-700"
             >
               <View>
@@ -271,6 +271,7 @@ export default function EventsScreen() {
                 ) : null}
               </View>
             </Pressable>
+            </View>
           )}
         />
       )}

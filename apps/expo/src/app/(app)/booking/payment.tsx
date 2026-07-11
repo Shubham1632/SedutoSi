@@ -9,6 +9,7 @@ import {
 } from "@acme/app";
 import { Button } from "@acme/ui-native/button";
 
+import { ResponsiveContainer } from "~/components/responsive-container";
 import { screeningDisplay, sortSeats } from "~/lib/booking";
 import { getStripeRedirectTo, openStripeCheckout } from "~/lib/stripe-checkout";
 
@@ -79,43 +80,49 @@ export default function StripePaymentScreen() {
       <Stack.Screen options={{ title: "Payment" }} />
 
       <ScrollView contentContainerClassName="p-5 gap-5">
-        <View className="bg-card border-border gap-1 rounded-2xl border p-5">
-          <Text className="text-foreground text-xl font-bold">
-            {info.title}
-          </Text>
-          <Text className="text-muted-foreground text-sm">{info.when}</Text>
-          {info.where && (
-            <Text className="text-muted-foreground text-sm">{info.where}</Text>
-          )}
-          <Text className="text-muted-foreground mt-1 text-sm">
-            {selected.length} seat{selected.length > 1 ? "s" : ""} ·{" "}
-            {selected.join(", ")}
-          </Text>
-        </View>
-
-        <View className="bg-card border-border gap-3 rounded-2xl border p-5">
-          <View className="flex-row items-center justify-between">
-            <Text className="text-foreground text-base font-semibold">
-              Total
+        <ResponsiveContainer style={{ gap: 20 }}>
+          <View className="bg-card border-border gap-1 rounded-2xl border p-5">
+            <Text className="text-foreground text-xl font-bold">
+              {info.title}
             </Text>
-            <Text className="text-primary text-2xl font-extrabold">
-              €{total.toFixed(2)}
+            <Text className="text-muted-foreground text-sm">{info.when}</Text>
+            {info.where && (
+              <Text className="text-muted-foreground text-sm">
+                {info.where}
+              </Text>
+            )}
+            <Text className="text-muted-foreground mt-1 text-sm">
+              {selected.length} seat{selected.length > 1 ? "s" : ""} ·{" "}
+              {selected.join(", ")}
             </Text>
           </View>
-          <Text className="text-muted-foreground text-xs">
-            Pay securely with Stripe — card, Apple Pay, Google Pay or Revolut
-            Pay.
-          </Text>
-        </View>
+
+          <View className="bg-card border-border gap-3 rounded-2xl border p-5">
+            <View className="flex-row items-center justify-between">
+              <Text className="text-foreground text-base font-semibold">
+                Total
+              </Text>
+              <Text className="text-primary text-2xl font-extrabold">
+                €{total.toFixed(2)}
+              </Text>
+            </View>
+            <Text className="text-muted-foreground text-xs">
+              Pay securely with Stripe — card, Apple Pay, Google Pay or Revolut
+              Pay.
+            </Text>
+          </View>
+        </ResponsiveContainer>
       </ScrollView>
 
       <View className="border-border bg-card border-t px-5 pt-3 pb-6">
-        <Button
-          title={`Pay €${total.toFixed(2)} with Stripe`}
-          loading={isPaying}
-          disabled={selected.length === 0}
-          onPress={() => void onPay()}
-        />
+        <ResponsiveContainer>
+          <Button
+            title={`Pay €${total.toFixed(2)} with Stripe`}
+            loading={isPaying}
+            disabled={selected.length === 0}
+            onPress={() => void onPay()}
+          />
+        </ResponsiveContainer>
       </View>
     </View>
   );

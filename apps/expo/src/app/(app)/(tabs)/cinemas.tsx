@@ -7,6 +7,8 @@ import { LegendList } from "@legendapp/list";
 import type { Cinema } from "@acme/app";
 import { useCinemas } from "@acme/app";
 
+import { useResponsive } from "~/lib/use-responsive";
+
 function SearchButton({
   active,
   onPress,
@@ -24,6 +26,8 @@ function SearchButton({
 }
 
 export default function CinemasScreen() {
+  const { width } = useResponsive();
+  const numColumns = width >= 1200 ? 3 : width >= 700 ? 2 : 1;
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const { data: cinemas, isLoading } = useCinemas();
@@ -140,8 +144,12 @@ export default function CinemasScreen() {
         <LegendList
           data={filteredCinemas}
           keyExtractor={(item) => item.id}
+          numColumns={numColumns}
+          key={numColumns}
           contentContainerStyle={{ padding: 16, gap: 16 }}
+          columnWrapperStyle={numColumns > 1 ? { gap: 16 } : undefined}
           renderItem={({ item }: { item: Cinema }) => (
+            <View style={numColumns > 1 ? { flex: 1 } : undefined}>
             <Pressable
               onPress={() =>
                 router.push({
@@ -186,6 +194,7 @@ export default function CinemasScreen() {
                 </Text>
               </View>
             </Pressable>
+            </View>
           )}
         />
       )}

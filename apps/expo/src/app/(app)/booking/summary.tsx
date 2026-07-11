@@ -4,6 +4,7 @@ import { Stack, useLocalSearchParams, useRouter } from "expo-router";
 import { useScreening } from "@acme/app";
 import { Button } from "@acme/ui-native/button";
 
+import { ResponsiveContainer } from "~/components/responsive-container";
 import { screeningDisplay, sortSeats } from "~/lib/booking";
 
 export default function BookingSummaryScreen() {
@@ -41,63 +42,73 @@ export default function BookingSummaryScreen() {
       <Stack.Screen options={{ title: "Booking Summary" }} />
 
       <ScrollView contentContainerClassName="p-5 gap-5">
-        {/* Movie / showtime */}
-        <View className="bg-card border-border gap-1 rounded-2xl border p-5">
-          <Text className="text-foreground text-xl font-bold">
-            {info.title}
-          </Text>
-          <Text className="text-muted-foreground text-sm">{info.when}</Text>
-          {info.where && (
-            <Text className="text-muted-foreground text-sm">{info.where}</Text>
-          )}
-        </View>
+        <ResponsiveContainer style={{ gap: 20 }}>
+          {/* Movie / showtime */}
+          <View className="bg-card border-border gap-1 rounded-2xl border p-5">
+            <Text className="text-foreground text-xl font-bold">
+              {info.title}
+            </Text>
+            <Text className="text-muted-foreground text-sm">{info.when}</Text>
+            {info.where && (
+              <Text className="text-muted-foreground text-sm">
+                {info.where}
+              </Text>
+            )}
+          </View>
 
-        {/* Seats */}
-        <View className="bg-card border-border gap-3 rounded-2xl border p-5">
-          <Text className="text-muted-foreground text-xs font-medium uppercase">
-            Your seats
-          </Text>
-          <View className="flex-row flex-wrap gap-2">
-            {selected.map((id) => (
-              <View key={id} className="bg-primary/10 rounded-lg px-3 py-1.5">
-                <Text className="text-primary text-sm font-semibold">{id}</Text>
-              </View>
-            ))}
+          {/* Seats */}
+          <View className="bg-card border-border gap-3 rounded-2xl border p-5">
+            <Text className="text-muted-foreground text-xs font-medium uppercase">
+              Your seats
+            </Text>
+            <View className="flex-row flex-wrap gap-2">
+              {selected.map((id) => (
+                <View key={id} className="bg-primary/10 rounded-lg px-3 py-1.5">
+                  <Text className="text-primary text-sm font-semibold">
+                    {id}
+                  </Text>
+                </View>
+              ))}
+            </View>
           </View>
-        </View>
 
-        {/* Price breakdown */}
-        <View className="bg-card border-border gap-3 rounded-2xl border p-5">
-          <View className="flex-row items-center justify-between">
-            <Text className="text-muted-foreground text-sm">
-              Price per seat
-            </Text>
-            <Text className="text-foreground text-sm">
-              €{pricePerSeat.toFixed(2)}
-            </Text>
+          {/* Price breakdown */}
+          <View className="bg-card border-border gap-3 rounded-2xl border p-5">
+            <View className="flex-row items-center justify-between">
+              <Text className="text-muted-foreground text-sm">
+                Price per seat
+              </Text>
+              <Text className="text-foreground text-sm">
+                €{pricePerSeat.toFixed(2)}
+              </Text>
+            </View>
+            <View className="flex-row items-center justify-between">
+              <Text className="text-muted-foreground text-sm">Seats</Text>
+              <Text className="text-foreground text-sm">
+                × {selected.length}
+              </Text>
+            </View>
+            <View className="border-border flex-row items-center justify-between border-t pt-3">
+              <Text className="text-foreground text-base font-semibold">
+                Total
+              </Text>
+              <Text className="text-primary text-2xl font-extrabold">
+                €{total.toFixed(2)}
+              </Text>
+            </View>
           </View>
-          <View className="flex-row items-center justify-between">
-            <Text className="text-muted-foreground text-sm">Seats</Text>
-            <Text className="text-foreground text-sm">× {selected.length}</Text>
-          </View>
-          <View className="border-border flex-row items-center justify-between border-t pt-3">
-            <Text className="text-foreground text-base font-semibold">
-              Total
-            </Text>
-            <Text className="text-primary text-2xl font-extrabold">
-              €{total.toFixed(2)}
-            </Text>
-          </View>
-        </View>
+        </ResponsiveContainer>
       </ScrollView>
 
       {/* Payment CTA */}
       <View className="border-border bg-card border-t px-5 pt-3 pb-6">
-        <Button
-          title={`Continue to Payment · €${total.toFixed(2)}`}
-          disabled={selected.length === 0}
-          onPress={onContinueToPayment}
-        />
+        <ResponsiveContainer>
+          <Button
+            title={`Continue to Payment · €${total.toFixed(2)}`}
+            disabled={selected.length === 0}
+            onPress={onContinueToPayment}
+          />
+        </ResponsiveContainer>
       </View>
     </View>
   );

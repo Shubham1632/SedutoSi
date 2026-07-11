@@ -1,13 +1,17 @@
-import { Image, Pressable, View } from "react-native";
+import { Image, Pressable, Text, View } from "react-native";
 import { Stack, useRouter } from "expo-router";
 import { LegendList } from "@legendapp/list";
 
 import type { Wishlist } from "@acme/app";
 import { useToggleWishlist, useWishlist } from "@acme/app";
 import { appAlert } from "@acme/ui-native/alert";
-import { Text } from "@acme/ui-native/text";
+
+import { useResponsive } from "~/lib/use-responsive";
 
 export default function WishlistScreen() {
+  const { width } = useResponsive();
+  const numColumns =
+    width >= 1200 ? 5 : width >= 900 ? 4 : width >= 600 ? 3 : 2;
   const router = useRouter();
   const { data: wishlist, isLoading } = useWishlist();
   const toggleWishlist = useToggleWishlist();
@@ -42,52 +46,85 @@ export default function WishlistScreen() {
           </Text>
         </View>
       ) : (
-        <LegendList
-          data={wishlist}
-          keyExtractor={(item) => item.id}
-          contentContainerStyle={{ padding: 16, gap: 12 }}
-          renderItem={({ item }: { item: Wishlist }) => {
-            const movie = item.movie;
-            if (!movie) return null;
+        <>
+          <View className="px-4 pt-4 pb-1">
+            <Text className="text-muted-foreground text-sm">
+              {wishlist.length} movie{wishlist.length !== 1 ? "s" : ""} saved
+            </Text>
+          </View>
 
-            return (
-              <Pressable
-                onPress={() => router.push(`/movies/${movie.id}`)}
-                className="bg-card flex-row gap-3 overflow-hidden rounded-xl p-3"
-              >
-                {movie.poster_url ? (
-                  <Image
-                    source={{ uri: movie.poster_url }}
-                    style={{ width: 60, height: 90, borderRadius: 8 }}
-                    resizeMode="cover"
-                  />
-                ) : (
-                  <View
-                    className="bg-muted items-center justify-center rounded-lg"
-                    style={{ width: 60, height: 90 }}
+          <LegendList
+            data={wishlist}
+            keyExtractor={(item) => item.id}
+            numColumns={numColumns}
+            key={numColumns}
+            contentContainerStyle={{
+              padding: 16,
+              gap: 16,
+              width: "100%",
+              maxWidth: 1300,
+              alignSelf: "center",
+            }}
+            columnWrapperStyle={{ gap: 16 }}
+            renderItem={({ item }: { item: Wishlist }) => {
+              const movie = item.movie;
+              if (!movie) return null;
+
+              return (
+                <View style={{ flex: 1 }}>
+                  <Pressable
+                    onPress={() => router.push(`/movies/${movie.id}`)}
+                    className="bg-card overflow-hidden rounded-xl"
                   >
-                    <Text style={{ fontSize: 24 }}>🎬</Text>
-                  </View>
-                )}
-                <View className="flex-1 justify-center gap-1">
-                  <Text className="text-foreground text-base font-semibold">
-                    {movie.title}
-                  </Text>
-                  <Text className="text-muted-foreground text-sm">
-                    {[movie.genre, movie.language].filter(Boolean).join(" · ")}
-                  </Text>
+                    <View>
+                      {movie.poster_url ? (
+                        <Image
+                          source={{ uri: movie.poster_url }}
+                          style={{
+                            width: "100%",
+                            aspectRatio: 2 / 3,
+                            borderRadius: 16,
+                          }}
+                          resizeMode="cover"
+                        />
+                      ) : (
+                        <View
+                          className="bg-muted items-center justify-center"
+                          style={{ width: "100%", aspectRatio: 2 / 3 }}
+                        >
+                          <Text style={{ fontSize: 40 }}>🎬</Text>
+                        </View>
+                      )}
+                      <Pressable
+                        onPress={() => onRemove(movie.id)}
+                        hitSlop={12}
+                        className="bg-background/90 absolute top-2 right-2 h-9 w-9 items-center justify-center rounded-full"
+                      >
+                        <Text style={{ fontSize: 16 }}>♥</Text>
+                      </Pressable>
+                    </View>
+                    <View className="gap-1 p-3">
+                      <Text
+                        className="text-foreground text-sm font-bold"
+                        numberOfLines={1}
+                      >
+                        {movie.title}
+                      </Text>
+                      <Text
+                        className="text-muted-foreground text-xs"
+                        numberOfLines={1}
+                      >
+                        {[movie.genre, movie.language]
+                          .filter(Boolean)
+                          .join(" · ")}
+                      </Text>
+                    </View>
+                  </Pressable>
                 </View>
-                <Pressable
-                  onPress={() => onRemove(movie.id)}
-                  hitSlop={12}
-                  className="px-2"
-                >
-                  <Text style={{ fontSize: 20 }}>♥</Text>
-                </Pressable>
-              </Pressable>
-            );
-          }}
-        />
+              );
+            }}
+          />
+        </>
       )}
     </View>
   );

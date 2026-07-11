@@ -4,6 +4,9 @@ import { Stack, useLocalSearchParams, useRouter } from "expo-router";
 
 import { useCinema, useCinemaMovies } from "@acme/app";
 
+import { ResponsiveContainer } from "~/components/responsive-container";
+import { useResponsive } from "~/lib/use-responsive";
+
 function formatTime(iso: string) {
   return new Date(iso).toLocaleTimeString("en-GB", {
     hour: "2-digit",
@@ -25,6 +28,9 @@ function dateKey(iso: string) {
 
 export default function CinemaDetailScreen() {
   const { cinemaId } = useLocalSearchParams<{ cinemaId: string }>();
+  const { width } = useResponsive();
+  const numColumns =
+    width >= 1200 ? 4 : width >= 900 ? 3 : width >= 600 ? 2 : 1;
   const router = useRouter();
   const { data: cinema, isLoading } = useCinema(cinemaId);
   const { data: movies, isLoading: moviesLoading } = useCinemaMovies(cinemaId);
@@ -65,19 +71,21 @@ export default function CinemaDetailScreen() {
       />
 
       <View className="border-border gap-3 border-b px-4 py-4">
-        <Text className="text-foreground text-2xl font-bold">
-          {cinema?.name ?? "Cinema"}
-        </Text>
-        {cinema?.neighborhood ? (
-          <Text className="text-primary text-sm font-medium">
-            {cinema.neighborhood}
+        <ResponsiveContainer maxWidth={1200} style={{ gap: 12 }}>
+          <Text className="text-foreground text-2xl font-bold">
+            {cinema?.name ?? "Cinema"}
           </Text>
-        ) : null}
-        {cinema?.address ? (
-          <Text className="text-muted-foreground text-sm">
-            {cinema.address}
-          </Text>
-        ) : null}
+          {cinema?.neighborhood ? (
+            <Text className="text-primary text-sm font-medium">
+              {cinema.neighborhood}
+            </Text>
+          ) : null}
+          {cinema?.address ? (
+            <Text className="text-muted-foreground text-sm">
+              {cinema.address}
+            </Text>
+          ) : null}
+        </ResponsiveContainer>
       </View>
 
       {isLoading || moviesLoading ? (
@@ -96,36 +104,38 @@ export default function CinemaDetailScreen() {
       ) : (
         <View className="flex-1">
           <View className="border-border border-b px-4 py-3">
-            <FlatList
-              data={allDates}
-              horizontal
-              showsHorizontalScrollIndicator={false}
-              keyExtractor={(item) => item.date}
-              contentContainerStyle={{ gap: 8 }}
-              renderItem={({ item }) => {
-                const selected = item.date === selectedDateKey;
-                return (
-                  <Pressable
-                    onPress={() => setSelectedDate(item.date)}
-                    className={
-                      selected
-                        ? "bg-primary rounded-full px-4 py-2"
-                        : "border-border rounded-full border px-4 py-2"
-                    }
-                  >
-                    <Text
+            <ResponsiveContainer maxWidth={1200}>
+              <FlatList
+                data={allDates}
+                horizontal
+                showsHorizontalScrollIndicator={false}
+                keyExtractor={(item) => item.date}
+                contentContainerStyle={{ gap: 8 }}
+                renderItem={({ item }) => {
+                  const selected = item.date === selectedDateKey;
+                  return (
+                    <Pressable
+                      onPress={() => setSelectedDate(item.date)}
                       className={
                         selected
-                          ? "text-primary-foreground text-sm font-medium"
-                          : "text-foreground text-sm font-medium"
+                          ? "bg-primary rounded-full px-4 py-2"
+                          : "border-border rounded-full border px-4 py-2"
                       }
                     >
-                      {item.label}
-                    </Text>
-                  </Pressable>
-                );
-              }}
-            />
+                      <Text
+                        className={
+                          selected
+                            ? "text-primary-foreground text-sm font-medium"
+                            : "text-foreground text-sm font-medium"
+                        }
+                      >
+                        {item.label}
+                      </Text>
+                    </Pressable>
+                  );
+                }}
+              />
+            </ResponsiveContainer>
           </View>
 
           {moviesForDate.length === 0 ? (
@@ -141,10 +151,20 @@ export default function CinemaDetailScreen() {
             <FlatList
               data={moviesForDate}
               keyExtractor={(item) => item.movie.id}
-              contentContainerClassName="p-4 gap-4"
+              numColumns={numColumns}
+              key={numColumns}
+              contentContainerStyle={{
+                padding: 16,
+                gap: 16,
+                width: "100%",
+                maxWidth: 1200,
+                alignSelf: "center",
+              }}
+              columnWrapperStyle={numColumns > 1 ? { gap: 16 } : undefined}
               renderItem={({ item }) => {
                 const movie = item.movie;
                 return (
+                  <View style={numColumns > 1 ? { flex: 1 } : undefined}>
                   <Pressable
                     onPress={() => {
                       router.push({
@@ -208,6 +228,7 @@ export default function CinemaDetailScreen() {
                       ) : null}
                     </View>
                   </Pressable>
+                  </View>
                 );
               }}
             />

@@ -8,6 +8,9 @@ import {
   useScreeningsByCinemaAndMovie,
 } from "@acme/app";
 
+import { ResponsiveContainer } from "~/components/responsive-container";
+import { useResponsive } from "~/lib/use-responsive";
+
 function formatDateTime(iso: string) {
   return new Date(iso).toLocaleString("en-GB", {
     weekday: "short",
@@ -24,6 +27,8 @@ export default function CinemaMovieScreen() {
     movieId: string;
     date?: string;
   }>();
+  const { width } = useResponsive();
+  const numColumns = width >= 1200 ? 3 : width >= 800 ? 2 : 1;
   const router = useRouter();
   const { data: cinema } = useCinema(cinemaId);
   const { data: movies } = useCinemaMovies(cinemaId);
@@ -43,13 +48,15 @@ export default function CinemaMovieScreen() {
       />
 
       <View className="border-border gap-2 border-b px-4 py-4">
-        <Text className="text-foreground text-xl font-bold">
-          {movie?.title ?? "Showtimes"}
-        </Text>
-        <Text className="text-muted-foreground text-sm">
-          {cinema?.name ?? "Cinema"}
-          {cinema?.neighborhood ? ` — ${cinema.neighborhood}` : ""}
-        </Text>
+        <ResponsiveContainer maxWidth={1000} style={{ gap: 8 }}>
+          <Text className="text-foreground text-xl font-bold">
+            {movie?.title ?? "Showtimes"}
+          </Text>
+          <Text className="text-muted-foreground text-sm">
+            {cinema?.name ?? "Cinema"}
+            {cinema?.neighborhood ? ` — ${cinema.neighborhood}` : ""}
+          </Text>
+        </ResponsiveContainer>
       </View>
 
       {isLoading ? (
@@ -70,12 +77,22 @@ export default function CinemaMovieScreen() {
           <FlatList
             data={screenings}
             keyExtractor={(item) => item.id}
-            contentContainerClassName="p-4 gap-3"
+            numColumns={numColumns}
+            key={numColumns}
+            contentContainerStyle={{
+              padding: 16,
+              gap: 12,
+              width: "100%",
+              maxWidth: 1000,
+              alignSelf: "center",
+            }}
+            columnWrapperStyle={numColumns > 1 ? { gap: 12 } : undefined}
             renderItem={({ item }: { item: Screening }) => {
               const screen = item.screen as
                 | { name?: string; cinema?: { name?: string } }
                 | undefined;
               return (
+                <View style={numColumns > 1 ? { flex: 1 } : undefined}>
                 <Pressable
                   onPress={() => router.push(`/booking/${item.id}`)}
                   className="bg-card gap-3 rounded-2xl border border-gray-300 p-4 shadow-sm active:opacity-80 dark:border-gray-700"
@@ -97,6 +114,7 @@ export default function CinemaMovieScreen() {
                     </Text>
                   </View>
                 </Pressable>
+                </View>
               );
             }}
           />

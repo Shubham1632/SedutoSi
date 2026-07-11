@@ -3,6 +3,8 @@ import { Stack, useLocalSearchParams, useRouter } from "expo-router";
 
 import { Button } from "@acme/ui-native/button";
 
+import { ResponsiveContainer } from "~/components/responsive-container";
+
 export default function PaymentFailedScreen() {
   const router = useRouter();
   const { message, screeningId, seats, eventId, quantity } =
@@ -43,27 +45,34 @@ export default function PaymentFailedScreen() {
       />
 
       <ScrollView contentContainerClassName="flex-1 items-center justify-center gap-6 p-6">
-        <View className="bg-destructive/10 h-20 w-20 items-center justify-center rounded-full">
-          <Text className="text-destructive text-4xl">✕</Text>
-        </View>
+        <ResponsiveContainer
+          maxWidth={480}
+          style={{ alignItems: "center", gap: 24 }}
+        >
+          <View className="bg-destructive/10 h-20 w-20 items-center justify-center rounded-full">
+            <Text className="text-destructive text-4xl">✕</Text>
+          </View>
 
-        <View className="items-center gap-1">
-          <Text className="text-foreground text-2xl font-extrabold">
-            Payment Failed
-          </Text>
-          <Text className="text-muted-foreground text-center text-sm">
-            {message ?? "Something went wrong while processing your payment."}
-          </Text>
-        </View>
+          <View className="items-center gap-1">
+            <Text className="text-foreground text-2xl font-extrabold">
+              Payment Failed
+            </Text>
+            <Text className="text-muted-foreground text-center text-sm">
+              {message ?? "Something went wrong while processing your payment."}
+            </Text>
+          </View>
+        </ResponsiveContainer>
       </ScrollView>
 
       <View className="border-border bg-card gap-2 border-t px-5 pt-3 pb-6">
-        <Button title="Try Again" onPress={onRetry} />
-        <Button
-          title="Back to Home"
-          variant="outline"
-          onPress={() => router.dismissAll()}
-        />
+        <ResponsiveContainer maxWidth={480} style={{ gap: 8 }}>
+          <Button title="Try Again" onPress={onRetry} />
+          <Button
+            title="Back to Home"
+            variant="outline"
+            onPress={() => router.dismissAll()}
+          />
+        </ResponsiveContainer>
       </View>
     </View>
   );
