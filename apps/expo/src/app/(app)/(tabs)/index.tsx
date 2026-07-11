@@ -14,6 +14,8 @@ import { LegendList } from "@legendapp/list";
 import type { Movie } from "@acme/app";
 import { useMovies } from "@acme/app";
 
+import { useResponsive } from "~/lib/use-responsive";
+
 function SearchButton({
   active,
   onPress,
@@ -24,13 +26,16 @@ function SearchButton({
   return (
     <Pressable onPress={onPress} hitSlop={12} style={{ paddingHorizontal: 8 }}>
       <Text className="text-foreground" style={{ fontSize: 20 }}>
-        {active ? "✕" : "🔍"}
+        {active ? "✕" : "Q"}
       </Text>
     </Pressable>
   );
 }
 
 export default function MoviesScreen() {
+  const { width } = useResponsive();
+  const numColumns =
+    width >= 1200 ? 5 : width >= 900 ? 4 : width >= 600 ? 3 : 2;
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const { data: movies, isLoading } = useMovies();
@@ -138,7 +143,8 @@ export default function MoviesScreen() {
         <LegendList
           data={filteredMovies}
           keyExtractor={(item) => item.id}
-          numColumns={2}
+          numColumns={numColumns}
+          key={numColumns} // force remount when column count changes
           contentContainerStyle={{ padding: 16, gap: 16 }}
           columnWrapperStyle={{ gap: 16 }}
           renderItem={({ item }: { item: Movie }) => (

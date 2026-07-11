@@ -14,6 +14,8 @@ import { LegendList } from "@legendapp/list";
 import type { LiveEvent } from "@acme/app";
 import { useEvents } from "@acme/app";
 
+import { useResponsive } from "~/lib/use-responsive";
+
 const CATEGORY_ICON: Record<string, string> = {
   music: "🎵",
   concert: "🎵",
@@ -64,6 +66,9 @@ function formatEventDate(startsAt: string) {
 }
 
 export default function EventsScreen() {
+  const { width } = useResponsive();
+  const numColumns =
+    width >= 1200 ? 4 : width >= 900 ? 3 : width >= 600 ? 2 : 1;
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const { data: events, isLoading } = useEvents();
@@ -176,12 +181,15 @@ export default function EventsScreen() {
         <LegendList
           data={filteredEvents}
           keyExtractor={(item) => item.id}
+          numColumns={numColumns}
+          key={numColumns} // force remount when column count changes (RN requirement)
           contentContainerStyle={{
             paddingHorizontal: 16,
             paddingTop: 16,
             paddingBottom: insets.bottom + 90,
             gap: 16,
           }}
+          columnWrapperStyle={numColumns > 1 ? { gap: 16 } : undefined}
           renderItem={({ item }: { item: LiveEvent }) => (
             <Pressable
               onPress={() =>
@@ -190,6 +198,7 @@ export default function EventsScreen() {
                   params: { eventId: item.id },
                 })
               }
+              style={numColumns > 1 ? { flex: 1 } : undefined}
               className="bg-card overflow-hidden rounded-2xl border border-gray-300 shadow-sm active:opacity-80 dark:border-gray-700"
             >
               <View>
