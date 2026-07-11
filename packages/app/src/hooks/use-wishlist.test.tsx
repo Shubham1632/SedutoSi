@@ -11,9 +11,6 @@ import {
 } from "../test-utils/render";
 import { useToggleWishlist, useWishlist } from "./use-wishlist";
 
-/** Mounts useToggleWishlist alongside useSession so tests can wait for the
- * (async) session to resolve before mutating — the mutation's query key is
- * keyed by user id, so mutating too early would target the wrong cache key. */
 function useToggleWishlistReady() {
   const session = useSession();
   const toggle = useToggleWishlist();

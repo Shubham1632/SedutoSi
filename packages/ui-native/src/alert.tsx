@@ -18,13 +18,6 @@ interface AlertState {
 
 let listener: ((state: AlertState | null) => void) | null = null;
 
-/**
- * Themed drop-in replacement for React Native's `Alert.alert`. The OS-native
- * dialog always renders with the platform's default accent (iOS/Android
- * blue) which can't be restyled and clashes with the app's own theme —
- * this renders a themed Modal instead, using the same
- * `(title, message?, buttons?)` call signature.
- */
 export function appAlert(
   title: string,
   message?: string,
@@ -39,7 +32,6 @@ function buttonVariant(style: AlertButton["style"]) {
   return "default" as const;
 }
 
-/** Mount once near the app root. Renders whichever alert is currently active. */
 export function AlertHost() {
   const [state, setState] = useState<AlertState | null>(null);
 

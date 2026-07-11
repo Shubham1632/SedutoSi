@@ -2,7 +2,7 @@
 # https://supabase.com/docs/guides/local-development/cli/config
 # A string used to distinguish different Supabase projects on the same host. Defaults to the
 # working directory name when running `supabase init`.
-project_id = "cinemamilano"
+project_id = "sedutosi"
 
 [api]
 enabled = true
@@ -178,7 +178,7 @@ enabled = true
 #   Redirect URLs = https://<your-domain>/**           (prod; `/**` covers the ?next= query)
 #                   https://*.vercel.app/**            (optional: Vercel preview deploys)
 #                   http://localhost:3000/**           (local dev)
-#                   cinemamilano://auth-callback       (native deep link)
+#                   sedutosi://auth-callback           (native deep link)
 # See README -> Deploy. (The dashboard is the simplest path. If you instead manage config
 # as code with `supabase config push`, override `site_url` for the hosted project first —
 # pushing the localhost value below to production would re-introduce this exact bug.)
@@ -189,7 +189,7 @@ site_url = "http://localhost:3000"
 additional_redirect_urls = [
   "http://localhost:3000/**",
   "http://127.0.0.1:3000/**",
-  "cinemamilano://auth-callback",
+  "sedutosi://auth-callback",
 ]
 # How long tokens are valid for, in seconds. Defaults to 3600 (1 hour), maximum 604,800 (1 week).
 jwt_expiry = 3600

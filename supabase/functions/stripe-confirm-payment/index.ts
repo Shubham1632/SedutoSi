@@ -1,20 +1,3 @@
-// Verifies a completed Stripe Checkout session and records the booking, for
-// either a movie screening or a paid live event.
-//
-// Bookings are only ever written here, after Stripe confirms the session is
-// `paid` and its metadata matches the caller — never inserted directly by the
-// client (see the RLS policy change in 20260710000001_stripe_payments.sql).
-// The insert uses the service-role key deliberately (the sanctioned use per
-// CLAUDE.md's golden rule #2): RLS can't tell "verified by this function"
-// apart from "inserted by the app", so the INSERT policy was removed and this
-// is the one place (along with book-free-event, for free events) allowed to
-// bypass it.
-//
-// stripe-create-checkout-session already checked seats/capacity weren't taken
-// before payment, but two people can still race between then and here (both
-// pay within the same few seconds). This is the hard check: if someone else's
-// booking landed first, the loser's payment is refunded instead of silently
-// double-selling the seat or overselling the event.
 import { createClient } from "jsr:@supabase/supabase-js@2";
 import Stripe from "npm:stripe@^18.0.0";
 
@@ -31,9 +14,6 @@ Deno.serve(async (req) => {
   try {
     const stripeSecretKey = Deno.env.get("STRIPE_SECRET_KEY");
     if (!stripeSecretKey) {
-      // See the matching guard in stripe-create-checkout-session: this must
-      // come before any Stripe client is constructed, or a missing key
-      // crashes the function instead of returning a readable error.
       console.error("[stripe-confirm-payment] STRIPE_SECRET_KEY is not set");
       return json({ error: "Stripe is not configured on the server" }, 500);
     }
@@ -63,8 +43,6 @@ Deno.serve(async (req) => {
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "",
     );
 
-    // Idempotent: a retried confirm (e.g. the client retrying after a dropped
-    // response) returns the already-recorded booking instead of erroring.
     const { data: existing } = await supabaseAdmin
       .from("bookings")
       .select(BOOKING_SELECT)
@@ -105,8 +83,6 @@ Deno.serve(async (req) => {
       return json({ error: "Missing screening or seats on session" }, 500);
     }
 
-    // Hard race check: someone else may have booked one of these seats for
-    // this screening between checkout-session creation and now.
     const { data: bookedSeats, error: bookedSeatsError } = await supabaseAdmin.rpc(
       "get_booked_seats",
       { p_screening_id: screeningId },
@@ -141,8 +117,6 @@ Deno.serve(async (req) => {
       .single();
 
     if (insertError) {
-      // Unique violation on stripe_checkout_session_id: a concurrent request
-      // already inserted it — return that row instead of failing.
       if (insertError.code === "23505") {
         const { data: fallback } = await supabaseAdmin
           .from("bookings")
@@ -194,8 +168,6 @@ async function confirmEventBooking({
     return json({ error: "Event not found" }, 404);
   }
 
-  // Hard race check: someone else may have booked tickets for this event
-  // between checkout-session creation and now.
   if (event.capacity != null) {
     const { data: sold, error: soldError } = await supabaseAdmin.rpc(
       "get_event_tickets_sold",

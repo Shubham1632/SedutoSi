@@ -6,7 +6,6 @@ import { useSession, useSupabase } from "@acme/api";
 
 import type { UpdateProfileInput } from "../validators/auth";
 
-/** Read the current user's profile row (RLS: own only). */
 export function useProfile() {
   const supabase = useSupabase();
   const { user } = useSession();
@@ -27,7 +26,6 @@ export function useProfile() {
   });
 }
 
-/** Update the current user's display name / avatar. */
 export function useUpdateProfile() {
   const supabase = useSupabase();
   const queryClient = useQueryClient();

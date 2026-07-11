@@ -158,8 +158,6 @@ export default function Profile() {
     setIsSigningOut(true);
     try {
       await signOut(supabase);
-      // Drop any cached per-user data (profile, bookings) so the next
-      // sign-in doesn't briefly show the previous user's stale cache.
       queryClient.clear();
     } catch (e) {
       appAlert("Sign out failed", msg(e));
@@ -236,7 +234,6 @@ export default function Profile() {
       <ResponsiveContainer style={{ rowGap: 28 }}>
         <Text className="text-foreground text-2xl font-bold">Profile</Text>
 
-        {/* Header card */}
         <View className="bg-background border-border gap-5 rounded-2xl border p-6">
           <View className="flex-row items-center gap-4">
             <Pressable
@@ -322,7 +319,6 @@ export default function Profile() {
           ) : null}
         </View>
 
-        {/* Activity */}
         <Section title="Activity">
           <MenuRow
             label="My Bookings"
@@ -343,7 +339,6 @@ export default function Profile() {
           />
         </Section>
 
-        {/* Payments */}
         <Section title="Payments">
           <MenuRow
             label="Payment Methods"
@@ -352,7 +347,6 @@ export default function Profile() {
           />
         </Section>
 
-        {/* Support */}
         <Section title="Support">
           <MenuRow
             label="Help & Support"
@@ -372,7 +366,6 @@ export default function Profile() {
           />
         </Section>
 
-        {/* Legal */}
         <Section title="Legal">
           <MenuRow
             label="Terms & Conditions"
@@ -385,7 +378,6 @@ export default function Profile() {
           />
         </Section>
 
-        {/* Account actions */}
         <Section title="Account">
           <MenuRow
             label={isSigningOut ? "Signing out…" : "Sign Out"}

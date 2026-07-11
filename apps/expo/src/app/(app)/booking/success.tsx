@@ -85,9 +85,6 @@ export default function PaymentSuccessScreen() {
           <Button
             title="View My Bookings"
             onPress={() => {
-              // Clear the whole booking flow (seat selection, summary, payment)
-              // out of the stack first, so back from Bookings lands on Home
-              // instead of falling through to one of those screens.
               router.dismissAll();
               router.push("/bookings");
             }}

@@ -7,12 +7,10 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 import type { Database } from "./types";
 
-/** The app's Supabase client, typed against the generated DB schema. */
 export type AppSupabaseClient = SupabaseClient<Database>;
 
 const SupabaseContext = createContext<AppSupabaseClient | null>(null);
 
-/** Shared react-query client factory (sensible defaults for web + native). */
 export function createQueryClient(): QueryClient {
   return new QueryClient({
     defaultOptions: {
@@ -25,22 +23,11 @@ export function createQueryClient(): QueryClient {
 }
 
 export interface SupabaseProviderProps {
-  /**
-   * The platform Supabase client. Each app injects its own:
-   * - web: `@supabase/ssr` browser client (cookie-based)
-   * - native: `createClient` with an AsyncStorage auth adapter
-   */
   client: AppSupabaseClient;
-  /** Optional shared QueryClient (one is created if omitted). */
   queryClient?: QueryClient;
   children: ReactNode;
 }
 
-/**
- * Cross-platform data provider: makes the Supabase client available to shared
- * hooks (packages/app) and wires up react-query. Render once near the root of
- * each app.
- */
 export function SupabaseProvider({
   client,
   queryClient,
@@ -54,7 +41,6 @@ export function SupabaseProvider({
   );
 }
 
-/** Access the Supabase client from within a `<SupabaseProvider>`. */
 export function useSupabase(): AppSupabaseClient {
   const client = useContext(SupabaseContext);
   if (!client) {

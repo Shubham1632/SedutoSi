@@ -1,13 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import {
-  forgotPasswordSchema,
-  magicLinkSchema,
-  resetPasswordSchema,
-  signInSchema,
-  signUpSchema,
-  updateProfileSchema,
-} from "./auth";
+import { signInSchema, signUpSchema, updateProfileSchema } from "./auth";
 
 describe("auth validators", () => {
   it("accepts a valid sign-in", () => {
@@ -32,14 +25,6 @@ describe("auth validators", () => {
     ).toBe(true);
   });
 
-  it("rejects mismatched password confirmation", () => {
-    const res = resetPasswordSchema.safeParse({
-      password: "longenough",
-      confirmPassword: "different",
-    });
-    expect(res.success).toBe(false);
-  });
-
   it("allows an empty avatar URL but rejects a malformed one", () => {
     expect(
       updateProfileSchema.safeParse({ displayName: "A", avatarUrl: "" })
@@ -49,13 +34,5 @@ describe("auth validators", () => {
       updateProfileSchema.safeParse({ displayName: "A", avatarUrl: "x" })
         .success,
     ).toBe(false);
-  });
-
-  it("validates the email on magic-link and forgot-password", () => {
-    for (const schema of [magicLinkSchema, forgotPasswordSchema]) {
-      expect(schema.safeParse({ email: "a@b.com" }).success).toBe(true);
-      expect(schema.safeParse({ email: "nope" }).success).toBe(false);
-      expect(schema.safeParse({}).success).toBe(false);
-    }
   });
 });

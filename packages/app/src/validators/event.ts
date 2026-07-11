@@ -14,9 +14,7 @@ export const EVENT_CATEGORIES = [
   "other",
 ] as const;
 
-/** Organizers must give at least this much lead time before an event starts. */
 export const EVENT_MIN_LEAD_TIME_MS = 24 * 60 * 60 * 1000;
-/** Minimum gap between an event's start and end time, when an end time is set. */
 export const EVENT_MIN_DURATION_MS = 15 * 60 * 1000;
 
 export const createEventSchema = z

@@ -7,7 +7,7 @@ create table public.movies (
   genre           text,
   duration_minutes integer not null default 90,
   language        text not null default 'Italian',
-  rating          text,          -- e.g. 'PG-13', 'VM18'
+  rating          text,
   release_date    date,
   created_at      timestamptz not null default now()
 );
@@ -18,9 +18,6 @@ create policy "movies: public read"
   on public.movies for select to anon, authenticated
   using (true);
 
--- ============================================================================
--- Cinemas (Milan locations)
--- ============================================================================
 create table public.cinemas (
   id           uuid primary key default gen_random_uuid(),
   name         text not null,

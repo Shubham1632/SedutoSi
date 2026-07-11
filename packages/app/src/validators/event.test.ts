@@ -43,8 +43,6 @@ describe("createEventSchema", () => {
   });
 
   it("accepts a start time exactly at the lead-time boundary", () => {
-    // A hair past the boundary to avoid flaking on the >= comparison across
-    // the microseconds between building the fixture and the refine running.
     const result = createEventSchema.safeParse(
       validInput({
         startsAt: new Date(Date.now() + EVENT_MIN_LEAD_TIME_MS + 5_000),

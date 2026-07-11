@@ -29,8 +29,6 @@ describe("createQueryClient", () => {
 
 describe("useSupabase", () => {
   it("throws when used outside a <SupabaseProvider>", () => {
-    // React logs the thrown render error to console.error; that's expected
-    // noise from this negative test, not a real failure.
     const spy = vi.spyOn(console, "error").mockImplementation(() => undefined);
     expect(() => renderHook(() => useSupabase())).toThrow(
       "useSupabase must be used within a <SupabaseProvider>",

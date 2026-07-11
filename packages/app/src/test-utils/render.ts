@@ -5,7 +5,6 @@ import { QueryClient } from "@tanstack/react-query";
 import type { AppSupabaseClient } from "@acme/api";
 import { SupabaseProvider } from "@acme/api";
 
-/** A QueryClient tuned for tests: no retries, so failures surface immediately. */
 export function createTestQueryClient() {
   return new QueryClient({
     defaultOptions: {
@@ -15,7 +14,6 @@ export function createTestQueryClient() {
   });
 }
 
-/** Wraps a hook under test with the same providers the real apps mount. */
 export function withSupabaseProvider(
   client: AppSupabaseClient,
   queryClient: QueryClient = createTestQueryClient(),

@@ -182,7 +182,7 @@ export default function EventsScreen() {
           data={filteredEvents}
           keyExtractor={(item) => item.id}
           numColumns={numColumns}
-          key={numColumns} // force remount when column count changes (RN requirement)
+          key={numColumns}
           contentContainerStyle={{
             paddingHorizontal: 16,
             paddingTop: 16,

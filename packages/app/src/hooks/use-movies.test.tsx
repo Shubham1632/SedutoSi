@@ -60,7 +60,7 @@ describe("useCinemaMovies", () => {
     expect(grouped).toHaveLength(2);
 
     const dune = grouped.find((g) => g.movie.id === movieA.id);
-    expect(dune?.showtimes.map((s) => s.id)).toEqual(["s3", "s1"]); // 18:00 before 20:00
+    expect(dune?.showtimes.map((s) => s.id)).toEqual(["s3", "s1"]);
 
     const arrival = grouped.find((g) => g.movie.id === movieB.id);
     expect(arrival?.showtimes.map((s) => s.id)).toEqual(["s2"]);
@@ -160,8 +160,6 @@ describe("useMovie", () => {
       wrapper: withSupabaseProvider(client, queryClient),
     });
 
-    // initialData makes the cached movie available on the very first render,
-    // with no network round-trip needed.
     expect(result.current.data).toEqual(movieA);
 
     await waitFor(() => expect(result.current.isFetching).toBe(false));

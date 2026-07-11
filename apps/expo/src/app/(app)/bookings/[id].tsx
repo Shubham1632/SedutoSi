@@ -37,7 +37,6 @@ export default function BookingDetailScreen() {
     <ScrollView className="bg-background flex-1">
       <Stack.Screen options={{ title }} />
 
-      {/* Poster / cover banner */}
       <View style={{ height: 220 }}>
         {imageUrl ? (
           <Image
@@ -64,7 +63,6 @@ export default function BookingDetailScreen() {
           alignSelf: "center",
         }}
       >
-        {/* Ticket / QR card — floats slightly over the banner above */}
         <View className="bg-card border-border overflow-hidden rounded-2xl border shadow-lg">
           <View className="items-center gap-3 p-6">
             <View className="rounded-2xl bg-white p-4">
@@ -179,7 +177,6 @@ export default function BookingDetailScreen() {
           </View>
         </View>
 
-        {/* Seats (movies only — events are general admission) */}
         {!isEvent && (
           <View className="bg-card border-border gap-3 rounded-2xl border p-5">
             <Text className="text-muted-foreground text-xs font-medium uppercase">
@@ -200,7 +197,6 @@ export default function BookingDetailScreen() {
           </View>
         )}
 
-        {/* Price */}
         <View className="bg-card border-border gap-3 rounded-2xl border p-5">
           <View className="flex-row items-center justify-between">
             <Text className="text-muted-foreground text-sm">

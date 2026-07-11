@@ -2,9 +2,9 @@ import type { ConfigContext, ExpoConfig } from "expo/config";
 
 export default ({ config }: ConfigContext): ExpoConfig => ({
   ...config,
-  name: "CinemaMilano",
-  slug: "cinemamilano",
-  scheme: process.env.EXPO_PUBLIC_AUTH_SCHEME ?? "cinemamilano",
+  name: "SedutoSi",
+  slug: "sedutosi",
+  scheme: process.env.EXPO_PUBLIC_AUTH_SCHEME ?? "sedutosi",
   version: "0.1.0",
   orientation: "portrait",
   icon: "./assets/icon-light.png",
@@ -15,7 +15,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   newArchEnabled: true,
   assetBundlePatterns: ["**/*"],
   ios: {
-    bundleIdentifier: "com.example.cinemamilano",
+    bundleIdentifier: "com.example.sedutosi",
     supportsTablet: true,
     icon: {
       light: "./assets/icon-light.png",
@@ -23,7 +23,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     },
   },
   android: {
-    package: "com.example.cinemamilano",
+    package: "com.example.sedutosi",
     adaptiveIcon: {
       foregroundImage: "./assets/icon-light.png",
       backgroundColor: "#1F104A",

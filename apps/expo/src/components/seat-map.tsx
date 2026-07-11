@@ -12,14 +12,12 @@ import {
 import type { SeatStatus } from "~/lib/booking";
 import { AISLE_AFTER, ROWS, SEATS_PER_ROW } from "~/lib/booking";
 
-const GAP = 4; // px between seats
+const GAP = 4;
 const MIN_ZOOM = 1;
 const MAX_ZOOM = 3;
 
 type Colors = ReturnType<typeof seatColors>;
 
-// Selected/screen colors mirror the app's primary brand color (@acme/ui-native/theme-colors)
-// instead of a hardcoded blue/indigo, so seat selection reads as "on brand" in both themes.
 function seatColors(dark: boolean) {
   return dark
     ? {
@@ -48,19 +46,12 @@ export interface SeatMapProps {
   onToggleSeat: (id: string) => void;
 }
 
-/**
- * Interactive cinema seat map: fits the screen at 1×, pinch to zoom (up to 3×),
- * drag to pan when zoomed. Renders its own legend + zoom controls above the
- * board. Layout/colors use inline styles (NativeWind is unreliable for the
- * highly-dynamic grid).
- */
 export function SeatMap({ occupied, selected, onToggleSeat }: SeatMapProps) {
   const dark = useColorScheme() === "dark";
   const C = seatColors(dark);
   const { width } = useWindowDimensions();
 
-  // Seat size chosen so the whole board fits the screen width at 1×.
-  const totalCells = SEATS_PER_ROW + 1 /* aisle */ + 2; /* row labels */
+  const totalCells = SEATS_PER_ROW + 1 + 2;
   const seat = Math.min(
     26,
     Math.max(
@@ -81,7 +72,6 @@ export function SeatMap({ occupied, selected, onToggleSeat }: SeatMapProps) {
 
   return (
     <>
-      {/* Legend + zoom controls */}
       <View className="flex-row items-center justify-between px-5 py-3">
         <View className="flex-row items-center gap-4">
           <LegendDot
@@ -99,7 +89,6 @@ export function SeatMap({ occupied, selected, onToggleSeat }: SeatMapProps) {
         </View>
       </View>
 
-      {/* Board — pinch to zoom, drag to pan when zoomed in */}
       <View
         style={{
           flex: 1,
@@ -146,8 +135,6 @@ export function SeatMap({ occupied, selected, onToggleSeat }: SeatMapProps) {
     </>
   );
 }
-
-// --- Board pieces ------------------------------------------------------------
 
 function ScreenIndicator({ seat, colors }: { seat: number; colors: Colors }) {
   return (
@@ -308,8 +295,6 @@ function ZoomButton({
   );
 }
 
-// --- Pinch-to-zoom + pan (pure RN, no native config) -------------------------
-
 function distance(touches: { pageX: number; pageY: number }[]) {
   const a = touches[0];
   const b = touches[1];
@@ -321,9 +306,6 @@ function clamp(v: number, min: number, max: number) {
   return Math.min(max, Math.max(min, v));
 }
 
-// Built with plain closures at module scope (no React refs), so all the
-// imperative gesture mutation lives outside render — the hook just holds one
-// stable instance. Board dimensions are captured once (the app is portrait).
 function createPinchController(boardWidth: number, boardHeight: number) {
   const scale = new Animated.Value(1);
   const translateX = new Animated.Value(0);
@@ -368,8 +350,6 @@ function createPinchController(boardWidth: number, boardHeight: number) {
   };
 
   const panResponder = PanResponder.create({
-    // Never claim on a plain tap — let seat presses through. Only take over
-    // for a two-finger pinch, or a drag once the board is zoomed in.
     onStartShouldSetPanResponder: () => false,
     onMoveShouldSetPanResponder: (e, gesture) =>
       e.nativeEvent.touches.length >= 2 ||
@@ -424,7 +404,6 @@ function createPinchController(boardWidth: number, boardHeight: number) {
 }
 
 function usePinchZoom(boardWidth: number, boardHeight: number) {
-  // One stable controller for the component's lifetime.
   const [controller] = useState(() =>
     createPinchController(boardWidth, boardHeight),
   );

@@ -73,7 +73,6 @@ export function useToggleWishlist() {
         queryClient.setQueryData<Wishlist[]>(queryKey, (old) => {
           if (!old) return old;
           if (wishlisted) {
-            // Optimistically add a placeholder row
             const optimisticRow: Wishlist = {
               id: `optimistic-${movieId}`,
               user_id: user.id,

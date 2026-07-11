@@ -33,9 +33,6 @@ const mockSignInWithOAuth = vi.mocked(signInWithOAuth);
 const mockSyncOAuthAvatar = vi.mocked(syncOAuthAvatar);
 const mockOpenAuthSessionAsync = vi.mocked(openAuthSessionAsync);
 const mockGetQueryParams = vi.mocked(getQueryParams);
-// supabase.auth's methods are plain vi.fn() mocks (see the module mock above),
-// not real bound class methods, so detaching them here is safe despite the
-// lint rule's generic "this" concern.
 /* eslint-disable @typescript-eslint/unbound-method */
 const mockExchangeCodeForSession = vi.mocked(
   supabase.auth.exchangeCodeForSession,
