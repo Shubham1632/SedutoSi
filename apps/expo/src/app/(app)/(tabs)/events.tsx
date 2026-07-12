@@ -214,7 +214,7 @@ export default function EventsScreen() {
             gap: 16,
           }}
           columnWrapperStyle={numColumns > 1 ? { gap: 16 } : undefined}
-          ListFooterComponent={<View style={{ height: tabBarHeight + 16 }} />}
+          ListFooterComponent={<View style={{ height: tabBarHeight + 40 }} />}
           renderItem={({ item }: { item: LiveEvent }) => (
             <View style={numColumns > 1 ? { flex: 1 } : undefined}>
               <Pressable
