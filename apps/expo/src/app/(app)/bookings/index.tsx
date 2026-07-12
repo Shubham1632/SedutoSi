@@ -43,7 +43,9 @@ export default function BookingsScreen() {
 
   return (
     <View className="bg-background flex-1">
-      <Stack.Screen options={{ title: "My Bookings" }} />
+      <Stack.Screen
+        options={{ title: "My Bookings", headerBackTitle: "Profile" }}
+      />
 
       <ResponsiveContainer maxWidth={1100}>
         <View className="flex-row gap-2 px-4 pt-4">

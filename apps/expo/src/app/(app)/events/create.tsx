@@ -212,7 +212,9 @@ export default function CreateEventScreen() {
 
   return (
     <View className="bg-background flex-1">
-      <Stack.Screen options={{ title: "Add Live Event" }} />
+      <Stack.Screen
+        options={{ title: "Add Live Event", headerBackTitle: "Profile" }}
+      />
       <ScrollView contentContainerClassName="p-5 pb-10">
         <ResponsiveContainer style={{ gap: 20 }}>
           <View className="gap-1.5">

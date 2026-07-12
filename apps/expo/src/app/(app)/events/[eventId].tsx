@@ -49,7 +49,9 @@ export default function EventDetailScreen() {
   if (isLoading || !event) {
     return (
       <View className="bg-background flex-1 items-center justify-center">
-        <Stack.Screen options={{ title: "Event" }} />
+        <Stack.Screen
+          options={{ title: "Event", headerBackTitle: "Live Events" }}
+        />
         <ActivityIndicator />
       </View>
     );
@@ -59,7 +61,9 @@ export default function EventDetailScreen() {
 
   return (
     <View className="bg-background flex-1">
-      <Stack.Screen options={{ title: event.title }} />
+      <Stack.Screen
+        options={{ title: event.title, headerBackTitle: "Live Events" }}
+      />
 
       <ScrollView contentContainerClassName="gap-4 pb-4">
         {event.image_url ? (

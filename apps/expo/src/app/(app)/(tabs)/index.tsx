@@ -17,6 +17,7 @@ import type { Movie } from "@acme/app";
 import { useMovies } from "@acme/app";
 
 import { useResponsive } from "~/lib/use-responsive";
+import { useThemeColors } from "~/lib/use-theme-colors";
 
 function SearchButton({
   active,
@@ -39,6 +40,7 @@ export default function MoviesScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const tabBarHeight = useBottomTabBarHeight();
+  const themeColors = useThemeColors();
   const { data: movies, isLoading } = useMovies();
   const [searchOpen, setSearchOpen] = useState(false);
   const [query, setQuery] = useState("");
@@ -63,41 +65,44 @@ export default function MoviesScreen() {
   }, [movies, activeFilter, query]);
 
   return (
-    <View className="bg-background flex-1" style={{ paddingTop: insets.top }}>
-      <View className="flex-row items-start justify-between px-4 pt-4">
-        <View className="gap-1">
-          <Text className="text-foreground text-2xl font-bold">
-            Now Showing
-          </Text>
-          <Text className="text-muted-foreground text-sm">
-            Milan {movies?.length ? `· ${movies.length} Movies` : ""}
-          </Text>
-        </View>
-        <SearchButton
-          active={searchOpen}
-          onPress={() => {
-            setSearchOpen((open) => !open);
-            setQuery("");
-          }}
-        />
-      </View>
-
-      {searchOpen && (
-        <View className="px-4 pt-3">
-          <TextInput
-            value={query}
-            onChangeText={setQuery}
-            placeholder="Search movies…"
-            autoFocus
-            className="bg-card border-border text-foreground rounded-lg border px-3 py-2"
+    <View className="bg-background flex-1">
+      <View
+        style={{ backgroundColor: themeColors.header, paddingTop: insets.top }}
+      >
+        <View className="flex-row items-start justify-between px-4 pt-4">
+          <View className="gap-1">
+            <Text className="text-foreground text-2xl font-bold">
+              Now Showing
+            </Text>
+            <Text className="text-muted-foreground text-sm">
+              Milan {movies?.length ? `· ${movies.length} Movies` : ""}
+            </Text>
+          </View>
+          <SearchButton
+            active={searchOpen}
+            onPress={() => {
+              setSearchOpen((open) => !open);
+              setQuery("");
+            }}
           />
         </View>
-      )}
 
-      <View
-        style={{ paddingHorizontal: 16, paddingTop: 12, paddingBottom: 12 }}
-      >
-        <FlatList
+        {searchOpen && (
+          <View className="px-4 pt-3">
+            <TextInput
+              value={query}
+              onChangeText={setQuery}
+              placeholder="Search movies…"
+              autoFocus
+              className="bg-card border-border text-foreground rounded-lg border px-3 py-2"
+            />
+          </View>
+        )}
+
+        <View
+          style={{ paddingHorizontal: 16, paddingTop: 12, paddingBottom: 12 }}
+        >
+          <FlatList
           data={filters}
           horizontal
           showsHorizontalScrollIndicator={false}
@@ -128,6 +133,7 @@ export default function MoviesScreen() {
             );
           }}
         />
+        </View>
       </View>
 
       {isLoading ? (

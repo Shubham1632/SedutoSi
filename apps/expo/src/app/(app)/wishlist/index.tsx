@@ -33,7 +33,9 @@ export default function WishlistScreen() {
 
   return (
     <View className="bg-background flex-1">
-      <Stack.Screen options={{ title: "Wishlist" }} />
+      <Stack.Screen
+        options={{ title: "Wishlist", headerBackTitle: "Profile" }}
+      />
 
       {isLoading ? (
         <View className="flex-1 items-center justify-center">

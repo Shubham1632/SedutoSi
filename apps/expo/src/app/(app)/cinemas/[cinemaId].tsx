@@ -68,6 +68,7 @@ export default function CinemaDetailScreen() {
       <Stack.Screen
         options={{
           title: cinema?.name ?? "Cinema",
+          headerBackTitle: "Cinema Hall",
         }}
       />
 

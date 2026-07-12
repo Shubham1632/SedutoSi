@@ -67,68 +67,72 @@ export default function CinemasScreen() {
   }, [cinemas, activeFilter, query]);
 
   return (
-    <View className="bg-background flex-1" style={{ paddingTop: insets.top }}>
-      <View className="flex-row items-start justify-between px-4 pt-4">
-        <View className="gap-1">
-          <Text className="text-foreground text-2xl font-bold">
-            Cinema Halls
-          </Text>
-          <Text className="text-muted-foreground text-sm">
-            {`Milan ${cinemas?.length ? `· ${cinemas.length} locations` : ""}`}
-          </Text>
-        </View>
-        <SearchButton
-          active={searchOpen}
-          onPress={() => {
-            setSearchOpen((open) => !open);
-            setQuery("");
-          }}
-        />
-      </View>
-
-      {searchOpen && (
-        <View className="px-4 pt-3">
-          <TextInput
-            value={query}
-            onChangeText={setQuery}
-            placeholder="Search cinemas…"
-            autoFocus
-            className="bg-card border-border text-foreground rounded-lg border px-3 py-2"
+    <View className="bg-background flex-1">
+      <View
+        style={{ backgroundColor: colors.header, paddingTop: insets.top }}
+      >
+        <View className="flex-row items-start justify-between px-4 pt-4">
+          <View className="gap-1">
+            <Text className="text-foreground text-2xl font-bold">
+              Cinema Halls
+            </Text>
+            <Text className="text-muted-foreground text-sm">
+              {`Milan ${cinemas?.length ? `· ${cinemas.length} locations` : ""}`}
+            </Text>
+          </View>
+          <SearchButton
+            active={searchOpen}
+            onPress={() => {
+              setSearchOpen((open) => !open);
+              setQuery("");
+            }}
           />
         </View>
-      )}
 
-      <View className="px-4 pt-3">
-        <FlatList
-          data={filters}
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          keyExtractor={(item) => item}
-          contentContainerStyle={{ gap: 8 }}
-          renderItem={({ item }) => {
-            const selected = item === activeFilter;
-            return (
-              <Pressable
-                onPress={() => setActiveFilter(item)}
-                className={
-                  selected
-                    ? "bg-primary rounded-full px-4 py-2"
-                    : "border-border rounded-full border px-4 py-2"
-                }
-              >
-                <Text
+        {searchOpen && (
+          <View className="px-4 pt-3">
+            <TextInput
+              value={query}
+              onChangeText={setQuery}
+              placeholder="Search cinemas…"
+              autoFocus
+              className="bg-card border-border text-foreground rounded-lg border px-3 py-2"
+            />
+          </View>
+        )}
+
+        <View className="px-4 pt-3 pb-3">
+          <FlatList
+            data={filters}
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            keyExtractor={(item) => item}
+            contentContainerStyle={{ gap: 8 }}
+            renderItem={({ item }) => {
+              const selected = item === activeFilter;
+              return (
+                <Pressable
+                  onPress={() => setActiveFilter(item)}
                   className={
                     selected
-                      ? "text-primary-foreground text-sm font-medium"
-                      : "text-foreground text-sm font-medium"
+                      ? "bg-primary rounded-full px-4 py-2"
+                      : "border-border rounded-full border px-4 py-2"
                   }
                 >
-                  {item}
-                </Text>
-              </Pressable>
-            );
-          }}
-        />
+                  <Text
+                    className={
+                      selected
+                        ? "text-primary-foreground text-sm font-medium"
+                        : "text-foreground text-sm font-medium"
+                    }
+                  >
+                    {item}
+                  </Text>
+                </Pressable>
+              );
+            }}
+          />
+        </View>
       </View>
 
       {isLoading ? (

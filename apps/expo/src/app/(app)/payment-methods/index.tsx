@@ -37,7 +37,9 @@ export default function PaymentMethodsScreen() {
 
   return (
     <View className="bg-background flex-1">
-      <Stack.Screen options={{ title: "Payment Methods" }} />
+      <Stack.Screen
+        options={{ title: "Payment Methods", headerBackTitle: "Profile" }}
+      />
 
       <View className="flex-1 p-4">
         {isLoading ? (

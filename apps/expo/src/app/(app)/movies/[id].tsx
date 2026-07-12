@@ -24,7 +24,9 @@ export default function MovieScreen() {
   if (isLoading || !movie) {
     return (
       <View className="bg-background flex-1 items-center justify-center">
-        <Stack.Screen options={{ title: "Loading…" }} />
+        <Stack.Screen
+          options={{ title: "Loading…", headerBackTitle: "Movies" }}
+        />
         <Text className="text-muted-foreground">Loading…</Text>
       </View>
     );
@@ -52,7 +54,9 @@ export default function MovieScreen() {
 
   return (
     <ScrollView className="bg-background flex-1">
-      <Stack.Screen options={{ title: movie.title }} />
+      <Stack.Screen
+        options={{ title: movie.title, headerBackTitle: "Movies" }}
+      />
       <ResponsiveContainer
         maxWidth={900}
         style={

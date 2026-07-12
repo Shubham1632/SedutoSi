@@ -100,7 +100,7 @@ function Section({
           {title}
         </Text>
       ) : null}
-      <View className="bg-background border-border overflow-hidden rounded-2xl border">
+      <View className="bg-card border-border overflow-hidden rounded-2xl border">
         {children}
       </View>
     </View>
@@ -239,7 +239,7 @@ export default function Profile() {
       <ResponsiveContainer style={{ rowGap: 28 }}>
         <Text className="text-foreground text-2xl font-bold">Profile</Text>
 
-        <View className="bg-background border-border gap-5 rounded-2xl border p-6">
+        <View className="bg-card border-border gap-5 rounded-2xl border p-6">
           <View className="flex-row items-center gap-4">
             <Pressable
               onPress={() => void onPickAvatar()}

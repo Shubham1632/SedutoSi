@@ -1,10 +1,11 @@
 export const lightColors: Record<string, string> = {
-  background: "#fbfaf7",
+  background: "#eeeae1",
   card: "#ffffff",
   text: "#2b2118",
   border: "#e6e1d6",
   primary: "#e2711d",
   notification: "#d4362d",
+  header: "#ffffff",
 };
 
 export const darkColors: Record<string, string> = {
@@ -14,4 +15,5 @@ export const darkColors: Record<string, string> = {
   border: "#3a4066",
   primary: "#f2934a",
   notification: "#e0574a",
+  header: "#262c4a",
 };

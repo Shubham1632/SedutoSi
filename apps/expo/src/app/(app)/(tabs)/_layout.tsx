@@ -3,6 +3,8 @@ import { Tabs } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import { useTheme } from "@react-navigation/native";
 
+import { useThemeColors } from "~/lib/use-theme-colors";
+
 function TabIcon({
   name,
   focused,
@@ -22,6 +24,7 @@ function TabIcon({
 
 export default function TabsLayout() {
   const { colors } = useTheme();
+  const themeColors = useThemeColors();
 
   return (
     <Tabs
@@ -30,7 +33,7 @@ export default function TabsLayout() {
 
         tabBarActiveTintColor: colors.primary,
         tabBarInactiveTintColor: "#9ca3af",
-        tabBarStyle: { backgroundColor: colors.card },
+        tabBarStyle: { backgroundColor: themeColors.header },
       }}
     >
       <Tabs.Screen
