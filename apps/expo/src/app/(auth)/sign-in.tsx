@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Image, View } from "react-native";
+import { View } from "react-native";
 import { Link } from "expo-router";
 import { Controller, useForm } from "react-hook-form";
 
@@ -10,17 +10,19 @@ import { Button } from "@acme/ui-native/button";
 import { Input } from "@acme/ui-native/input";
 import { Text } from "@acme/ui-native/text";
 
+import { BrandMark } from "~/components/brand-mark";
 import { GoogleSignInButton } from "~/components/google-sign-in-button";
 import { ResponsiveContainer } from "~/components/responsive-container";
 import { signInWithGoogle } from "~/lib/google-auth";
 import { supabase } from "~/lib/supabase";
-
-import logo from "../../../assets/logo.png";
+import { useResponsive } from "~/lib/use-responsive";
 
 const msg = (e: unknown) =>
   e instanceof Error ? e.message : "Something went wrong";
 
 export default function SignIn() {
+  const { width } = useResponsive();
+  const isWide = width >= 700;
   const [googleLoading, setGoogleLoading] = useState(false);
 
   const {
@@ -53,92 +55,92 @@ export default function SignIn() {
 
   return (
     <View className="bg-background flex-1 justify-center p-6">
-      <ResponsiveContainer maxWidth={420} style={{ gap: 16 }}>
-        <View
-          style={{
-            width: "100%",
-            alignItems: "center",
-            marginBottom: 8,
-            gap: 6,
-          }}
-        >
-          <Image
-            source={logo}
-            style={{ width: 132, height: 121 }}
-            resizeMode="contain"
-          />
-          <Text className="text-3xl font-bold">
-            Seduto
-            <Text className="text-primary text-3xl font-bold">Sì</Text>
-          </Text>
-        </View>
+      <ResponsiveContainer
+        maxWidth={isWide ? 920 : 420}
+        style={
+          isWide
+            ? { flexDirection: "row", alignItems: "center", gap: 48 }
+            : undefined
+        }
+      >
+        {isWide && (
+          <View style={{ flex: 1 }}>
+            <BrandMark size="lg" />
+          </View>
+        )}
 
-        <Text className="text-3xl font-bold">Welcome back</Text>
+        <View style={{ gap: 16, flex: isWide ? 1 : undefined }}>
+          {!isWide && <BrandMark size="sm" />}
 
-        <View className="gap-1">
-          <Controller
-            control={control}
-            name="email"
-            render={({ field: { onChange, onBlur, value } }) => (
-              <Input
-                placeholder="Email"
-                autoCapitalize="none"
-                keyboardType="email-address"
-                value={value}
-                onChangeText={onChange}
-                onBlur={onBlur}
-              />
+          <Text className="text-3xl font-bold">Welcome back</Text>
+
+          <View className="gap-1">
+            <Controller
+              control={control}
+              name="email"
+              render={({ field: { onChange, onBlur, value } }) => (
+                <Input
+                  placeholder="Email"
+                  autoCapitalize="none"
+                  keyboardType="email-address"
+                  value={value}
+                  onChangeText={onChange}
+                  onBlur={onBlur}
+                />
+              )}
+            />
+            {errors.email && (
+              <Text className="text-destructive text-sm">
+                {errors.email.message}
+              </Text>
             )}
-          />
-          {errors.email && (
-            <Text className="text-destructive text-sm">
-              {errors.email.message}
-            </Text>
-          )}
-        </View>
+          </View>
 
-        <View className="gap-1">
-          <Controller
-            control={control}
-            name="password"
-            render={({ field: { onChange, onBlur, value } }) => (
-              <Input
-                placeholder="Password"
-                secureTextEntry
-                value={value}
-                onChangeText={onChange}
-                onBlur={onBlur}
-              />
+          <View className="gap-1">
+            <Controller
+              control={control}
+              name="password"
+              render={({ field: { onChange, onBlur, value } }) => (
+                <Input
+                  placeholder="Password"
+                  secureTextEntry
+                  value={value}
+                  onChangeText={onChange}
+                  onBlur={onBlur}
+                />
+              )}
+            />
+            {errors.password && (
+              <Text className="text-destructive text-sm">
+                {errors.password.message}
+              </Text>
             )}
+          </View>
+
+          <Button
+            title="Sign in"
+            loading={isSubmitting}
+            onPress={() => void handleSubmit(onSubmit)()}
           />
-          {errors.password && (
-            <Text className="text-destructive text-sm">
-              {errors.password.message}
+
+          <View className="flex-row items-center gap-3">
+            <View className="bg-border h-px flex-1" />
+            <Text className="text-muted-foreground text-xs uppercase">
+              or
             </Text>
-          )}
-        </View>
+            <View className="bg-border h-px flex-1" />
+          </View>
 
-        <Button
-          title="Sign in"
-          loading={isSubmitting}
-          onPress={() => void handleSubmit(onSubmit)()}
-        />
+          <GoogleSignInButton
+            loading={googleLoading}
+            onPress={() => void onGoogleSignIn()}
+          />
 
-        <View className="flex-row items-center gap-3">
-          <View className="bg-border h-px flex-1" />
-          <Text className="text-muted-foreground text-xs uppercase">or</Text>
-          <View className="bg-border h-px flex-1" />
-        </View>
-
-        <GoogleSignInButton
-          loading={googleLoading}
-          onPress={() => void onGoogleSignIn()}
-        />
-
-        <View className="flex-row justify-center">
-          <Link href="/sign-up">
-            <Text className="text-primary">Create account</Text>
-          </Link>
+          <View className="flex-row justify-center">
+            <Link href="/sign-up">
+              <Text className="text-primary">Create account</Text>
+            </Link>
+          </View>
         </View>
       </ResponsiveContainer>
     </View>
