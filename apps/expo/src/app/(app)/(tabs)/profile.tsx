@@ -8,10 +8,10 @@ import {
   View,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { Ionicons } from "@expo/vector-icons";
-import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
 import * as ImagePicker from "expo-image-picker";
 import { useRouter } from "expo-router";
+import { Ionicons } from "@expo/vector-icons";
+import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
 import { useQueryClient } from "@tanstack/react-query";
 import { Controller, useForm } from "react-hook-form";
 
@@ -33,7 +33,6 @@ import { Text } from "@acme/ui-native/text";
 
 import { ResponsiveContainer } from "~/components/responsive-container";
 import { supabase } from "~/lib/supabase";
-
 import logo from "../../../../assets/logo.png";
 
 const msg = (e: unknown) =>

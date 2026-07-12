@@ -125,9 +125,7 @@ export default function SignIn() {
 
           <View className="flex-row items-center gap-3">
             <View className="bg-border h-px flex-1" />
-            <Text className="text-muted-foreground text-xs uppercase">
-              or
-            </Text>
+            <Text className="text-muted-foreground text-xs uppercase">or</Text>
             <View className="bg-border h-px flex-1" />
           </View>
 

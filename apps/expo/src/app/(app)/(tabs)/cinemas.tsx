@@ -1,10 +1,10 @@
 import { useMemo, useState } from "react";
 import { FlatList, Pressable, Text, TextInput, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { Ionicons } from "@expo/vector-icons";
-import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
 import { useRouter } from "expo-router";
+import { Ionicons } from "@expo/vector-icons";
 import { LegendList } from "@legendapp/list";
+import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
 
 import type { Cinema } from "@acme/app";
 import { useCinemas } from "@acme/app";
@@ -68,9 +68,7 @@ export default function CinemasScreen() {
 
   return (
     <View className="bg-background flex-1">
-      <View
-        style={{ backgroundColor: colors.header, paddingTop: insets.top }}
-      >
+      <View style={{ backgroundColor: colors.header, paddingTop: insets.top }}>
         <View className="flex-row items-start justify-between px-4 pt-4">
           <View className="gap-1">
             <Text className="text-foreground text-2xl font-bold">

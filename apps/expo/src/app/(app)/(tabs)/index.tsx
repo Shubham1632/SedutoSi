@@ -8,10 +8,10 @@ import {
   View,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { Ionicons } from "@expo/vector-icons";
-import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
 import { useRouter } from "expo-router";
+import { Ionicons } from "@expo/vector-icons";
 import { LegendList } from "@legendapp/list";
+import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
 
 import type { Movie } from "@acme/app";
 import { useMovies } from "@acme/app";
@@ -103,36 +103,36 @@ export default function MoviesScreen() {
           style={{ paddingHorizontal: 16, paddingTop: 12, paddingBottom: 12 }}
         >
           <FlatList
-          data={filters}
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          keyExtractor={(item) => item}
-          extraData={activeFilter}
-          contentContainerStyle={{ gap: 8 }}
-          renderItem={({ item }) => {
-            const selected = item === activeFilter;
-            return (
-              <Pressable
-                onPress={() => setActiveFilter(item)}
-                className={
-                  selected
-                    ? "bg-primary rounded-[20px] px-4 py-2"
-                    : "border-border rounded-[20px] border px-4 py-2"
-                }
-              >
-                <Text
+            data={filters}
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            keyExtractor={(item) => item}
+            extraData={activeFilter}
+            contentContainerStyle={{ gap: 8 }}
+            renderItem={({ item }) => {
+              const selected = item === activeFilter;
+              return (
+                <Pressable
+                  onPress={() => setActiveFilter(item)}
                   className={
                     selected
-                      ? "text-primary-foreground text-sm font-medium"
-                      : "text-foreground text-sm font-medium"
+                      ? "bg-primary rounded-[20px] px-4 py-2"
+                      : "border-border rounded-[20px] border px-4 py-2"
                   }
                 >
-                  {item}
-                </Text>
-              </Pressable>
-            );
-          }}
-        />
+                  <Text
+                    className={
+                      selected
+                        ? "text-primary-foreground text-sm font-medium"
+                        : "text-foreground text-sm font-medium"
+                    }
+                  >
+                    {item}
+                  </Text>
+                </Pressable>
+              );
+            }}
+          />
         </View>
       </View>
 
