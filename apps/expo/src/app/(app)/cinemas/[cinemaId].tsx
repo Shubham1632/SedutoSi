@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 import { FlatList, Image, Pressable, Text, View } from "react-native";
 import { Stack, useLocalSearchParams, useRouter } from "expo-router";
+import { Ionicons } from "@expo/vector-icons";
 
 import { useCinema, useCinemaMovies } from "@acme/app";
 
@@ -67,6 +68,7 @@ export default function CinemaDetailScreen() {
       <Stack.Screen
         options={{
           title: cinema?.name ?? "Cinema",
+          headerBackTitle: "Cinema Hall",
         }}
       />
 
@@ -191,7 +193,11 @@ export default function CinemaDetailScreen() {
                           className="bg-muted items-center justify-center"
                           style={{ height: 200 }}
                         >
-                          <Text style={{ fontSize: 48 }}>🎬</Text>
+                          <Ionicons
+                            name="film-outline"
+                            size={48}
+                            color="#9ca3af"
+                          />
                         </View>
                       )}
                       <View className="gap-2 border-t border-gray-300 p-4 dark:border-gray-700">

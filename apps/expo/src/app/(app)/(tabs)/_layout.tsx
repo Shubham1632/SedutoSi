@@ -1,15 +1,30 @@
-import { Text } from "react-native";
+import type { ComponentProps } from "react";
 import { Tabs } from "expo-router";
+import { Ionicons } from "@expo/vector-icons";
 import { useTheme } from "@react-navigation/native";
 
-function TabIcon({ icon, focused }: { icon: string; focused: boolean }) {
+import { useThemeColors } from "~/lib/use-theme-colors";
+
+function TabIcon({
+  name,
+  focused,
+}: {
+  name: ComponentProps<typeof Ionicons>["name"];
+  focused: boolean;
+}) {
+  const { colors } = useTheme();
   return (
-    <Text style={{ fontSize: 22, opacity: focused ? 1 : 0.5 }}>{icon}</Text>
+    <Ionicons
+      name={name}
+      size={22}
+      color={focused ? colors.primary : "#9ca3af"}
+    />
   );
 }
 
 export default function TabsLayout() {
   const { colors } = useTheme();
+  const themeColors = useThemeColors();
 
   return (
     <Tabs
@@ -18,7 +33,7 @@ export default function TabsLayout() {
 
         tabBarActiveTintColor: colors.primary,
         tabBarInactiveTintColor: "#9ca3af",
-        tabBarStyle: { backgroundColor: colors.card },
+        tabBarStyle: { backgroundColor: themeColors.header },
       }}
     >
       <Tabs.Screen
@@ -26,7 +41,12 @@ export default function TabsLayout() {
         options={{
           title: "Now Showing",
           tabBarLabel: "Movies",
-          tabBarIcon: ({ focused }) => <TabIcon icon="🎬" focused={focused} />,
+          tabBarIcon: ({ focused }) => (
+            <TabIcon
+              name={focused ? "film" : "film-outline"}
+              focused={focused}
+            />
+          ),
         }}
       />
       <Tabs.Screen
@@ -34,7 +54,12 @@ export default function TabsLayout() {
         options={{
           title: "Cinema Halls",
           tabBarLabel: "Cinema Hall",
-          tabBarIcon: ({ focused }) => <TabIcon icon="🏛️" focused={focused} />,
+          tabBarIcon: ({ focused }) => (
+            <TabIcon
+              name={focused ? "business" : "business-outline"}
+              focused={focused}
+            />
+          ),
         }}
       />
       <Tabs.Screen
@@ -42,7 +67,12 @@ export default function TabsLayout() {
         options={{
           title: "Live Events",
           tabBarLabel: "Live Events",
-          tabBarIcon: ({ focused }) => <TabIcon icon="🎟️" focused={focused} />,
+          tabBarIcon: ({ focused }) => (
+            <TabIcon
+              name={focused ? "ticket" : "ticket-outline"}
+              focused={focused}
+            />
+          ),
         }}
       />
       <Tabs.Screen
@@ -50,7 +80,12 @@ export default function TabsLayout() {
         options={{
           title: "Profile",
           tabBarLabel: "Profile",
-          tabBarIcon: ({ focused }) => <TabIcon icon="👤" focused={focused} />,
+          tabBarIcon: ({ focused }) => (
+            <TabIcon
+              name={focused ? "person" : "person-outline"}
+              focused={focused}
+            />
+          ),
         }}
       />
     </Tabs>

@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 import { FlatList, Image, Pressable, Text, View } from "react-native";
 import { Stack, useRouter } from "expo-router";
+import { Ionicons } from "@expo/vector-icons";
 
 import type { Booking } from "@acme/app";
 import { useMyBookings } from "@acme/app";
@@ -42,7 +43,9 @@ export default function BookingsScreen() {
 
   return (
     <View className="bg-background flex-1">
-      <Stack.Screen options={{ title: "My Bookings" }} />
+      <Stack.Screen
+        options={{ title: "My Bookings", headerBackTitle: "Profile" }}
+      />
 
       <ResponsiveContainer maxWidth={1100}>
         <View className="flex-row gap-2 px-4 pt-4">
@@ -141,9 +144,11 @@ export default function BookingsScreen() {
                         className="bg-muted items-center justify-center"
                         style={{ width: 96 }}
                       >
-                        <Text style={{ fontSize: 32 }}>
-                          {isEvent ? "🎟️" : "🎬"}
-                        </Text>
+                        <Ionicons
+                          name={isEvent ? "ticket-outline" : "film-outline"}
+                          size={32}
+                          color="#9ca3af"
+                        />
                       </View>
                     )}
 

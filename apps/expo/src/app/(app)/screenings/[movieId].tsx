@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 import { FlatList, Pressable, Text, View } from "react-native";
 import { Stack, useLocalSearchParams, useRouter } from "expo-router";
+import { Ionicons } from "@expo/vector-icons";
 
 import type { Screening } from "@acme/app";
 import { useMovie, useScreenings } from "@acme/app";
@@ -8,18 +9,23 @@ import { useMovie, useScreenings } from "@acme/app";
 import { ResponsiveContainer } from "~/components/responsive-container";
 import { useResponsive } from "~/lib/use-responsive";
 
-function formatScreeningParts(iso: string) {
-  const date = new Date(iso);
-  const dateLabel = date.toLocaleDateString("en-GB", {
+function formatTime(iso: string) {
+  return new Date(iso).toLocaleTimeString("en-GB", {
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+}
+
+function formatDate(iso: string) {
+  return new Date(iso).toLocaleDateString("en-GB", {
     weekday: "short",
     day: "numeric",
     month: "short",
   });
-  const timeLabel = date.toLocaleTimeString("en-GB", {
-    hour: "2-digit",
-    minute: "2-digit",
-  });
-  return { dateLabel, timeLabel };
+}
+
+function dateKey(iso: string) {
+  return new Date(iso).toISOString().slice(0, 10);
 }
 
 type SortKey = "time" | "price" | "seats";
@@ -63,10 +69,30 @@ export default function ScreeningsScreen() {
     refetch,
   } = useScreenings(movieId);
   const [sortBy, setSortBy] = useState<SortKey>("time");
+  const [selectedDate, setSelectedDate] = useState<string | null>(null);
+
+  const allDates = useMemo(() => {
+    const dateSet = new Set<string>();
+    screenings?.forEach((screening) => {
+      dateSet.add(dateKey(screening.starts_at));
+    });
+    return Array.from(dateSet)
+      .sort()
+      .map((date) => ({ date, label: formatDate(`${date}T00:00:00Z`) }));
+  }, [screenings]);
+
+  const selectedDateKey = selectedDate ?? allDates[0]?.date ?? null;
+
+  const screeningsForDate = useMemo(() => {
+    if (!selectedDateKey) return screenings ?? [];
+    return (screenings ?? []).filter(
+      (screening) => dateKey(screening.starts_at) === selectedDateKey,
+    );
+  }, [screenings, selectedDateKey]);
 
   const sortedScreenings = useMemo(
-    () => sortScreenings(screenings ?? [], sortBy),
-    [screenings, sortBy],
+    () => sortScreenings(screeningsForDate, sortBy),
+    [screeningsForDate, sortBy],
   );
 
   return (
@@ -74,7 +100,39 @@ export default function ScreeningsScreen() {
       <Stack.Screen options={{ title: movie?.title ?? "Select Showtime" }} />
       {!isLoading && screenings?.length ? (
         <ResponsiveContainer maxWidth={960}>
-          <View className="flex-row gap-2 px-4 pt-4 pb-1">
+          <View className="px-4 pt-4 pb-1">
+            <FlatList
+              data={allDates}
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              keyExtractor={(item) => item.date}
+              contentContainerStyle={{ gap: 8 }}
+              renderItem={({ item }) => {
+                const selected = item.date === selectedDateKey;
+                return (
+                  <Pressable
+                    onPress={() => setSelectedDate(item.date)}
+                    className={
+                      selected
+                        ? "bg-primary rounded-full px-4 py-2"
+                        : "border-border rounded-full border px-4 py-2"
+                    }
+                  >
+                    <Text
+                      className={
+                        selected
+                          ? "text-primary-foreground text-sm font-medium"
+                          : "text-foreground text-sm font-medium"
+                      }
+                    >
+                      {item.label}
+                    </Text>
+                  </Pressable>
+                );
+              }}
+            />
+          </View>
+          <View className="flex-row gap-2 px-4 pt-3 pb-1">
             <Text className="text-muted-foreground self-center text-sm">
               Sort by
             </Text>
@@ -154,9 +212,7 @@ export default function ScreeningsScreen() {
                   cinema?: { name: string; neighborhood?: string };
                 }
               | undefined;
-            const { dateLabel, timeLabel } = formatScreeningParts(
-              item.starts_at,
-            );
+            const timeLabel = formatTime(item.starts_at);
             const lowSeats = item.available_seats <= 10;
             return (
               <View style={numColumns > 1 ? { flex: 1 } : undefined}>
@@ -172,18 +228,18 @@ export default function ScreeningsScreen() {
                       <Text className="text-primary text-base font-extrabold">
                         {timeLabel}
                       </Text>
-                      <Text className="text-primary/80 text-[10px] font-medium uppercase">
-                        {dateLabel}
-                      </Text>
                     </View>
                     <View className="flex-1 gap-1">
                       {screen?.cinema && (
-                        <Text
-                          className="text-foreground text-sm font-semibold"
-                          numberOfLines={1}
-                        >
-                          🏛️ {screen.cinema.name}
-                        </Text>
+                        <View className="flex-row items-center gap-1">
+                          <Ionicons name="business" size={13} color="#9ca3af" />
+                          <Text
+                            className="text-foreground text-sm font-semibold"
+                            numberOfLines={1}
+                          >
+                            {screen.cinema.name}
+                          </Text>
+                        </View>
                       )}
                       {screen?.cinema?.neighborhood ? (
                         <Text

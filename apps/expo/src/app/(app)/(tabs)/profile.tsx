@@ -4,11 +4,14 @@ import {
   Image,
   Pressable,
   ScrollView,
+  useColorScheme,
   View,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import * as ImagePicker from "expo-image-picker";
 import { useRouter } from "expo-router";
+import { Ionicons } from "@expo/vector-icons";
+import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
 import { useQueryClient } from "@tanstack/react-query";
 import { Controller, useForm } from "react-hook-form";
 
@@ -30,6 +33,7 @@ import { Text } from "@acme/ui-native/text";
 
 import { ResponsiveContainer } from "~/components/responsive-container";
 import { supabase } from "~/lib/supabase";
+import logo from "../../../../assets/logo.png";
 
 const msg = (e: unknown) =>
   e instanceof Error ? e.message : "Something went wrong";
@@ -78,7 +82,7 @@ function MenuRow({
           <Text className="text-muted-foreground text-xs">{subtitle}</Text>
         ) : null}
       </View>
-      <Text className="text-muted-foreground text-lg">›</Text>
+      <Ionicons name="chevron-forward" size={18} color="#9ca3af" />
     </Pressable>
   );
 }
@@ -97,7 +101,7 @@ function Section({
           {title}
         </Text>
       ) : null}
-      <View className="bg-background border-border overflow-hidden rounded-2xl border">
+      <View className="bg-card border-border overflow-hidden rounded-2xl border">
         {children}
       </View>
     </View>
@@ -110,6 +114,8 @@ function Divider() {
 
 export default function Profile() {
   const insets = useSafeAreaInsets();
+  const tabBarHeight = useBottomTabBarHeight();
+  const primaryForeground = useColorScheme() === "dark" ? "#2b2118" : "#ffffff";
   const { user } = useSession();
   const profile = useProfile();
   const updateProfile = useUpdateProfile();
@@ -228,13 +234,13 @@ export default function Profile() {
       contentContainerStyle={{
         paddingTop: insets.top + 20,
         paddingHorizontal: 20,
-        paddingBottom: 56,
+        paddingBottom: tabBarHeight + 24,
       }}
     >
       <ResponsiveContainer style={{ rowGap: 28 }}>
         <Text className="text-foreground text-2xl font-bold">Profile</Text>
 
-        <View className="bg-background border-border gap-5 rounded-2xl border p-6">
+        <View className="bg-card border-border gap-5 rounded-2xl border p-6">
           <View className="flex-row items-center gap-4">
             <Pressable
               onPress={() => void onPickAvatar()}
@@ -264,9 +270,7 @@ export default function Profile() {
                     style={{ transform: [{ scale: 0.6 }] }}
                   />
                 ) : (
-                  <Text className="text-primary-foreground text-[10px] font-bold">
-                    ✎
-                  </Text>
+                  <Ionicons name="pencil" size={12} color={primaryForeground} />
                 )}
               </View>
             </Pressable>
@@ -282,9 +286,11 @@ export default function Profile() {
               onPress={() => setIsEditing((v) => !v)}
               className="border-border h-9 w-9 items-center justify-center rounded-full border active:opacity-70"
             >
-              <Text className="text-muted-foreground text-sm">
-                {isEditing ? "✕" : "✎"}
-              </Text>
+              <Ionicons
+                name={isEditing ? "close" : "pencil"}
+                size={16}
+                color="#9ca3af"
+              />
             </Pressable>
           </View>
 
@@ -387,7 +393,15 @@ export default function Profile() {
           <MenuRow label="Delete Account" destructive onPress={onDelete} />
         </Section>
 
-        <Text className="text-muted-foreground mt-1 text-center text-xs">
+        <View style={{ width: "100%", alignItems: "center", marginTop: 8 }}>
+          <Image
+            source={logo}
+            style={{ width: 48, height: 44 }}
+            resizeMode="contain"
+          />
+        </View>
+
+        <Text className="text-muted-foreground text-center text-xs">
           SedutoSi v1.0.0
         </Text>
       </ResponsiveContainer>

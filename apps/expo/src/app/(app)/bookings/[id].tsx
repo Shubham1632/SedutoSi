@@ -1,6 +1,7 @@
 import { Image, Pressable, ScrollView, Text, View } from "react-native";
 import QRCode from "react-native-qrcode-svg";
 import { Stack, useLocalSearchParams } from "expo-router";
+import { Ionicons } from "@expo/vector-icons";
 
 import { useBooking } from "@acme/app";
 
@@ -47,7 +48,11 @@ export default function BookingDetailScreen() {
           />
         ) : (
           <View className="bg-muted h-full w-full items-center justify-center">
-            <Text style={{ fontSize: 56 }}>{isEvent ? "🎟️" : "🎬"}</Text>
+            <Ionicons
+              name={isEvent ? "ticket-outline" : "film-outline"}
+              size={56}
+              color="#9ca3af"
+            />
           </View>
         )}
       </View>

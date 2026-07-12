@@ -2,13 +2,16 @@ import { useMemo, useState } from "react";
 import { FlatList, Pressable, Text, TextInput, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useRouter } from "expo-router";
+import { Ionicons } from "@expo/vector-icons";
 import { LegendList } from "@legendapp/list";
+import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
 
 import type { Cinema } from "@acme/app";
 import { useCinemas } from "@acme/app";
 
 import { openMapsSearch } from "~/lib/maps";
 import { useResponsive } from "~/lib/use-responsive";
+import { useThemeColors } from "~/lib/use-theme-colors";
 
 function SearchButton({
   active,
@@ -19,9 +22,7 @@ function SearchButton({
 }) {
   return (
     <Pressable onPress={onPress} hitSlop={12} style={{ paddingHorizontal: 8 }}>
-      <Text className="text-foreground" style={{ fontSize: 20 }}>
-        {active ? "✕" : "🔍"}
-      </Text>
+      <Ionicons name={active ? "close" : "search"} size={20} color="#9ca3af" />
     </Pressable>
   );
 }
@@ -31,6 +32,8 @@ export default function CinemasScreen() {
   const numColumns = width >= 1200 ? 3 : width >= 700 ? 2 : 1;
   const router = useRouter();
   const insets = useSafeAreaInsets();
+  const tabBarHeight = useBottomTabBarHeight();
+  const colors = useThemeColors();
   const { data: cinemas, isLoading } = useCinemas();
   const [searchOpen, setSearchOpen] = useState(false);
   const [query, setQuery] = useState("");
@@ -64,68 +67,70 @@ export default function CinemasScreen() {
   }, [cinemas, activeFilter, query]);
 
   return (
-    <View className="bg-background flex-1" style={{ paddingTop: insets.top }}>
-      <View className="flex-row items-start justify-between px-4 pt-4">
-        <View className="gap-1">
-          <Text className="text-foreground text-2xl font-bold">
-            Cinema Halls
-          </Text>
-          <Text className="text-muted-foreground text-sm">
-            {`Milan ${cinemas?.length ? `· ${cinemas.length} locations` : ""}`}
-          </Text>
-        </View>
-        <SearchButton
-          active={searchOpen}
-          onPress={() => {
-            setSearchOpen((open) => !open);
-            setQuery("");
-          }}
-        />
-      </View>
-
-      {searchOpen && (
-        <View className="px-4 pt-3">
-          <TextInput
-            value={query}
-            onChangeText={setQuery}
-            placeholder="Search cinemas…"
-            autoFocus
-            className="bg-card border-border text-foreground rounded-lg border px-3 py-2"
+    <View className="bg-background flex-1">
+      <View style={{ backgroundColor: colors.header, paddingTop: insets.top }}>
+        <View className="flex-row items-start justify-between px-4 pt-4">
+          <View className="gap-1">
+            <Text className="text-foreground text-2xl font-bold">
+              Cinema Halls
+            </Text>
+            <Text className="text-muted-foreground text-sm">
+              {`Milan ${cinemas?.length ? `· ${cinemas.length} locations` : ""}`}
+            </Text>
+          </View>
+          <SearchButton
+            active={searchOpen}
+            onPress={() => {
+              setSearchOpen((open) => !open);
+              setQuery("");
+            }}
           />
         </View>
-      )}
 
-      <View className="px-4 pt-3">
-        <FlatList
-          data={filters}
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          keyExtractor={(item) => item}
-          contentContainerStyle={{ gap: 8 }}
-          renderItem={({ item }) => {
-            const selected = item === activeFilter;
-            return (
-              <Pressable
-                onPress={() => setActiveFilter(item)}
-                className={
-                  selected
-                    ? "bg-primary rounded-full px-4 py-2"
-                    : "border-border rounded-full border px-4 py-2"
-                }
-              >
-                <Text
+        {searchOpen && (
+          <View className="px-4 pt-3">
+            <TextInput
+              value={query}
+              onChangeText={setQuery}
+              placeholder="Search cinemas…"
+              autoFocus
+              className="bg-card border-border text-foreground rounded-lg border px-3 py-2"
+            />
+          </View>
+        )}
+
+        <View className="px-4 pt-3 pb-3">
+          <FlatList
+            data={filters}
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            keyExtractor={(item) => item}
+            contentContainerStyle={{ gap: 8 }}
+            renderItem={({ item }) => {
+              const selected = item === activeFilter;
+              return (
+                <Pressable
+                  onPress={() => setActiveFilter(item)}
                   className={
                     selected
-                      ? "text-primary-foreground text-sm font-medium"
-                      : "text-foreground text-sm font-medium"
+                      ? "bg-primary rounded-full px-4 py-2"
+                      : "border-border rounded-full border px-4 py-2"
                   }
                 >
-                  {item}
-                </Text>
-              </Pressable>
-            );
-          }}
-        />
+                  <Text
+                    className={
+                      selected
+                        ? "text-primary-foreground text-sm font-medium"
+                        : "text-foreground text-sm font-medium"
+                    }
+                  >
+                    {item}
+                  </Text>
+                </Pressable>
+              );
+            }}
+          />
+        </View>
       </View>
 
       {isLoading ? (
@@ -149,6 +154,7 @@ export default function CinemasScreen() {
           key={numColumns}
           contentContainerStyle={{ padding: 16, gap: 16 }}
           columnWrapperStyle={numColumns > 1 ? { gap: 16 } : undefined}
+          ListFooterComponent={<View style={{ height: tabBarHeight + 16 }} />}
           renderItem={({ item }: { item: Cinema }) => (
             <View style={numColumns > 1 ? { flex: 1 } : undefined}>
               <Pressable
@@ -162,7 +168,11 @@ export default function CinemasScreen() {
               >
                 <View className="flex-row items-center gap-3 p-4">
                   <View className="bg-primary/15 h-12 w-12 items-center justify-center rounded-full">
-                    <Text style={{ fontSize: 22 }}>🏛️</Text>
+                    <Ionicons
+                      name="business"
+                      size={22}
+                      color={colors.primary}
+                    />
                   </View>
                   <View className="flex-1 gap-1">
                     <Text
@@ -171,16 +181,24 @@ export default function CinemasScreen() {
                     >
                       {item.name}
                     </Text>
-                    <Pressable onPress={() => openMapsSearch(item.address)}>
+                    <Pressable
+                      onPress={() => openMapsSearch(item.address)}
+                      className="flex-row items-center gap-1"
+                    >
+                      <Ionicons
+                        name="location-outline"
+                        size={12}
+                        color="#9ca3af"
+                      />
                       <Text
                         className="text-muted-foreground text-xs"
                         numberOfLines={1}
                       >
-                        📍 {item.address}
+                        {item.address}
                       </Text>
                     </Pressable>
                   </View>
-                  <Text className="text-muted-foreground text-lg">›</Text>
+                  <Ionicons name="chevron-forward" size={18} color="#9ca3af" />
                 </View>
                 <View className="flex-row items-center justify-between border-t border-gray-300 px-4 py-2.5 dark:border-gray-700">
                   {item.neighborhood ? (
@@ -192,9 +210,16 @@ export default function CinemasScreen() {
                   ) : (
                     <View />
                   )}
-                  <Text className="text-primary text-xs font-semibold">
-                    View showtimes →
-                  </Text>
+                  <View className="flex-row items-center gap-1">
+                    <Text className="text-primary text-xs font-semibold">
+                      View showtimes
+                    </Text>
+                    <Ionicons
+                      name="chevron-forward"
+                      size={12}
+                      color={colors.primary}
+                    />
+                  </View>
                 </View>
               </Pressable>
             </View>

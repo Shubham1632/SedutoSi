@@ -9,6 +9,7 @@ import {
 } from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import { Stack, useRouter } from "expo-router";
+import { Ionicons } from "@expo/vector-icons";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { Controller, useForm } from "react-hook-form";
 
@@ -211,7 +212,9 @@ export default function CreateEventScreen() {
 
   return (
     <View className="bg-background flex-1">
-      <Stack.Screen options={{ title: "Add Live Event" }} />
+      <Stack.Screen
+        options={{ title: "Add Live Event", headerBackTitle: "Profile" }}
+      />
       <ScrollView contentContainerClassName="p-5 pb-10">
         <ResponsiveContainer style={{ gap: 20 }}>
           <View className="gap-1.5">
@@ -229,7 +232,7 @@ export default function CreateEventScreen() {
                 />
               ) : (
                 <View className="flex-1 items-center justify-center gap-2">
-                  <RNText style={{ fontSize: 32, opacity: 0.5 }}>🖼️</RNText>
+                  <Ionicons name="image-outline" size={32} color="#9ca3af" />
                   <Text className="text-muted-foreground text-sm">
                     Tap to choose a photo
                   </Text>

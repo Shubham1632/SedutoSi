@@ -1,18 +1,21 @@
 import { useMemo, useState } from "react";
 import { Pressable, ScrollView, Text, View } from "react-native";
 import { Stack, useLocalSearchParams, useRouter } from "expo-router";
+import { Ionicons } from "@expo/vector-icons";
 
 import { useEvent, useEventTicketsSold } from "@acme/app";
 import { Button } from "@acme/ui-native/button";
 
 import { ResponsiveContainer } from "~/components/responsive-container";
 import { eventDisplay } from "~/lib/booking";
+import { useThemeColors } from "~/lib/use-theme-colors";
 
 const MAX_TICKETS_PER_BOOKING = 10;
 
 export default function EventTicketQuantityScreen() {
   const { eventId } = useLocalSearchParams<{ eventId: string }>();
   const router = useRouter();
+  const colors = useThemeColors();
   const { data: event, isLoading } = useEvent(eventId);
   const { data: ticketsSold } = useEventTicketsSold(eventId);
   const [quantity, setQuantity] = useState(1);
@@ -85,7 +88,7 @@ export default function EventTicketQuantityScreen() {
                   className="border-border h-11 w-11 items-center justify-center rounded-full border active:opacity-70"
                   style={{ opacity: quantity <= 1 ? 0.4 : 1 }}
                 >
-                  <Text className="text-foreground text-xl font-bold">−</Text>
+                  <Ionicons name="remove" size={20} color={colors.text} />
                 </Pressable>
                 <Text className="text-foreground w-10 text-center text-3xl font-extrabold">
                   {quantity}
@@ -98,7 +101,7 @@ export default function EventTicketQuantityScreen() {
                   className="border-border h-11 w-11 items-center justify-center rounded-full border active:opacity-70"
                   style={{ opacity: quantity >= maxQuantity ? 0.4 : 1 }}
                 >
-                  <Text className="text-foreground text-xl font-bold">+</Text>
+                  <Ionicons name="add" size={20} color={colors.text} />
                 </Pressable>
               </View>
             </View>

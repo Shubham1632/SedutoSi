@@ -9,30 +9,57 @@ import {
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useRouter } from "expo-router";
+import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import { LegendList } from "@legendapp/list";
+import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
 
 import type { LiveEvent } from "@acme/app";
 import { useEvents } from "@acme/app";
 
 import { useResponsive } from "~/lib/use-responsive";
+import { useThemeColors } from "~/lib/use-theme-colors";
 
-const CATEGORY_ICON: Record<string, string> = {
-  music: "🎵",
-  concert: "🎵",
-  theater: "🎭",
-  theatre: "🎭",
-  comedy: "🎤",
-  sports: "⚽",
-  art: "🎨",
-  exhibition: "🖼️",
-  festival: "🎉",
-  food: "🍝",
-  film: "🎬",
-  workshop: "🛠️",
+const CATEGORY_ICON: Record<
+  string,
+  | { family: "ionicons"; name: keyof typeof Ionicons.glyphMap }
+  | {
+      family: "mci";
+      name: keyof typeof MaterialCommunityIcons.glyphMap;
+    }
+> = {
+  music: { family: "ionicons", name: "musical-notes" },
+  concert: { family: "ionicons", name: "musical-notes" },
+  theater: { family: "mci", name: "drama-masks" },
+  theatre: { family: "mci", name: "drama-masks" },
+  comedy: { family: "ionicons", name: "mic" },
+  sports: { family: "ionicons", name: "football" },
+  art: { family: "ionicons", name: "color-palette" },
+  exhibition: { family: "ionicons", name: "images" },
+  festival: { family: "ionicons", name: "sparkles" },
+  food: { family: "ionicons", name: "restaurant" },
+  film: { family: "ionicons", name: "film" },
+  workshop: { family: "ionicons", name: "construct" },
 };
 
-function categoryIcon(category: string) {
-  return CATEGORY_ICON[category.toLowerCase()] ?? "🎟️";
+function CategoryIcon({
+  category,
+  size,
+  color,
+}: {
+  category: string;
+  size: number;
+  color: string;
+}) {
+  const icon = CATEGORY_ICON[category.toLowerCase()] ?? {
+    family: "ionicons" as const,
+    name: "ticket" as const,
+  };
+  if (icon.family === "mci") {
+    return (
+      <MaterialCommunityIcons name={icon.name} size={size} color={color} />
+    );
+  }
+  return <Ionicons name={icon.name} size={size} color={color} />;
 }
 
 function SearchButton({
@@ -44,9 +71,7 @@ function SearchButton({
 }) {
   return (
     <Pressable onPress={onPress} hitSlop={12} style={{ paddingHorizontal: 8 }}>
-      <Text className="text-foreground" style={{ fontSize: 20 }}>
-        {active ? "✕" : "🔍"}
-      </Text>
+      <Ionicons name={active ? "close" : "search"} size={20} color="#9ca3af" />
     </Pressable>
   );
 }
@@ -71,6 +96,8 @@ export default function EventsScreen() {
     width >= 1200 ? 4 : width >= 900 ? 3 : width >= 600 ? 2 : 1;
   const router = useRouter();
   const insets = useSafeAreaInsets();
+  const tabBarHeight = useBottomTabBarHeight();
+  const themeColors = useThemeColors();
   const { data: events, isLoading } = useEvents();
   const [searchOpen, setSearchOpen] = useState(false);
   const [query, setQuery] = useState("");
@@ -100,68 +127,72 @@ export default function EventsScreen() {
   }, [events, activeFilter, query]);
 
   return (
-    <View className="bg-background flex-1" style={{ paddingTop: insets.top }}>
-      <View className="flex-row items-start justify-between px-4 pt-4">
-        <View className="gap-1">
-          <Text className="text-foreground text-2xl font-bold">
-            Live Events
-          </Text>
-          <Text className="text-muted-foreground text-sm">
-            {`Milan ${events?.length ? `· ${events.length} upcoming` : ""}`}
-          </Text>
-        </View>
-        <SearchButton
-          active={searchOpen}
-          onPress={() => {
-            setSearchOpen((open) => !open);
-            setQuery("");
-          }}
-        />
-      </View>
-
-      {searchOpen && (
-        <View className="px-4 pt-3">
-          <TextInput
-            value={query}
-            onChangeText={setQuery}
-            placeholder="Search events…"
-            autoFocus
-            className="bg-card border-border text-foreground rounded-lg border px-3 py-2"
+    <View className="bg-background flex-1">
+      <View
+        style={{ backgroundColor: themeColors.header, paddingTop: insets.top }}
+      >
+        <View className="flex-row items-start justify-between px-4 pt-4">
+          <View className="gap-1">
+            <Text className="text-foreground text-2xl font-bold">
+              Live Events
+            </Text>
+            <Text className="text-muted-foreground text-sm">
+              {`Milan ${events?.length ? `· ${events.length} upcoming` : ""}`}
+            </Text>
+          </View>
+          <SearchButton
+            active={searchOpen}
+            onPress={() => {
+              setSearchOpen((open) => !open);
+              setQuery("");
+            }}
           />
         </View>
-      )}
 
-      <View className="px-4 pt-3 pb-3">
-        <FlatList
-          data={filters}
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          keyExtractor={(item) => item}
-          contentContainerStyle={{ gap: 8 }}
-          renderItem={({ item }) => {
-            const selected = item === activeFilter;
-            return (
-              <Pressable
-                onPress={() => setActiveFilter(item)}
-                className={
-                  selected
-                    ? "bg-primary rounded-full px-4 py-2"
-                    : "border-border rounded-full border px-4 py-2"
-                }
-              >
-                <Text
+        {searchOpen && (
+          <View className="px-4 pt-3">
+            <TextInput
+              value={query}
+              onChangeText={setQuery}
+              placeholder="Search events…"
+              autoFocus
+              className="bg-card border-border text-foreground rounded-lg border px-3 py-2"
+            />
+          </View>
+        )}
+
+        <View className="px-4 pt-3 pb-3">
+          <FlatList
+            data={filters}
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            keyExtractor={(item) => item}
+            contentContainerStyle={{ gap: 8 }}
+            renderItem={({ item }) => {
+              const selected = item === activeFilter;
+              return (
+                <Pressable
+                  onPress={() => setActiveFilter(item)}
                   className={
                     selected
-                      ? "text-primary-foreground text-sm font-medium"
-                      : "text-foreground text-sm font-medium"
+                      ? "bg-primary rounded-full px-4 py-2"
+                      : "border-border rounded-full border px-4 py-2"
                   }
                 >
-                  {item}
-                </Text>
-              </Pressable>
-            );
-          }}
-        />
+                  <Text
+                    className={
+                      selected
+                        ? "text-primary-foreground text-sm font-medium"
+                        : "text-foreground text-sm font-medium"
+                    }
+                  >
+                    {item}
+                  </Text>
+                </Pressable>
+              );
+            }}
+          />
+        </View>
       </View>
 
       {isLoading ? (
@@ -186,10 +217,10 @@ export default function EventsScreen() {
           contentContainerStyle={{
             paddingHorizontal: 16,
             paddingTop: 16,
-            paddingBottom: insets.bottom + 90,
             gap: 16,
           }}
           columnWrapperStyle={numColumns > 1 ? { gap: 16 } : undefined}
+          ListFooterComponent={<View style={{ height: tabBarHeight + 40 }} />}
           renderItem={({ item }: { item: LiveEvent }) => (
             <View style={numColumns > 1 ? { flex: 1 } : undefined}>
               <Pressable
@@ -219,16 +250,22 @@ export default function EventsScreen() {
                         gap: 4,
                       }}
                     >
-                      <Text style={{ fontSize: 32, opacity: 0.4 }}>🖼️</Text>
+                      <Ionicons
+                        name="image-outline"
+                        size={32}
+                        color="#9ca3af"
+                      />
                       <Text className="text-muted-foreground text-[10px] font-medium tracking-wide uppercase">
                         No image yet
                       </Text>
                     </View>
                   )}
                   <View className="bg-background/90 absolute top-2 left-2 flex-row items-center gap-1 rounded-full px-2.5 py-1">
-                    <Text style={{ fontSize: 11 }}>
-                      {categoryIcon(item.category)}
-                    </Text>
+                    <CategoryIcon
+                      category={item.category}
+                      size={11}
+                      color="#9ca3af"
+                    />
                     <Text className="text-foreground text-[10px] font-bold tracking-wide uppercase">
                       {item.category}
                     </Text>
@@ -260,16 +297,26 @@ export default function EventsScreen() {
                   >
                     {item.title}
                   </Text>
-                  <Text className="text-muted-foreground text-xs">
-                    🕐 {formatEventDate(item.starts_at)}
-                  </Text>
-                  {item.location ? (
-                    <Text
-                      className="text-muted-foreground text-xs"
-                      numberOfLines={1}
-                    >
-                      📍 {item.location}
+                  <View className="flex-row items-center gap-1">
+                    <Ionicons name="time-outline" size={12} color="#9ca3af" />
+                    <Text className="text-muted-foreground text-xs">
+                      {formatEventDate(item.starts_at)}
                     </Text>
+                  </View>
+                  {item.location ? (
+                    <View className="flex-row items-center gap-1">
+                      <Ionicons
+                        name="location-outline"
+                        size={12}
+                        color="#9ca3af"
+                      />
+                      <Text
+                        className="text-muted-foreground text-xs"
+                        numberOfLines={1}
+                      >
+                        {item.location}
+                      </Text>
+                    </View>
                   ) : null}
                 </View>
               </Pressable>

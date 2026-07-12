@@ -25,8 +25,8 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   android: {
     package: "com.example.sedutosi",
     adaptiveIcon: {
-      foregroundImage: "./assets/icon-light.png",
-      backgroundColor: "#1F104A",
+      foregroundImage: "./assets/logo-padded.png",
+      backgroundColor: "#eeeae1",
     },
     edgeToEdgeEnabled: true,
   },
@@ -56,11 +56,11 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     [
       "expo-splash-screen",
       {
-        backgroundColor: "#E4E4E7",
-        image: "./assets/icon-light.png",
+        backgroundColor: "#eeeae1",
+        image: "./assets/logo-padded.png",
         dark: {
-          backgroundColor: "#18181B",
-          image: "./assets/icon-dark.png",
+          backgroundColor: "#22273f",
+          image: "./assets/logo-padded.png",
         },
       },
     ],

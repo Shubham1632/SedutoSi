@@ -9,12 +9,15 @@ import {
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useRouter } from "expo-router";
+import { Ionicons } from "@expo/vector-icons";
 import { LegendList } from "@legendapp/list";
+import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
 
 import type { Movie } from "@acme/app";
 import { useMovies } from "@acme/app";
 
 import { useResponsive } from "~/lib/use-responsive";
+import { useThemeColors } from "~/lib/use-theme-colors";
 
 function SearchButton({
   active,
@@ -25,9 +28,7 @@ function SearchButton({
 }) {
   return (
     <Pressable onPress={onPress} hitSlop={12} style={{ paddingHorizontal: 8 }}>
-      <Text className="text-foreground" style={{ fontSize: 20 }}>
-        {active ? "✕" : "Q"}
-      </Text>
+      <Ionicons name={active ? "close" : "search"} size={20} color="#9ca3af" />
     </Pressable>
   );
 }
@@ -38,6 +39,8 @@ export default function MoviesScreen() {
     width >= 1200 ? 5 : width >= 900 ? 4 : width >= 600 ? 3 : 2;
   const router = useRouter();
   const insets = useSafeAreaInsets();
+  const tabBarHeight = useBottomTabBarHeight();
+  const themeColors = useThemeColors();
   const { data: movies, isLoading } = useMovies();
   const [searchOpen, setSearchOpen] = useState(false);
   const [query, setQuery] = useState("");
@@ -62,71 +65,75 @@ export default function MoviesScreen() {
   }, [movies, activeFilter, query]);
 
   return (
-    <View className="bg-background flex-1" style={{ paddingTop: insets.top }}>
-      <View className="flex-row items-start justify-between px-4 pt-4">
-        <View className="gap-1">
-          <Text className="text-foreground text-2xl font-bold">
-            Now Showing
-          </Text>
-          <Text className="text-muted-foreground text-sm">
-            Milan {movies?.length ? `· ${movies.length} Movies` : ""}
-          </Text>
-        </View>
-        <SearchButton
-          active={searchOpen}
-          onPress={() => {
-            setSearchOpen((open) => !open);
-            setQuery("");
-          }}
-        />
-      </View>
-
-      {searchOpen && (
-        <View className="px-4 pt-3">
-          <TextInput
-            value={query}
-            onChangeText={setQuery}
-            placeholder="Search movies…"
-            autoFocus
-            className="bg-card border-border text-foreground rounded-lg border px-3 py-2"
+    <View className="bg-background flex-1">
+      <View
+        style={{ backgroundColor: themeColors.header, paddingTop: insets.top }}
+      >
+        <View className="flex-row items-start justify-between px-4 pt-4">
+          <View className="gap-1">
+            <Text className="text-foreground text-2xl font-bold">
+              Now Showing
+            </Text>
+            <Text className="text-muted-foreground text-sm">
+              Milan {movies?.length ? `· ${movies.length} Movies` : ""}
+            </Text>
+          </View>
+          <SearchButton
+            active={searchOpen}
+            onPress={() => {
+              setSearchOpen((open) => !open);
+              setQuery("");
+            }}
           />
         </View>
-      )}
 
-      <View
-        style={{ paddingHorizontal: 16, paddingTop: 12, paddingBottom: 12 }}
-      >
-        <FlatList
-          data={filters}
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          keyExtractor={(item) => item}
-          extraData={activeFilter}
-          contentContainerStyle={{ gap: 8 }}
-          renderItem={({ item }) => {
-            const selected = item === activeFilter;
-            return (
-              <Pressable
-                onPress={() => setActiveFilter(item)}
-                className={
-                  selected
-                    ? "bg-primary rounded-[20px] px-4 py-2"
-                    : "border-border rounded-[20px] border px-4 py-2"
-                }
-              >
-                <Text
+        {searchOpen && (
+          <View className="px-4 pt-3">
+            <TextInput
+              value={query}
+              onChangeText={setQuery}
+              placeholder="Search movies…"
+              autoFocus
+              className="bg-card border-border text-foreground rounded-lg border px-3 py-2"
+            />
+          </View>
+        )}
+
+        <View
+          style={{ paddingHorizontal: 16, paddingTop: 12, paddingBottom: 12 }}
+        >
+          <FlatList
+            data={filters}
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            keyExtractor={(item) => item}
+            extraData={activeFilter}
+            contentContainerStyle={{ gap: 8 }}
+            renderItem={({ item }) => {
+              const selected = item === activeFilter;
+              return (
+                <Pressable
+                  onPress={() => setActiveFilter(item)}
                   className={
                     selected
-                      ? "text-primary-foreground text-sm font-medium"
-                      : "text-foreground text-sm font-medium"
+                      ? "bg-primary rounded-[20px] px-4 py-2"
+                      : "border-border rounded-[20px] border px-4 py-2"
                   }
                 >
-                  {item}
-                </Text>
-              </Pressable>
-            );
-          }}
-        />
+                  <Text
+                    className={
+                      selected
+                        ? "text-primary-foreground text-sm font-medium"
+                        : "text-foreground text-sm font-medium"
+                    }
+                  >
+                    {item}
+                  </Text>
+                </Pressable>
+              );
+            }}
+          />
+        </View>
       </View>
 
       {isLoading ? (
@@ -147,10 +154,11 @@ export default function MoviesScreen() {
           key={numColumns}
           contentContainerStyle={{ padding: 16, gap: 16 }}
           columnWrapperStyle={{ gap: 16 }}
+          ListFooterComponent={<View style={{ height: tabBarHeight + 16 }} />}
           renderItem={({ item }: { item: Movie }) => (
             <Pressable
               onPress={() => router.push(`/movies/${item.id}`)}
-              className="bg-card flex-1 overflow-hidden rounded-xl"
+              className="bg-card flex-1 overflow-hidden rounded-2xl border border-gray-300 shadow-sm active:opacity-80 dark:border-gray-700"
             >
               <View>
                 {item.poster_url ? (
@@ -168,7 +176,7 @@ export default function MoviesScreen() {
                     className="bg-muted items-center justify-center"
                     style={{ height: 220 }}
                   >
-                    <Text className="text-4xl">🎬</Text>
+                    <Ionicons name="film-outline" size={36} color="#9ca3af" />
                   </View>
                 )}
                 {item.rating ? (

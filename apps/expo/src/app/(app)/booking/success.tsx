@@ -1,14 +1,17 @@
 import { ScrollView, Text, View } from "react-native";
 import { Stack, useLocalSearchParams, useRouter } from "expo-router";
+import { Ionicons } from "@expo/vector-icons";
 
 import { useBooking } from "@acme/app";
 import { Button } from "@acme/ui-native/button";
 
 import { ResponsiveContainer } from "~/components/responsive-container";
 import { bookingDisplay } from "~/lib/booking";
+import { useThemeColors } from "~/lib/use-theme-colors";
 
 export default function PaymentSuccessScreen() {
   const router = useRouter();
+  const colors = useThemeColors();
   const { bookingId } = useLocalSearchParams<{ bookingId: string }>();
   const { data: booking, isLoading } = useBooking(bookingId);
 
@@ -31,7 +34,7 @@ export default function PaymentSuccessScreen() {
           style={{ alignItems: "center", gap: 24 }}
         >
           <View className="bg-primary/10 h-20 w-20 items-center justify-center rounded-full">
-            <Text className="text-primary text-4xl">✓</Text>
+            <Ionicons name="checkmark" size={40} color={colors.primary} />
           </View>
 
           <View className="items-center gap-1">
