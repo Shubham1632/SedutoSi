@@ -8,8 +8,9 @@ import {
   View,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
+import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
+import { useRouter } from "expo-router";
 import { LegendList } from "@legendapp/list";
 
 import type { Movie } from "@acme/app";
@@ -37,6 +38,7 @@ export default function MoviesScreen() {
     width >= 1200 ? 5 : width >= 900 ? 4 : width >= 600 ? 3 : 2;
   const router = useRouter();
   const insets = useSafeAreaInsets();
+  const tabBarHeight = useBottomTabBarHeight();
   const { data: movies, isLoading } = useMovies();
   const [searchOpen, setSearchOpen] = useState(false);
   const [query, setQuery] = useState("");
@@ -146,6 +148,7 @@ export default function MoviesScreen() {
           key={numColumns}
           contentContainerStyle={{ padding: 16, gap: 16 }}
           columnWrapperStyle={{ gap: 16 }}
+          ListFooterComponent={<View style={{ height: tabBarHeight + 16 }} />}
           renderItem={({ item }: { item: Movie }) => (
             <Pressable
               onPress={() => router.push(`/movies/${item.id}`)}

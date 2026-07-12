@@ -126,6 +126,9 @@ importers:
       '@react-native-community/datetimepicker':
         specifier: 8.4.4
         version: 8.4.4(expo@54.0.20)(react-native@0.81.5(@babel/core@7.29.7)(@types/react@19.1.12)(bufferutil@4.0.8)(react@19.1.4))(react@19.1.4)
+      '@react-navigation/bottom-tabs':
+        specifier: ^7.4.8
+        version: 7.4.8(@react-navigation/native@7.1.18(react-native@0.81.5(@babel/core@7.29.7)(@types/react@19.1.12)(bufferutil@4.0.8)(react@19.1.4))(react@19.1.4))(react-native-safe-area-context@5.6.1(react-native@0.81.5(@babel/core@7.29.7)(@types/react@19.1.12)(bufferutil@4.0.8)(react@19.1.4))(react@19.1.4))(react-native-screens@4.16.0(react-native@0.81.5(@babel/core@7.29.7)(@types/react@19.1.12)(bufferutil@4.0.8)(react@19.1.4))(react@19.1.4))(react-native@0.81.5(@babel/core@7.29.7)(@types/react@19.1.12)(bufferutil@4.0.8)(react@19.1.4))(react@19.1.4)
       '@react-navigation/native':
         specifier: ^7.1.18
         version: 7.1.18(react-native@0.81.5(@babel/core@7.29.7)(@types/react@19.1.12)(bufferutil@4.0.8)(react@19.1.4))(react@19.1.4)
@@ -9166,7 +9169,7 @@ snapshots:
       '@babel/plugin-transform-sticky-regex': 7.27.1(@babel/core@7.29.7)
       '@babel/plugin-transform-typescript': 7.28.5(@babel/core@7.29.7)
       '@babel/plugin-transform-unicode-regex': 7.27.1(@babel/core@7.29.7)
-      '@babel/template': 7.27.2
+      '@babel/template': 7.29.7
       '@react-native/babel-plugin-codegen': 0.81.5(@babel/core@7.29.7)
       babel-plugin-syntax-hermes-parser: 0.29.1
       babel-plugin-transform-flow-enums: 0.0.2(@babel/core@7.29.7)

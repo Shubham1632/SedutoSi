@@ -8,8 +8,9 @@ import {
   View,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { useRouter } from "expo-router";
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
+import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
+import { useRouter } from "expo-router";
 import { LegendList } from "@legendapp/list";
 
 import type { LiveEvent } from "@acme/app";
@@ -94,6 +95,7 @@ export default function EventsScreen() {
     width >= 1200 ? 4 : width >= 900 ? 3 : width >= 600 ? 2 : 1;
   const router = useRouter();
   const insets = useSafeAreaInsets();
+  const tabBarHeight = useBottomTabBarHeight();
   const { data: events, isLoading } = useEvents();
   const [searchOpen, setSearchOpen] = useState(false);
   const [query, setQuery] = useState("");
@@ -209,10 +211,10 @@ export default function EventsScreen() {
           contentContainerStyle={{
             paddingHorizontal: 16,
             paddingTop: 16,
-            paddingBottom: insets.bottom + 90,
             gap: 16,
           }}
           columnWrapperStyle={numColumns > 1 ? { gap: 16 } : undefined}
+          ListFooterComponent={<View style={{ height: tabBarHeight + 16 }} />}
           renderItem={({ item }: { item: LiveEvent }) => (
             <View style={numColumns > 1 ? { flex: 1 } : undefined}>
               <Pressable

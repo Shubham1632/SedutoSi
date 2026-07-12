@@ -1,8 +1,9 @@
 import { useMemo, useState } from "react";
 import { FlatList, Pressable, Text, TextInput, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
+import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
+import { useRouter } from "expo-router";
 import { LegendList } from "@legendapp/list";
 
 import type { Cinema } from "@acme/app";
@@ -31,6 +32,7 @@ export default function CinemasScreen() {
   const numColumns = width >= 1200 ? 3 : width >= 700 ? 2 : 1;
   const router = useRouter();
   const insets = useSafeAreaInsets();
+  const tabBarHeight = useBottomTabBarHeight();
   const colors = useThemeColors();
   const { data: cinemas, isLoading } = useCinemas();
   const [searchOpen, setSearchOpen] = useState(false);
@@ -150,6 +152,7 @@ export default function CinemasScreen() {
           key={numColumns}
           contentContainerStyle={{ padding: 16, gap: 16 }}
           columnWrapperStyle={numColumns > 1 ? { gap: 16 } : undefined}
+          ListFooterComponent={<View style={{ height: tabBarHeight + 16 }} />}
           renderItem={({ item }: { item: Cinema }) => (
             <View style={numColumns > 1 ? { flex: 1 } : undefined}>
               <Pressable

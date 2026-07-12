@@ -8,9 +8,10 @@ import {
   View,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { Ionicons } from "@expo/vector-icons";
+import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
 import * as ImagePicker from "expo-image-picker";
 import { useRouter } from "expo-router";
-import { Ionicons } from "@expo/vector-icons";
 import { useQueryClient } from "@tanstack/react-query";
 import { Controller, useForm } from "react-hook-form";
 
@@ -112,6 +113,7 @@ function Divider() {
 
 export default function Profile() {
   const insets = useSafeAreaInsets();
+  const tabBarHeight = useBottomTabBarHeight();
   const primaryForeground = useColorScheme() === "dark" ? "#2b2118" : "#ffffff";
   const { user } = useSession();
   const profile = useProfile();
@@ -231,7 +233,7 @@ export default function Profile() {
       contentContainerStyle={{
         paddingTop: insets.top + 20,
         paddingHorizontal: 20,
-        paddingBottom: 56,
+        paddingBottom: tabBarHeight + 24,
       }}
     >
       <ResponsiveContainer style={{ rowGap: 28 }}>
