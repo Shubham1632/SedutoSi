@@ -158,7 +158,7 @@ export default function MoviesScreen() {
           renderItem={({ item }: { item: Movie }) => (
             <Pressable
               onPress={() => router.push(`/movies/${item.id}`)}
-              className="bg-card flex-1 overflow-hidden rounded-xl"
+              className="bg-card flex-1 overflow-hidden rounded-2xl border border-gray-300 shadow-sm active:opacity-80 dark:border-gray-700"
             >
               <View>
                 {item.poster_url ? (

@@ -34,6 +34,8 @@ import { Text } from "@acme/ui-native/text";
 import { ResponsiveContainer } from "~/components/responsive-container";
 import { supabase } from "~/lib/supabase";
 
+import logo from "../../../../assets/logo.png";
+
 const msg = (e: unknown) =>
   e instanceof Error ? e.message : "Something went wrong";
 
@@ -392,7 +394,15 @@ export default function Profile() {
           <MenuRow label="Delete Account" destructive onPress={onDelete} />
         </Section>
 
-        <Text className="text-muted-foreground mt-1 text-center text-xs">
+        <View style={{ width: "100%", alignItems: "center", marginTop: 8 }}>
+          <Image
+            source={logo}
+            style={{ width: 48, height: 44 }}
+            resizeMode="contain"
+          />
+        </View>
+
+        <Text className="text-muted-foreground text-center text-xs">
           SedutoSi v1.0.0
         </Text>
       </ResponsiveContainer>

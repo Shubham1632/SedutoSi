@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { View } from "react-native";
+import { Image, View } from "react-native";
 import { Link } from "expo-router";
 import { Controller, useForm } from "react-hook-form";
 
@@ -19,6 +19,8 @@ import { GoogleSignInButton } from "~/components/google-sign-in-button";
 import { ResponsiveContainer } from "~/components/responsive-container";
 import { signInWithGoogle } from "~/lib/google-auth";
 import { supabase } from "~/lib/supabase";
+
+import logo from "../../../assets/logo.png";
 
 const msg = (e: unknown) =>
   e instanceof Error ? e.message : "Something went wrong";
@@ -65,6 +67,25 @@ export default function SignUp() {
   return (
     <View className="bg-background flex-1 justify-center p-6">
       <ResponsiveContainer maxWidth={420} style={{ gap: 16 }}>
+        <View
+          style={{
+            width: "100%",
+            alignItems: "center",
+            marginBottom: 8,
+            gap: 6,
+          }}
+        >
+          <Image
+            source={logo}
+            style={{ width: 132, height: 121 }}
+            resizeMode="contain"
+          />
+          <Text className="text-3xl font-bold">
+            Seduto
+            <Text className="text-primary text-3xl font-bold">Sì</Text>
+          </Text>
+        </View>
+
         <Text className="text-3xl font-bold">Create account</Text>
 
         <View className="gap-1">
@@ -176,6 +197,25 @@ function CheckEmail({ email, onBack }: { email: string; onBack: () => void }) {
   return (
     <View className="bg-background flex-1 justify-center p-6">
       <ResponsiveContainer maxWidth={420} style={{ gap: 16 }}>
+        <View
+          style={{
+            width: "100%",
+            alignItems: "center",
+            marginBottom: 8,
+            gap: 6,
+          }}
+        >
+          <Image
+            source={logo}
+            style={{ width: 132, height: 121 }}
+            resizeMode="contain"
+          />
+          <Text className="text-3xl font-bold">
+            Seduto
+            <Text className="text-primary text-3xl font-bold">Sì</Text>
+          </Text>
+        </View>
+
         <Text className="text-center text-3xl font-bold">Check your email</Text>
         <Text className="text-muted-foreground text-center">
           Enter the 6-digit code we sent to{" "}
