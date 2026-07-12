@@ -1,5 +1,6 @@
 import { Image, Pressable, ScrollView, Text, View } from "react-native";
 import { Stack, useLocalSearchParams, useRouter } from "expo-router";
+import { Ionicons } from "@expo/vector-icons";
 
 import { useSession } from "@acme/api";
 import { useMovie, useToggleWishlist, useWishlist } from "@acme/app";
@@ -7,11 +8,13 @@ import { Button } from "@acme/ui-native/button";
 
 import { ResponsiveContainer } from "~/components/responsive-container";
 import { useResponsive } from "~/lib/use-responsive";
+import { useThemeColors } from "~/lib/use-theme-colors";
 
 export default function MovieScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
   const { user } = useSession();
+  const colors = useThemeColors();
   const { width } = useResponsive();
   const isWide = width >= 700;
   const { data: movie, isLoading } = useMovie(id);
@@ -74,7 +77,7 @@ export default function MovieScreen() {
                   className="bg-muted items-center justify-center rounded-2xl"
                   style={{ width: "100%", aspectRatio: 2 / 3 }}
                 >
-                  <Text style={{ fontSize: 64 }}>🎬</Text>
+                  <Ionicons name="film-outline" size={64} color="#9ca3af" />
                 </View>
               )}
               <Pressable
@@ -82,9 +85,11 @@ export default function MovieScreen() {
                 hitSlop={12}
                 className="bg-background/90 absolute top-2 right-2 h-10 w-10 items-center justify-center rounded-full"
               >
-                <Text style={{ fontSize: 20 }}>
-                  {isWishlisted ? "♥" : "♡"}
-                </Text>
+                <Ionicons
+                  name={isWishlisted ? "heart" : "heart-outline"}
+                  size={20}
+                  color={isWishlisted ? colors.primary : colors.text}
+                />
               </Pressable>
             </View>
           </View>

@@ -1,5 +1,6 @@
 import { Image, Pressable, Text, View } from "react-native";
 import { Stack, useRouter } from "expo-router";
+import { Ionicons } from "@expo/vector-icons";
 import { LegendList } from "@legendapp/list";
 
 import type { Wishlist } from "@acme/app";
@@ -7,12 +8,14 @@ import { useToggleWishlist, useWishlist } from "@acme/app";
 import { appAlert } from "@acme/ui-native/alert";
 
 import { useResponsive } from "~/lib/use-responsive";
+import { useThemeColors } from "~/lib/use-theme-colors";
 
 export default function WishlistScreen() {
   const { width } = useResponsive();
   const numColumns =
     width >= 1200 ? 5 : width >= 900 ? 4 : width >= 600 ? 3 : 2;
   const router = useRouter();
+  const colors = useThemeColors();
   const { data: wishlist, isLoading } = useWishlist();
   const toggleWishlist = useToggleWishlist();
 
@@ -92,7 +95,11 @@ export default function WishlistScreen() {
                           className="bg-muted items-center justify-center"
                           style={{ width: "100%", aspectRatio: 2 / 3 }}
                         >
-                          <Text style={{ fontSize: 40 }}>🎬</Text>
+                          <Ionicons
+                            name="film-outline"
+                            size={40}
+                            color="#9ca3af"
+                          />
                         </View>
                       )}
                       <Pressable
@@ -100,7 +107,11 @@ export default function WishlistScreen() {
                         hitSlop={12}
                         className="bg-background/90 absolute top-2 right-2 h-9 w-9 items-center justify-center rounded-full"
                       >
-                        <Text style={{ fontSize: 16 }}>♥</Text>
+                        <Ionicons
+                          name="heart"
+                          size={16}
+                          color={colors.primary}
+                        />
                       </Pressable>
                     </View>
                     <View className="gap-1 p-3">

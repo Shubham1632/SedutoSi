@@ -1,3 +1,4 @@
+import type { ComponentProps } from "react";
 import { useState } from "react";
 import {
   Animated,
@@ -8,6 +9,7 @@ import {
   useWindowDimensions,
   View,
 } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
 
 import type { SeatStatus } from "~/lib/booking";
 import { AISLE_AFTER, ROWS, SEATS_PER_ROW } from "~/lib/booking";
@@ -83,9 +85,9 @@ export function SeatMap({ occupied, selected, onToggleSeat }: SeatMapProps) {
           <LegendDot color={C.occupied} label="Taken" />
         </View>
         <View className="border-border flex-row items-center gap-1 rounded-full border p-0.5">
-          <ZoomButton label="−" onPress={pinch.zoomOut} />
-          <ZoomButton label="⤢" small onPress={pinch.reset} />
-          <ZoomButton label="+" onPress={pinch.zoomIn} />
+          <ZoomButton icon="remove" onPress={pinch.zoomOut} />
+          <ZoomButton icon="scan-outline" small onPress={pinch.reset} />
+          <ZoomButton icon="add" onPress={pinch.zoomIn} />
         </View>
       </View>
 
@@ -272,25 +274,26 @@ function LegendDot({
 }
 
 function ZoomButton({
-  label,
+  icon,
   small,
   onPress,
 }: {
-  label: string;
+  icon: ComponentProps<typeof Ionicons>["name"];
   small?: boolean;
   onPress: () => void;
 }) {
+  const dark = useColorScheme() === "dark";
   return (
     <Pressable
       onPress={onPress}
       hitSlop={6}
       className="bg-muted h-7 w-7 items-center justify-center rounded-full"
     >
-      <Text
-        className={`text-foreground font-bold ${small ? "text-xs" : "text-base"}`}
-      >
-        {label}
-      </Text>
+      <Ionicons
+        name={icon}
+        size={small ? 12 : 16}
+        color={dark ? "#f5f3ee" : "#2b2118"}
+      />
     </Pressable>
   );
 }

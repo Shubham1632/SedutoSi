@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 import { FlatList, Pressable, Text, View } from "react-native";
 import { Stack, useLocalSearchParams, useRouter } from "expo-router";
+import { Ionicons } from "@expo/vector-icons";
 
 import type { Screening } from "@acme/app";
 import { useMovie, useScreenings } from "@acme/app";
@@ -178,12 +179,15 @@ export default function ScreeningsScreen() {
                     </View>
                     <View className="flex-1 gap-1">
                       {screen?.cinema && (
-                        <Text
-                          className="text-foreground text-sm font-semibold"
-                          numberOfLines={1}
-                        >
-                          🏛️ {screen.cinema.name}
-                        </Text>
+                        <View className="flex-row items-center gap-1">
+                          <Ionicons name="business" size={13} color="#9ca3af" />
+                          <Text
+                            className="text-foreground text-sm font-semibold"
+                            numberOfLines={1}
+                          >
+                            {screen.cinema.name}
+                          </Text>
+                        </View>
                       )}
                       {screen?.cinema?.neighborhood ? (
                         <Text

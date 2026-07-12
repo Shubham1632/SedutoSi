@@ -9,6 +9,7 @@ import {
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useRouter } from "expo-router";
+import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import { LegendList } from "@legendapp/list";
 
 import type { LiveEvent } from "@acme/app";
@@ -16,23 +17,47 @@ import { useEvents } from "@acme/app";
 
 import { useResponsive } from "~/lib/use-responsive";
 
-const CATEGORY_ICON: Record<string, string> = {
-  music: "🎵",
-  concert: "🎵",
-  theater: "🎭",
-  theatre: "🎭",
-  comedy: "🎤",
-  sports: "⚽",
-  art: "🎨",
-  exhibition: "🖼️",
-  festival: "🎉",
-  food: "🍝",
-  film: "🎬",
-  workshop: "🛠️",
+const CATEGORY_ICON: Record<
+  string,
+  | { family: "ionicons"; name: keyof typeof Ionicons.glyphMap }
+  | {
+      family: "mci";
+      name: keyof typeof MaterialCommunityIcons.glyphMap;
+    }
+> = {
+  music: { family: "ionicons", name: "musical-notes" },
+  concert: { family: "ionicons", name: "musical-notes" },
+  theater: { family: "mci", name: "drama-masks" },
+  theatre: { family: "mci", name: "drama-masks" },
+  comedy: { family: "ionicons", name: "mic" },
+  sports: { family: "ionicons", name: "football" },
+  art: { family: "ionicons", name: "color-palette" },
+  exhibition: { family: "ionicons", name: "images" },
+  festival: { family: "ionicons", name: "sparkles" },
+  food: { family: "ionicons", name: "restaurant" },
+  film: { family: "ionicons", name: "film" },
+  workshop: { family: "ionicons", name: "construct" },
 };
 
-function categoryIcon(category: string) {
-  return CATEGORY_ICON[category.toLowerCase()] ?? "🎟️";
+function CategoryIcon({
+  category,
+  size,
+  color,
+}: {
+  category: string;
+  size: number;
+  color: string;
+}) {
+  const icon = CATEGORY_ICON[category.toLowerCase()] ?? {
+    family: "ionicons" as const,
+    name: "ticket" as const,
+  };
+  if (icon.family === "mci") {
+    return (
+      <MaterialCommunityIcons name={icon.name} size={size} color={color} />
+    );
+  }
+  return <Ionicons name={icon.name} size={size} color={color} />;
 }
 
 function SearchButton({
@@ -44,9 +69,7 @@ function SearchButton({
 }) {
   return (
     <Pressable onPress={onPress} hitSlop={12} style={{ paddingHorizontal: 8 }}>
-      <Text className="text-foreground" style={{ fontSize: 20 }}>
-        {active ? "✕" : "🔍"}
-      </Text>
+      <Ionicons name={active ? "close" : "search"} size={20} color="#9ca3af" />
     </Pressable>
   );
 }
@@ -219,16 +242,22 @@ export default function EventsScreen() {
                         gap: 4,
                       }}
                     >
-                      <Text style={{ fontSize: 32, opacity: 0.4 }}>🖼️</Text>
+                      <Ionicons
+                        name="image-outline"
+                        size={32}
+                        color="#9ca3af"
+                      />
                       <Text className="text-muted-foreground text-[10px] font-medium tracking-wide uppercase">
                         No image yet
                       </Text>
                     </View>
                   )}
                   <View className="bg-background/90 absolute top-2 left-2 flex-row items-center gap-1 rounded-full px-2.5 py-1">
-                    <Text style={{ fontSize: 11 }}>
-                      {categoryIcon(item.category)}
-                    </Text>
+                    <CategoryIcon
+                      category={item.category}
+                      size={11}
+                      color="#9ca3af"
+                    />
                     <Text className="text-foreground text-[10px] font-bold tracking-wide uppercase">
                       {item.category}
                     </Text>
@@ -260,16 +289,26 @@ export default function EventsScreen() {
                   >
                     {item.title}
                   </Text>
-                  <Text className="text-muted-foreground text-xs">
-                    🕐 {formatEventDate(item.starts_at)}
-                  </Text>
-                  {item.location ? (
-                    <Text
-                      className="text-muted-foreground text-xs"
-                      numberOfLines={1}
-                    >
-                      📍 {item.location}
+                  <View className="flex-row items-center gap-1">
+                    <Ionicons name="time-outline" size={12} color="#9ca3af" />
+                    <Text className="text-muted-foreground text-xs">
+                      {formatEventDate(item.starts_at)}
                     </Text>
+                  </View>
+                  {item.location ? (
+                    <View className="flex-row items-center gap-1">
+                      <Ionicons
+                        name="location-outline"
+                        size={12}
+                        color="#9ca3af"
+                      />
+                      <Text
+                        className="text-muted-foreground text-xs"
+                        numberOfLines={1}
+                      >
+                        {item.location}
+                      </Text>
+                    </View>
                   ) : null}
                 </View>
               </Pressable>

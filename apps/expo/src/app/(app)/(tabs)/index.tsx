@@ -9,6 +9,7 @@ import {
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useRouter } from "expo-router";
+import { Ionicons } from "@expo/vector-icons";
 import { LegendList } from "@legendapp/list";
 
 import type { Movie } from "@acme/app";
@@ -25,9 +26,7 @@ function SearchButton({
 }) {
   return (
     <Pressable onPress={onPress} hitSlop={12} style={{ paddingHorizontal: 8 }}>
-      <Text className="text-foreground" style={{ fontSize: 20 }}>
-        {active ? "✕" : "Q"}
-      </Text>
+      <Ionicons name={active ? "close" : "search"} size={20} color="#9ca3af" />
     </Pressable>
   );
 }
@@ -168,7 +167,7 @@ export default function MoviesScreen() {
                     className="bg-muted items-center justify-center"
                     style={{ height: 220 }}
                   >
-                    <Text className="text-4xl">🎬</Text>
+                    <Ionicons name="film-outline" size={36} color="#9ca3af" />
                   </View>
                 )}
                 {item.rating ? (

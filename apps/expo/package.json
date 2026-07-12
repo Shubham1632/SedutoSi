@@ -23,6 +23,7 @@
     "@acme/config": "workspace:*",
     "@acme/ui-native": "workspace:*",
     "@expo/metro-runtime": "~6.1.2",
+    "@expo/vector-icons": "^15.0.3",
     "@legendapp/list": "^2.0.14",
     "@react-native-async-storage/async-storage": "catalog:",
     "@react-native-community/datetimepicker": "8.4.4",

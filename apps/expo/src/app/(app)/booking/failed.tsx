@@ -1,5 +1,6 @@
 import { ScrollView, Text, View } from "react-native";
 import { Stack, useLocalSearchParams, useRouter } from "expo-router";
+import { Ionicons } from "@expo/vector-icons";
 
 import { Button } from "@acme/ui-native/button";
 
@@ -50,7 +51,7 @@ export default function PaymentFailedScreen() {
           style={{ alignItems: "center", gap: 24 }}
         >
           <View className="bg-destructive/10 h-20 w-20 items-center justify-center rounded-full">
-            <Text className="text-destructive text-4xl">✕</Text>
+            <Ionicons name="close" size={40} color="#dc2626" />
           </View>
 
           <View className="items-center gap-1">

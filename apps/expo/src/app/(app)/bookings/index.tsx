@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 import { FlatList, Image, Pressable, Text, View } from "react-native";
 import { Stack, useRouter } from "expo-router";
+import { Ionicons } from "@expo/vector-icons";
 
 import type { Booking } from "@acme/app";
 import { useMyBookings } from "@acme/app";
@@ -141,9 +142,11 @@ export default function BookingsScreen() {
                         className="bg-muted items-center justify-center"
                         style={{ width: 96 }}
                       >
-                        <Text style={{ fontSize: 32 }}>
-                          {isEvent ? "🎟️" : "🎬"}
-                        </Text>
+                        <Ionicons
+                          name={isEvent ? "ticket-outline" : "film-outline"}
+                          size={32}
+                          color="#9ca3af"
+                        />
                       </View>
                     )}
 

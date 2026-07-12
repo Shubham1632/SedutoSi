@@ -8,6 +8,7 @@ import {
   View,
 } from "react-native";
 import { Stack, useLocalSearchParams, useRouter } from "expo-router";
+import { Ionicons } from "@expo/vector-icons";
 
 import { useEvent, useEventTicketsSold } from "@acme/app";
 import { Button } from "@acme/ui-native/button";
@@ -72,7 +73,7 @@ export default function EventDetailScreen() {
             className="bg-muted items-center justify-center"
             style={{ width: "100%", height: 220 }}
           >
-            <Text style={{ fontSize: 48, opacity: 0.4 }}>🖼️</Text>
+            <Ionicons name="image-outline" size={48} color="#9ca3af" />
           </View>
         )}
 
@@ -92,9 +93,13 @@ export default function EventDetailScreen() {
             </Text>
 
             {event.location ? (
-              <Pressable onPress={() => openMapsSearch(event.location ?? "")}>
+              <Pressable
+                onPress={() => openMapsSearch(event.location ?? "")}
+                className="flex-row items-center gap-1"
+              >
+                <Ionicons name="location-outline" size={14} color="#9ca3af" />
                 <Text className="text-foreground text-sm font-medium">
-                  📍 {event.location}
+                  {event.location}
                 </Text>
               </Pressable>
             ) : null}

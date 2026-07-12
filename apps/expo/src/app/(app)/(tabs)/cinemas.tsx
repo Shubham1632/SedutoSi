@@ -2,6 +2,7 @@ import { useMemo, useState } from "react";
 import { FlatList, Pressable, Text, TextInput, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useRouter } from "expo-router";
+import { Ionicons } from "@expo/vector-icons";
 import { LegendList } from "@legendapp/list";
 
 import type { Cinema } from "@acme/app";
@@ -9,6 +10,7 @@ import { useCinemas } from "@acme/app";
 
 import { openMapsSearch } from "~/lib/maps";
 import { useResponsive } from "~/lib/use-responsive";
+import { useThemeColors } from "~/lib/use-theme-colors";
 
 function SearchButton({
   active,
@@ -19,9 +21,7 @@ function SearchButton({
 }) {
   return (
     <Pressable onPress={onPress} hitSlop={12} style={{ paddingHorizontal: 8 }}>
-      <Text className="text-foreground" style={{ fontSize: 20 }}>
-        {active ? "✕" : "🔍"}
-      </Text>
+      <Ionicons name={active ? "close" : "search"} size={20} color="#9ca3af" />
     </Pressable>
   );
 }
@@ -31,6 +31,7 @@ export default function CinemasScreen() {
   const numColumns = width >= 1200 ? 3 : width >= 700 ? 2 : 1;
   const router = useRouter();
   const insets = useSafeAreaInsets();
+  const colors = useThemeColors();
   const { data: cinemas, isLoading } = useCinemas();
   const [searchOpen, setSearchOpen] = useState(false);
   const [query, setQuery] = useState("");
@@ -162,7 +163,11 @@ export default function CinemasScreen() {
               >
                 <View className="flex-row items-center gap-3 p-4">
                   <View className="bg-primary/15 h-12 w-12 items-center justify-center rounded-full">
-                    <Text style={{ fontSize: 22 }}>🏛️</Text>
+                    <Ionicons
+                      name="business"
+                      size={22}
+                      color={colors.primary}
+                    />
                   </View>
                   <View className="flex-1 gap-1">
                     <Text
@@ -171,16 +176,24 @@ export default function CinemasScreen() {
                     >
                       {item.name}
                     </Text>
-                    <Pressable onPress={() => openMapsSearch(item.address)}>
+                    <Pressable
+                      onPress={() => openMapsSearch(item.address)}
+                      className="flex-row items-center gap-1"
+                    >
+                      <Ionicons
+                        name="location-outline"
+                        size={12}
+                        color="#9ca3af"
+                      />
                       <Text
                         className="text-muted-foreground text-xs"
                         numberOfLines={1}
                       >
-                        📍 {item.address}
+                        {item.address}
                       </Text>
                     </Pressable>
                   </View>
-                  <Text className="text-muted-foreground text-lg">›</Text>
+                  <Ionicons name="chevron-forward" size={18} color="#9ca3af" />
                 </View>
                 <View className="flex-row items-center justify-between border-t border-gray-300 px-4 py-2.5 dark:border-gray-700">
                   {item.neighborhood ? (
@@ -192,9 +205,16 @@ export default function CinemasScreen() {
                   ) : (
                     <View />
                   )}
-                  <Text className="text-primary text-xs font-semibold">
-                    View showtimes →
-                  </Text>
+                  <View className="flex-row items-center gap-1">
+                    <Text className="text-primary text-xs font-semibold">
+                      View showtimes
+                    </Text>
+                    <Ionicons
+                      name="chevron-forward"
+                      size={12}
+                      color={colors.primary}
+                    />
+                  </View>
                 </View>
               </Pressable>
             </View>
