@@ -1,4 +1,14 @@
-export const lightColors: Record<string, string> = {
+export interface ThemeColors {
+  background: string;
+  card: string;
+  text: string;
+  border: string;
+  primary: string;
+  notification: string;
+  header: string;
+}
+
+export const lightColors: ThemeColors = {
   background: "#eeeae1",
   card: "#ffffff",
   text: "#2b2118",
@@ -8,7 +18,7 @@ export const lightColors: Record<string, string> = {
   header: "#ffffff",
 };
 
-export const darkColors: Record<string, string> = {
+export const darkColors: ThemeColors = {
   background: "#22273f",
   card: "#262c4a",
   text: "#f5f3ee",

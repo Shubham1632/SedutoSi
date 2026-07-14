@@ -31,9 +31,18 @@ import { Button } from "@acme/ui-native/button";
 import { Input } from "@acme/ui-native/input";
 import { Text } from "@acme/ui-native/text";
 
+import type { ThemePreference } from "~/lib/theme-preference";
 import { ResponsiveContainer } from "~/components/responsive-container";
 import { supabase } from "~/lib/supabase";
+import { useThemePreference } from "~/lib/theme-preference";
+import { useThemeColors } from "~/lib/use-theme-colors";
 import logo from "../../../../assets/logo.png";
+
+const THEME_OPTIONS: { value: ThemePreference; label: string }[] = [
+  { value: "system", label: "System Default" },
+  { value: "light", label: "Light" },
+  { value: "dark", label: "Dark" },
+];
 
 const msg = (e: unknown) =>
   e instanceof Error ? e.message : "Something went wrong";
@@ -87,6 +96,32 @@ function MenuRow({
   );
 }
 
+function ThemeOptionRow({
+  label,
+  selected,
+  onPress,
+  accentColor,
+}: {
+  label: string;
+  selected: boolean;
+  onPress: () => void;
+  accentColor: string;
+}) {
+  return (
+    <Pressable
+      onPress={onPress}
+      className="flex-row items-center gap-3 px-5 py-4 active:opacity-70"
+    >
+      <Text className="text-foreground flex-1 text-base font-medium">
+        {label}
+      </Text>
+      {selected ? (
+        <Ionicons name="checkmark" size={18} color={accentColor} />
+      ) : null}
+    </Pressable>
+  );
+}
+
 function Section({
   title,
   children,
@@ -117,6 +152,8 @@ export default function Profile() {
   const tabBarHeight = useBottomTabBarHeight();
   const primaryForeground = useColorScheme() === "dark" ? "#2b2118" : "#ffffff";
   const { user } = useSession();
+  const { preference, setPreference } = useThemePreference();
+  const themeColors = useThemeColors();
   const profile = useProfile();
   const updateProfile = useUpdateProfile();
   const uploadAvatar = useUploadAvatar();
@@ -382,6 +419,20 @@ export default function Profile() {
             label="Privacy Policy"
             onPress={() => appAlert("Privacy Policy", "Coming soon.")}
           />
+        </Section>
+
+        <Section title="Appearance">
+          {THEME_OPTIONS.map((option, index) => (
+            <View key={option.value}>
+              {index > 0 ? <Divider /> : null}
+              <ThemeOptionRow
+                label={option.label}
+                selected={preference === option.value}
+                onPress={() => setPreference(option.value)}
+                accentColor={themeColors.primary}
+              />
+            </View>
+          ))}
         </Section>
 
         <Section title="Account">

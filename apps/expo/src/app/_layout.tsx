@@ -14,6 +14,7 @@ import { AlertHost } from "@acme/ui-native/alert";
 import { darkColors, lightColors } from "@acme/ui-native/theme-colors";
 
 import { supabase } from "~/lib/supabase";
+import { ThemePreferenceProvider } from "~/lib/theme-preference";
 
 import "../styles.css";
 
@@ -51,13 +52,15 @@ export default function RootLayout() {
 
   return (
     <SafeAreaProvider>
-      <SupabaseProvider client={supabase}>
-        <ThemeProvider value={isDark ? AppDarkTheme : AppLightTheme}>
-          <AuthGate />
-          <StatusBar style={isDark ? "light" : "dark"} />
-          <AlertHost />
-        </ThemeProvider>
-      </SupabaseProvider>
+      <ThemePreferenceProvider>
+        <SupabaseProvider client={supabase}>
+          <ThemeProvider value={isDark ? AppDarkTheme : AppLightTheme}>
+            <AuthGate />
+            <StatusBar style={isDark ? "light" : "dark"} />
+            <AlertHost />
+          </ThemeProvider>
+        </SupabaseProvider>
+      </ThemePreferenceProvider>
     </SafeAreaProvider>
   );
 }
